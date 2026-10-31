@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Bfamily Compétences Zone</title>
+<style>
+:root{color-scheme:light;--pr:#1f4fd8;--tx:#16192a;--mu:#5b6275;--bd:#e4e7ef;--bg:#f5f7fc;--ok:#1a8f4c;--ko:#c63b3b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--tx);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:0 18px 40px}
+header{border-bottom:1px solid var(--bd);padding:12px 18px;max-width:640px;margin:0 auto}
+.lo{font-weight:800;font-size:19px;color:var(--pr)}.lo small{display:block;font-weight:400;font-size:12px;color:var(--mu)}
+nav{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+nav a{white-space:nowrap;padding:7px 12px;border-radius:20px;color:var(--tx);text-decoration:none;font-size:14px;border:1px solid var(--bd)}
+nav a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+h1{font-size:28px;line-height:1.2;margin:28px 0 10px}h2{font-size:20px;margin:0 0 8px}
+.mu{color:var(--mu)}.sm{font-size:14px}
+.c{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px;margin:14px 0}
+.g{background:var(--bg)}
+.b,button{display:block;width:100%;text-align:center;background:var(--pr);color:#fff;border:0;border-radius:10px;padding:13px 16px;margin-top:10px;font:inherit;text-decoration:none;cursor:pointer}
+.b.s,button.s{background:#fff;color:var(--pr);border:1px solid var(--pr)}
+button:disabled{opacity:.4}
+.o{text-align:left;background:#fff;color:var(--tx);border:1px solid var(--bd)}
+.o.ok{border-color:var(--ok);background:#e9f7ef}.o.ko{border-color:var(--ko);background:#fdecec}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--bd);font:inherit;margin-top:8px}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pr)}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:#e8efff;color:var(--pr);margin:0 4px 4px 0}
+.vd{aspect-ratio:16/9;background:var(--bg);border:1px dashed var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mu);font-size:14px;padding:10px}
+.vd iframe{width:100%;height:100%;border:0;border-radius:10px}
+.ex{background:var(--bg);border-left:4px solid var(--pr);padding:10px;border-radius:6px;font-size:14px;margin:8px 0}
+.cert{border:6px double #b8892b;background:#fffaf0;color:#2a2210;text-align:center;padding:22px 12px;border-radius:6px}
+.cert h2{font-size:24px;letter-spacing:2px;color:#8a6212}.cert .n{font-size:26px;font-weight:700;margin:12px 0;border-bottom:1px solid #b8892b;display:inline-block;padding:0 10px}
+.wa{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:8px;background:#25d366;color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 16px;border-radius:30px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.wa svg{width:22px;height:22px;fill:#fff}
+footer{text-align:center;font-size:13px;color:var(--mu);padding:20px}
+</style>
+</head>
+<body>
+<header><div class="lo">Bfamily Compétences Zone<small>Je tiens bon !</small></div>
+<nav id="nav"></nav></header>
+<div class="w" id="app"></div>
+<a class="wa" id="wa" href="https://wa.me/2290197610535" target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>WhatsApp</a>
+<footer>© Bfamily · Orienter, former, accompagner</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+/* A REMPLIR : collez ici les liens YouTube des 3 leçons */
+var VIDEOS=["","",""];
+var WA="2290197610535";
+var WAMSG="Bonjour, je vous écris depuis Bfamily Compétences Zone.";
+/* ADRESSE DU SITE pour le code QR : a remplacer par l'adresse finale */
+var SITE="https://claude.ai/artifact/Tj7uT4h8KXuWuVPWn974D7";
+var L=[
+{t:"Qu’est-ce qu’un prompt ?",c:"Un prompt est l’instruction que vous donnez à une IA. Plus il est clair et précis, meilleure est la réponse. Une IA ne devine pas : elle suit ce que vous écrivez.",ex:"Faible : « Parle-moi du marketing. »\nMeilleur : « Explique en 5 points simples le marketing digital à un jeune entrepreneur béninois. »",
+q:[{q:"Qu’est-ce qu’un prompt ?",o:["Un virus informatique","Une instruction donnée à une IA","Un type de clavier"],a:1},{q:"Un prompt plus précis donne généralement…",o:["Une meilleure réponse","Une réponse plus lente","Aucune différence"],a:0}]},
+{t:"La structure d’un bon prompt",c:"Un bon prompt contient un RÔLE (qui est l’IA), un CONTEXTE (la situation), une TÂCHE (ce qu’elle doit faire) et un FORMAT (la forme de la réponse).",ex:"Rôle : Tu es coach en entrepreneuriat.\nContexte : Je lance un petit commerce à Cotonou.\nTâche : Propose un plan d’action sur 30 jours.\nFormat : Tableau avec une ligne par semaine.",
+q:[{q:"Quel élément précise la forme de la réponse ?",o:["Le rôle","Le contexte","Le format"],a:2},{q:"« Tu es coach en entrepreneuriat » correspond à…",o:["Le rôle","La tâche","Le format"],a:0}]},
+{t:"Améliorer et itérer",c:"Le premier résultat est rarement parfait. Demandez des corrections : « Raccourcis », « Donne un exemple », « Ton plus simple ». Dialoguer avec l’IA fait partie de la méthode. Vérifiez toujours les informations avant de les publier.",ex:"« Reprends ta réponse, mais en 3 phrases courtes et avec un exemple concret. »",
+q:[{q:"Si la réponse n’est pas parfaite, il faut…",o:["Abandonner","Demander des corrections à l’IA","Changer d’ordinateur"],a:1},{q:"Itérer signifie…",o:["Affiner la réponse par plusieurs échanges","Effacer la conversation","Copier sans lire"],a:0}]}
+];
+var WHY='<div class="c g"><h2>Pourquoi cette formation ?</h2><p>On ne peut pas tirer le meilleur d’une IA sans maîtriser le prompting. Face à une demande floue, même une IA très puissante donne une réponse moyenne. Face à une demande bien posée, elle donne d’excellents résultats. Cette formation vous apprend à parler à l’IA.</p></div><div class="c"><h2>Ce que vous gagnez</h2><p>• Savoir écrire des demandes claires et obtenir de meilleurs résultats.<br>• Gagner du temps dans vos études, votre travail ou votre activité.<br>• Un certificat Bfamily Compétences Zone à votre nom, à ajouter à votre CV et à partager.</p></div>';
+var LW=["C’est le point de départ : avant de bien écrire à une IA, il faut comprendre ce qu’est un prompt et pourquoi la précision change tout.","Vous savez maintenant qu’un prompt précis donne de meilleures réponses. Cette leçon vous donne une méthode simple (Rôle, Contexte, Tâche, Format) pour être précis à chaque fois.","Même avec une bonne structure, la première réponse n’est pas toujours parfaite. Cette dernière leçon vous apprend à corriger et affiner, pour obtenir un résultat prêt à utiliser."];
+var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home"};
+try{var r=localStorage.getItem("bf_acad");if(r){var o=JSON.parse(r);S.name=o.name||"";S.done=o.done||[]}}catch(e){}
+function save(){try{localStorage.setItem("bf_acad",JSON.stringify({name:S.name,done:S.done}))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function ytId(u){var m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?m[1]:""}
+var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["contact","Contact"]];
+function page(){var h=(location.hash||"").replace("#","");return P.some(function(p){return p[0]==h})?h:"accueil"}
+function render(){var p=page(),a=document.getElementById("app"),h="";
+document.getElementById("nav").innerHTML=P.map(function(x){return '<a href="#'+x[0]+'" class="'+(x[0]==p?'on':'')+'">'+x[1]+'</a>'}).join("");
+if(p=="accueil")h='<h1>Des compétences pratiques pour transformer votre potentiel en opportunités.</h1><p class="mu">Bfamily Compétences Zone réunit des jeunes qui transmettent à d’autres jeunes des compétences concrètes, en ligne et en présentiel, avec certificat à la clé.</p><a class="b" href="#cours">Commencer la formation Prompting IA</a><a class="b s" href="#apropos">Découvrir Bfamily</a><div class="c g"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
+if(p=="apropos")h='<h1>À propos de Bfamily</h1><div class="c"><h2>Qui sommes-nous</h2><p>Bfamily est un collectif de jeunes qui ont choisi de mettre leurs compétences au service d’autres jeunes. Depuis 2018, nous transmettons des savoir-faire pratiques, en intelligence artificielle comme dans d’autres domaines, pour aider chacun à révéler son potentiel.</p></div><div class="c"><h2>Notre mission</h2><p>Aider les jeunes à découvrir leurs talents, acquérir des compétences utiles sur le marché et les valoriser pour trouver un emploi, entreprendre ou créer leurs propres revenus.</p></div><div class="c"><h2>Notre vision</h2><p>Une jeunesse compétente, autonome, capable de transformer ses connaissances et ses talents en vraies opportunités professionnelles.</p></div><div class="c g"><h2>Ce que nous faisons</h2><p><b>Orienter</b> : identifier vos talents et votre voie.<br><b>Former</b> : formations en ligne avec certificat et formations pratiques en présentiel.<br><b>Accompagner</b> : vous suivre vers l’emploi, l’entrepreneuriat ou la création de revenus.</p></div>';
+if(p=="formations")h='<h1>Nos formations</h1><div class="c"><span class="tag">En ligne</span><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2><p class="mu">3 leçons en vidéo, des quiz et un certificat à votre nom à partager sur les réseaux.</p><a class="b" href="#cours">Commencer</a></div><div class="c"><span class="tag">Présentiel</span><h2>Formations pratiques</h2><p class="mu">Des sessions sur place dans plusieurs domaines. Contactez-nous pour connaître les prochaines dates.</p><a class="b s" href="#contact">Nous contacter</a></div><div class="c g"><p class="sm mu" style="margin:0">D’autres formations en ligne arrivent bientôt.</p></div>';
+if(p=="contact")h='<h1>Contact</h1><div class="c"><p>Une question, une formation sur place, un partenariat ? Écrivez-nous sur WhatsApp.</p><a class="b" href="https://wa.me/'+WA+'?text='+encodeURIComponent(WAMSG)+'" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>';
+if(p=="cours")h=cours();
+a.innerHTML=h;drawQR()}
+function drawQR(){var e=document.getElementById("qr");if(!e)return;try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();e.innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true})}catch(x){}}
+function prog(){var n=Math.round(S.done.length/L.length*100);return '<div class="bar"><i style="width:'+n+'%"></i></div><p class="mu sm">'+S.done.length+' / '+L.length+' leçons validées</p>'}
+function cours(){var h="",s=S.sub;
+if(s=="home"){h='<h1>Maîtriser le prompting IA</h1>'+WHY+'<div class="c">'+prog()+'</div>';
+if(!S.name)return h+'<div class="c"><h2>Bienvenue</h2><p class="sm mu">Entrez votre nom tel qu’il apparaîtra sur votre certificat.</p><input id="nm" placeholder="Prénom et nom" maxlength="40"><button onclick="setName()">Commencer</button></div>';
+var nx=0;while(S.done.indexOf(nx)>-1)nx++;
+h+='<div class="c"><p>Bonjour <b>'+esc(S.name)+'</b></p>';
+if(nx<L.length)h+='<button onclick="go(\'lesson\','+nx+')">'+(S.done.length?'Continuer':'Commencer')+' : leçon '+(nx+1)+'</button>';
+else h+='<p>Toutes les leçons sont validées.</p><button onclick="go(\'cert\')">Voir mon certificat</button>';
+return h+'<button class="s" onclick="reset()">Recommencer à zéro</button></div>'}
+if(s=="lesson"){var l=L[S.i],id=ytId(VIDEOS[S.i]);
+return '<p class="mu sm">Leçon '+(S.i+1)+' sur '+L.length+'</p><div class="c"><h2>'+l.t+'</h2><div class="ex" style="border-left-color:#1a8f4c"><b>Pourquoi cette leçon ?</b><br>'+LW[S.i]+'</div><div class="vd">'+(id?'<iframe src="https://www.youtube-nocookie.com/embed/'+id+'" allowfullscreen></iframe>':'Vidéo de la leçon bientôt disponible')+'</div>'+(id?'<a class="b s" href="https://youtu.be/'+id+'" target="_blank" rel="noopener">Ouvrir sur YouTube</a>':'')+'<p>'+l.c+'</p><div class="ex">'+l.ex.split("\n").map(esc).join("<br>")+'</div><button onclick="go(\'quiz\')">Passer au quiz</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
+if(s=="quiz"){var q=L[S.i].q[S.qi];
+h='<p class="mu sm">Quiz leçon '+(S.i+1)+' · question '+(S.qi+1)+'/'+L[S.i].q.length+'</p><div class="c"><h2>'+q.q+'</h2>'+q.o.map(function(t,k){var c="";if(S.ans!=null){if(k==q.a)c=" ok";else if(k==S.ans)c=" ko"}return '<button class="o'+c+'" '+(S.ans!=null?'disabled':'')+' onclick="pick('+k+')">'+t+'</button>'}).join("");
+if(S.ans!=null)h+='<p>'+(S.ans==q.a?'Bonne réponse !':'Mauvaise réponse. La bonne est en vert.')+'</p><button onclick="nextQ()">Suivant</button>';
+return h+'</div>'}
+if(s=="result"){var tot=L[S.i].q.length,ok=S.sc==tot;
+return '<div class="c"><h2>Résultat : '+S.sc+' / '+tot+'</h2>'+(ok?'<p>Bravo, leçon validée !</p><button onclick="validate()">Continuer</button>':'<p>Il faut toutes les bonnes réponses pour avancer. Relisez la leçon et réessayez.</p><button onclick="go(\'lesson\')">Relire la leçon</button><button class="s" onclick="go(\'quiz\')">Refaire le quiz</button>')+'</div>'}
+if(s=="cert"){var d=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+return '<h1>Votre certificat</h1><div class="cert"><div>BFAMILY COMPÉTENCES ZONE</div><h2>CERTIFICAT</h2><div>de réussite décerné à</div><div class="n">'+esc(S.name)+'</div><div>pour avoir validé la formation <b>Maîtriser le prompting IA</b></div><div style="margin-top:12px"><b>Compétence acquise</b><br>Rédiger des prompts clairs et efficaces pour dialoguer avec une IA.</div><div style="margin-top:10px;font-size:14px;text-align:left;display:inline-block"><b>Cette personne sait désormais :</b><br>• structurer une demande avec la méthode Rôle, Contexte, Tâche, Format<br>• obtenir des réponses plus précises et plus utiles<br>• corriger et affiner les réponses d’une IA</div><div id="qr" style="width:96px;margin:14px auto 4px"></div><div style="font-size:12px">Scannez pour suivre la formation</div><div style="font-size:13px;margin-top:10px">Certification obtenue le '+d+'</div></div><div class="c"><p class="sm"><b>Sur votre CV :</b> ajoutez dans la section Formations « Maîtriser le prompting IA, Bfamily Compétences Zone ».</p><p class="mu sm">Faites une capture d’écran pour enregistrer ou partager votre certificat.</p><button onclick="share()">Partager sur les réseaux</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
+return h}
+function go(s,i){S.sub=s;if(i!=null)S.i=i;S.qi=0;S.sc=0;S.ans=null;render();window.scrollTo(0,0)}
+function setName(){var v=document.getElementById("nm").value.trim();if(v.length<2)return;S.name=v;save();render()}
+function pick(k){S.ans=k;if(k==L[S.i].q[S.qi].a)S.sc++;render()}
+function nextQ(){S.ans=null;if(S.qi+1<L[S.i].q.length){S.qi++}else{S.sub="result"}render()}
+function validate(){if(S.done.indexOf(S.i)<0)S.done.push(S.i);save();go(S.done.length>=L.length?"cert":"home")}
+function reset(){if(confirm("Effacer votre progression ?")){S.done=[];S.name="";save();go("home")}}
+function share(){var t="Je viens d’obtenir mon certificat « Maîtriser le prompting IA » chez Bfamily Compétences Zone ! #Bfamily #IA #Prompting";try{if(navigator.share){navigator.share({text:t});return}}catch(e){}try{window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}catch(e){}}
+try{document.getElementById("wa").href="https://wa.me/"+WA+"?text="+encodeURIComponent(WAMSG)}catch(e){}
+window.addEventListener("hashchange",function(){window.scrollTo(0,0);render()});
+render();
+</script>
+</body>
+</html>
