@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <title>Bfamily Compétences Zone</title>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js">
 <style>
 :root{color-scheme:light;--pr:#1f4fd8;--tx:#16192a;--mu:#5b6275;--bd:#e4e7ef;--bg:#f5f7fc;--ok:#1a8f4c;--ko:#c63b3b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}
@@ -49,19 +53,27 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--bd);font
 @keyframes dash{to{stroke-dashoffset:-24}}
 @keyframes glow{to{opacity:.45}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+header{position:relative}
+#mb{display:none;position:absolute;right:12px;top:10px;width:40px;height:40px;padding:0;margin:0;background:#fff;color:var(--tx);border:1px solid var(--bd);border-radius:50%;font-size:22px;line-height:1}
+#dr .ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:30}
+#dr .pn{position:fixed;top:0;right:0;bottom:0;width:78%;max-width:320px;background:#fff;z-index:31;padding:calc(20px + env(safe-area-inset-top,0px)) 18px 18px;box-shadow:-6px 0 24px rgba(0,0,0,.2);animation:sl .25s both;overflow-y:auto}
+@keyframes sl{from{transform:translateX(100%)}}
+#dr .pn a{display:block;padding:14px 4px;border-bottom:1px solid var(--bd);color:var(--tx);text-decoration:none}
 footer{text-align:center;font-size:13px;color:var(--mu);padding:20px}
 </style>
 </head>
 <body>
 <header><div class="lo"><span class="l1">Bfamily</span><span class="l2">Compétences Zone</span></div>
-<nav id="nav"></nav></header>
+<nav id="nav"></nav><button id="mb" onclick="S.menu=!S.menu;render()" aria-label="Menu">⋮</button></header>
+<div id="dr"></div>
 <div class="w" id="app"></div>
 <a class="wa" id="wa" href="https://wa.me/2290197610535" target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>WhatsApp</a>
 <footer>© Bfamily · Orienter, former, accompagner</footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 /* A REMPLIR : collez ici les liens YouTube des 3 leçons */
 var VIDEOS=["","",""];
+var HINT=0;try{HINT=localStorage.getItem("bf_in")==="1"}catch(e){}
 var WA="2290197610535";
 var WAMSG="Bonjour, je vous écris depuis Bfamily Compétences Zone.";
 /* ADRESSE DU SITE pour le code QR : a remplacer par l'adresse finale */
@@ -75,29 +87,36 @@ q:[{q:"Quel élément précise la forme de la réponse ?",o:["Le rôle","Le cont
 q:[{q:"Si la réponse n’est pas parfaite, il faut…",o:["Abandonner","Demander des corrections à l’IA","Changer d’ordinateur"],a:1},{q:"Itérer signifie…",o:["Affiner la réponse par plusieurs échanges","Effacer la conversation","Copier sans lire"],a:0}]}
 ];
 var WHY='<div class="c g"><h2>Pourquoi cette formation ?</h2><p>On ne peut pas tirer le meilleur d’une IA sans maîtriser le prompting. Face à une demande floue, même une IA très puissante donne une réponse moyenne. Face à une demande bien posée, elle donne d’excellents résultats. Cette formation vous apprend à parler à l’IA.</p></div><div class="c"><h2>Ce que vous gagnez</h2><p>• Savoir écrire des demandes claires et obtenir de meilleurs résultats.<br>• Gagner du temps dans vos études, votre travail ou votre activité.<br>• Un certificat Bfamily Compétences Zone à votre nom, à ajouter à votre CV et à partager.</p></div>';
+var OFFER='<div class="c g"><h2>Ce que nous offrons</h2><p><b>Orienter</b> : trouver votre voie.<br><b>Former</b> : formations pratiques avec certificat.<br><b>Accompagner</b> : vers l’emploi, l’entrepreneuriat ou vos propres revenus.</p><a class="b s" href="#apropos">À propos de Bfamily</a></div>';
 var LW=["C’est le point de départ : avant de bien écrire à une IA, il faut comprendre ce qu’est un prompt et pourquoi la précision change tout.","Vous savez maintenant qu’un prompt précis donne de meilleures réponses. Cette leçon vous donne une méthode simple (Rôle, Contexte, Tâche, Format) pour être précis à chaque fois.","Même avec une bonne structure, la première réponse n’est pas toujours parfaite. Cette dernière leçon vous apprend à corriger et affiner, pour obtenir un résultat prêt à utiliser."];
 var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home"};
 function save(){try{if(window.FB)FB.save()}catch(e){}}
 function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
 function ytId(u){var m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?m[1]:""}
-var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["admin","Admin"],["contact","Contact"]];
+var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["admin","Admin"],["formation","F"],["evolution","E"],["certificats","C"],["bourses","B"],["infos","I"],["opportunites","O"],["contact","Contact"]];var HIDE=["cours","admin","formation","evolution","certificats","bourses","infos","opportunites"];
 function page(){var h=(location.hash||"").replace("#","");return P.some(function(p){return p[0]==h})?h:"accueil"}
 function render(){var p=page(),a=document.getElementById("app"),h="";
-document.getElementById("nav").innerHTML=P.filter(function(x){return x[0]!="admin"}).map(function(x){return '<a href="#'+x[0]+'" class="'+(x[0]==p?'on':'')+'">'+x[1]+'</a>'}).join("");
+document.getElementById("nav").innerHTML=P.filter(function(x){return HIDE.indexOf(x[0])<0}).map(function(x){return '<a href="#'+x[0]+'" class="'+((x[0]==p||(x[0]=="formations"&&(p=="formation"||p=="cours")))?'on':'')+'">'+x[1]+'</a>'}).join("");
 if(p=="accueil")h='<h1>Des compétences pratiques pour transformer votre potentiel en opportunités.</h1><p class="mu">Bfamily Compétences Zone réunit des jeunes qui transmettent à d’autres jeunes des compétences concrètes, en ligne et en présentiel, avec certificat à la clé.</p><a class="b" href="#cours">Commencer la formation Prompting IA</a><a class="b s" href="#apropos">Découvrir Bfamily</a><div class="c g"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
 if(p=="apropos")h='<h1>À propos de Bfamily</h1><div class="c"><h2>Qui sommes-nous</h2><p>Bfamily est un collectif de jeunes qui ont choisi de mettre leurs compétences au service d’autres jeunes. Depuis 2018, nous transmettons des savoir-faire pratiques, en intelligence artificielle comme dans d’autres domaines, pour aider chacun à révéler son potentiel.</p></div><div class="c"><h2>Notre mission</h2><p>Aider les jeunes à découvrir leurs talents, acquérir des compétences utiles sur le marché et les valoriser pour trouver un emploi, entreprendre ou créer leurs propres revenus.</p></div><div class="c"><h2>Notre vision</h2><p>Une jeunesse compétente, autonome, capable de transformer ses connaissances et ses talents en vraies opportunités professionnelles.</p></div><div class="c g"><h2>Ce que nous faisons</h2><p><b>Orienter</b> : identifier vos talents et votre voie.<br><b>Former</b> : formations en ligne avec certificat et formations pratiques en présentiel.<br><b>Accompagner</b> : vous suivre vers l’emploi, l’entrepreneuriat ou la création de revenus.</p></div>';
-if(p=="formations")h='<h1>Nos formations</h1><div class="c"><span class="tag">En ligne</span><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2><p class="mu">3 leçons en vidéo, des quiz et un certificat à votre nom à partager sur les réseaux.</p><a class="b" href="#cours">Commencer</a></div><div class="c"><span class="tag">Présentiel</span><h2>Formations pratiques</h2><p class="mu">Des sessions sur place dans plusieurs domaines. Contactez-nous pour connaître les prochaines dates.</p><a class="b s" href="#contact">Nous contacter</a></div><div class="c g"><p class="sm mu" style="margin:0">D’autres formations en ligne arrivent bientôt.</p></div>';
+if(p=="formations")h='<h1>Nos formations</h1>'+(S.user?'':'<p class="mu sm">Inscription gratuite : elle vous sera demandée pour ouvrir une formation.</p>')+'<div class="c"><span class="tag">En ligne</span><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2><p class="mu">3 leçons en vidéo, des quiz et un certificat à votre nom à partager sur les réseaux.</p><p><b>Pourquoi ?</b> On ne peut pas tirer le meilleur d’une IA sans maîtriser le prompting. Vous apprenez à lui parler pour obtenir de meilleurs résultats.</p><a class="b" href="#formation">Voir la formation</a></div><div class="c"><span class="tag">Présentiel</span><h2>Formations pratiques</h2><p class="mu">Des sessions sur place dans plusieurs domaines. Contactez-nous pour connaître les prochaines dates.</p><a class="b s" href="#contact">Nous contacter</a></div><div class="c g"><p class="sm mu" style="margin:0">D’autres formations en ligne arrivent bientôt.</p></div>';
 if(p=="contact")h='<h1>Contact</h1><div class="c"><p>Une question, une formation sur place, un partenariat ? Écrivez-nous sur WhatsApp.</p><a class="b" href="https://wa.me/'+WA+'?text='+encodeURIComponent(WAMSG)+'" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>';
 if(p=="cours")h=cours();
 if(p=="verifier")h=verif();
 if(p=="admin")h=adminView();
-if(p=="accueil"&&!S.authReady)h='<div class="c"><p>Chargement…</p></div>';
+if(p=="formation")h=need(formDetail);
+if(p=="evolution")h=need(evo);
+if(p=="certificats")h=need(certs);
+if(p=="bourses")h=soon("Bourses d’études","Retrouvez ici les bourses d’études disponibles et comment postuler.");
+if(p=="infos")h=soon("Informations","Actualités et informations utiles de Bfamily Compétences Zone.");
+if(p=="opportunites")h=soon("Opportunités","Offres d’emploi, stages, concours et opportunités pour les jeunes.");
+if(p=="accueil"&&!S.authReady)h=HINT?'<div class="c"><p>Chargement…</p></div>':authView();
 if(p=="accueil"&&S.authReady&&!S.user)h=authView();
-a.innerHTML=h;drawQR()}
+a.innerHTML=h;drawQR();document.getElementById("dr").innerHTML=drawer();document.getElementById("mb").style.display=S.user?"block":"none"}
 function drawQR(){var e=document.getElementById("qr");if(!e)return;try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();e.innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true})}catch(x){}}
 function prog(){var n=Math.round(S.done.length/L.length*100);return '<div class="bar"><i style="width:'+n+'%"></i></div><p class="mu sm">'+S.done.length+' / '+L.length+' leçons validées</p>'}
-function cours(){var h="",s=S.sub;if(!S.authReady)return '<div class="c"><p>Chargement…</p></div>';if(!S.user)return authView();
-if(s=="home"){h='<h1>Maîtriser le prompting IA</h1>'+WHY+'<div class="c">'+prog()+'</div>';
+function cours(){var h="",s=S.sub;if(!S.authReady&&HINT)return '<div class="c"><p>Chargement…</p></div>';if(!S.user)return authView();
+if(s=="home"){h='<h1>Maîtriser le prompting IA</h1><div class="c">'+prog()+'</div>';
 if(!S.name)return h+'<div class="c"><h2>Bienvenue</h2><p class="sm mu">Entrez votre nom tel qu’il apparaîtra sur votre certificat.</p><input id="nm" placeholder="Prénom et nom" maxlength="40"><button onclick="setName()">Commencer</button></div>';
 var nx=0;while(S.done.indexOf(nx)>-1)nx++;
 h+='<div class="c"><p>Bonjour <b>'+esc(S.name)+'</b></p>';
@@ -105,15 +124,15 @@ if(nx<L.length)h+='<button onclick="go(\'lesson\','+nx+')">'+(S.done.length?'Con
 else h+='<p>Toutes les leçons sont validées.</p><button onclick="go(\'cert\')">Voir mon certificat</button>';
 return h+'<button class="s" onclick="FB.out()">Se déconnecter</button></div>'}
 if(s=="lesson"){var l=L[S.i],id=ytId(VIDEOS[S.i]);
-return '<p class="mu sm">Leçon '+(S.i+1)+' sur '+L.length+'</p><div class="c"><h2>'+l.t+'</h2><div class="ex" style="border-left-color:#1a8f4c"><b>Pourquoi cette leçon ?</b><br>'+LW[S.i]+'</div><div class="vd">'+(id?'<iframe src="https://www.youtube-nocookie.com/embed/'+id+'" allowfullscreen></iframe>':'Vidéo de la leçon bientôt disponible')+'</div>'+(id?'<a class="b s" href="https://youtu.be/'+id+'" target="_blank" rel="noopener">Ouvrir sur YouTube</a>':'')+'<p>'+l.c+'</p><div class="ex">'+l.ex.split("\n").map(esc).join("<br>")+'</div><button onclick="go(\'quiz\')">Passer au quiz</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
+return '<div class="c" style="padding:10px 16px">'+prog()+'</div><p class="mu sm">Leçon '+(S.i+1)+' sur '+L.length+'</p><div class="c"><h2>'+l.t+'</h2><div class="ex" style="border-left-color:#1a8f4c"><b>Pourquoi cette leçon ?</b><br>'+LW[S.i]+'</div><div class="vd">'+(id?'<iframe src="https://www.youtube-nocookie.com/embed/'+id+'" allowfullscreen></iframe>':'Vidéo de la leçon bientôt disponible')+'</div>'+(id?'<a class="b s" href="https://youtu.be/'+id+'" target="_blank" rel="noopener">Ouvrir sur YouTube</a>':'')+'<p>'+l.c+'</p><div class="ex">'+l.ex.split("\n").map(esc).join("<br>")+'</div><button onclick="go(\'quiz\')">Passer au quiz</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
 if(s=="quiz"){var q=L[S.i].q[S.qi];
-h='<p class="mu sm">Quiz leçon '+(S.i+1)+' · question '+(S.qi+1)+'/'+L[S.i].q.length+'</p><div class="c"><h2>'+q.q+'</h2>'+q.o.map(function(t,k){var c="";if(S.ans!=null){if(k==q.a)c=" ok";else if(k==S.ans)c=" ko"}return '<button class="o'+c+'" '+(S.ans!=null?'disabled':'')+' onclick="pick('+k+')">'+t+'</button>'}).join("");
+h='<div class="c" style="padding:10px 16px">'+prog()+'</div><p class="mu sm">Quiz leçon '+(S.i+1)+' · question '+(S.qi+1)+'/'+L[S.i].q.length+'</p><div class="c"><h2>'+q.q+'</h2>'+q.o.map(function(t,k){var c="";if(S.ans!=null){if(k==q.a)c=" ok";else if(k==S.ans)c=" ko"}return '<button class="o'+c+'" '+(S.ans!=null?'disabled':'')+' onclick="pick('+k+')">'+t+'</button>'}).join("");
 if(S.ans!=null)h+='<p>'+(S.ans==q.a?'Bonne réponse !':'Mauvaise réponse. La bonne est en vert.')+'</p><button onclick="nextQ()">Suivant</button>';
 return h+'</div>'}
 if(s=="result"){var tot=L[S.i].q.length,ok=S.sc==tot;
 return '<div class="c"><h2>Résultat : '+S.sc+' / '+tot+'</h2>'+(ok?'<p>Bravo, leçon validée !</p><button onclick="validate()">Continuer</button>':'<p>Il faut toutes les bonnes réponses pour avancer. Relisez la leçon et réessayez.</p><button onclick="go(\'lesson\')">Relire la leçon</button><button class="s" onclick="go(\'quiz\')">Refaire le quiz</button>')+'</div>'}
 if(s=="cert"){if(!S.certId){if(S.certFail)return '<div class="c"><p>Impossible de créer votre certificat pour le moment.</p><button onclick="S.certFail=false;render()">Réessayer</button></div>';FB.issue();return '<div class="c"><p>Création de votre certificat…</p></div>'}var d=new Date(S.certDate||Date.now()).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
-return '<h1>Votre certificat</h1><div class="cert"><div>BFAMILY COMPÉTENCES ZONE</div><h2>CERTIFICAT</h2><div>de réussite décerné à</div><div class="n">'+esc(S.name)+'</div><div>pour avoir validé la formation <b>Maîtriser le prompting IA</b></div><div style="margin-top:12px"><b>Compétence acquise</b><br>Rédiger des prompts clairs et efficaces pour dialoguer avec une IA.</div><div style="margin-top:10px;font-size:14px;text-align:left;display:inline-block"><b>Cette personne sait désormais :</b><br>• structurer une demande avec la méthode Rôle, Contexte, Tâche, Format<br>• obtenir des réponses plus précises et plus utiles<br>• corriger et affiner les réponses d’une IA</div><div id="qr" style="width:96px;margin:14px auto 4px"></div><div style="font-size:12px">Scannez pour suivre la formation</div><div style="font-size:13px;margin-top:10px">Certification obtenue le '+d+'</div><div style="font-size:13px;margin-top:4px"><b>N° '+esc(S.certId)+'</b></div></div><div class="c"><p class="sm"><b>Sur votre CV :</b> ajoutez dans la section Formations « Maîtriser le prompting IA, Bfamily Compétences Zone ».</p><p class="mu sm">Faites une capture d’écran pour enregistrer ou partager votre certificat.</p><button onclick="share()">Partager sur les réseaux</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
+return '<h1>Votre certificat</h1><div class="cert"><div>BFAMILY COMPÉTENCES ZONE</div><h2>CERTIFICAT</h2><div>de réussite décerné à</div><div class="n">'+esc(S.name)+'</div><div>pour avoir validé la formation <b>Maîtriser le prompting IA</b></div><div style="margin-top:12px"><b>Compétence acquise</b><br>Rédiger des prompts clairs et efficaces pour dialoguer avec une IA.</div><div style="margin-top:10px;font-size:14px;text-align:left;display:inline-block"><b>Cette personne sait désormais :</b><br>• structurer une demande avec la méthode Rôle, Contexte, Tâche, Format<br>• obtenir des réponses plus précises et plus utiles<br>• corriger et affiner les réponses d’une IA</div><div id="qr" style="width:96px;margin:14px auto 4px"></div><div style="font-size:12px">Scannez pour suivre la formation</div><div style="font-size:13px;margin-top:10px">Certification obtenue le '+d+'</div><div style="font-size:13px;margin-top:4px"><b>N° '+esc(S.certId)+'</b></div></div><div class="c"><p class="sm"><b>Sur votre CV :</b> ajoutez dans la section Formations « Maîtriser le prompting IA, Bfamily Compétences Zone ».</p><p class="mu sm">Le certificat s’enregistre en image (PNG) dans les téléchargements de votre téléphone.</p><button onclick="certPng()">Télécharger mon certificat (image)</button><button class="s" onclick="share()">Partager sur les réseaux</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
 return h}
 function scene(){return '<svg viewBox="0 0 320 180" class="sc" role="img" aria-label="Étudiants en formation"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1e5b"/><stop offset="1" stop-color="#1f4fd8"/></linearGradient></defs><rect width="320" height="180" rx="16" fill="url(#gg)"/><path d="M0 120H320M0 140H320M0 160H320M60 100V180M130 100V180M200 100V180M270 100V180" stroke="#6ee7ff" stroke-opacity=".18" fill="none"/><path class="pl" d="M40 40L150 25L215 70L270 45" stroke="#6ee7ff" fill="none"/><g class="fl"><circle cx="40" cy="40" r="3" fill="#6ee7ff"/><circle cx="150" cy="25" r="2.5" fill="#fff"/><circle cx="270" cy="45" r="3" fill="#6ee7ff"/><circle cx="215" cy="70" r="2.5" fill="#fff"/></g><text x="160" y="58" fill="#fff" font-size="13" text-anchor="middle" opacity=".9">Apprendre · Créer · Réussir</text><g><circle cx="95" cy="102" r="11" fill="#ffd9b0"/><path d="M80 150q0-26 15-26t15 26z" fill="#ffb703"/><polygon class="scr" points="76,138 84,114 108,114 114,138" fill="#6ee7ff"/><rect x="62" y="138" width="66" height="6" rx="3" fill="#0e2a7a"/></g><g><circle cx="225" cy="102" r="11" fill="#ffd9b0"/><path d="M210 150q0-26 15-26t15 26z" fill="#ff6b9a"/><polygon class="scr" points="206,138 214,114 238,114 244,138" fill="#6ee7ff"/><rect x="192" y="138" width="66" height="6" rx="3" fill="#0e2a7a"/></g></svg>'}
 var ADMIN="bfamilyboutique@gmail.com";
@@ -128,15 +147,39 @@ function admCsv(){var q=function(v){return '"'+String(v==null?"":v).replace(/"/g
 var r=[["Nom","E-mail","Leçons validées","Certificat","Inscription"].map(q).join(",")].concat(S.adm.map(function(x){return [x.name,x.email,(x.done||[]).length,x.certId||"",x.createdAt?new Date(x.createdAt).toLocaleDateString("fr-FR"):""].map(q).join(",")}));
 var b=new Blob(["\ufeff"+r.join("\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="inscrits-bfamily.csv";document.body.appendChild(a);a.click();a.remove()}
 function admCopy(){var t=S.adm.map(function(x){return x.email}).filter(Boolean).join(", ");try{navigator.clipboard.writeText(t).then(function(){alert("E-mails copiés ("+S.adm.length+").")})}catch(e){prompt("Copiez les e-mails :",t)}}
+function certPng(){
+var W=1200,H=850,c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");
+x.fillStyle="#fffaf0";x.fillRect(0,0,W,H);x.strokeStyle="#b8892b";x.lineWidth=10;x.strokeRect(30,30,W-60,H-60);x.lineWidth=3;x.strokeRect(50,50,W-100,H-100);
+x.textAlign="center";
+var T=function(t,y,sz,col,w,xp){x.font=(w||"")+" "+sz+"px Georgia,serif";x.fillStyle=col||"#2a2210";x.fillText(t,xp||W/2,y)};
+var d=new Date(S.certDate||Date.now()).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+T("BFAMILY COMPÉTENCES ZONE",130,34,"#1f4fd8","bold");T("CERTIFICAT",220,76,"#8a6212","bold");T("de réussite décerné à",275,30);
+var sz=64;x.font="bold "+sz+"px Georgia,serif";while(x.measureText(S.name).width>W-200&&sz>24){sz-=2;x.font="bold "+sz+"px Georgia,serif"}
+T(S.name,370,sz,null,"bold");x.fillStyle="#b8892b";x.fillRect(250,390,W-500,3);
+T("pour avoir validé la formation",450,30);T("Maîtriser le prompting IA",505,44,null,"bold");
+T("Compétence acquise : rédiger des prompts clairs et efficaces avec une IA.",570,26);
+try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();var n=q.getModuleCount(),m=Math.floor(130/n),o=(W-m*n)/2;x.fillStyle="#000";for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(o+k*m,620+r*m,m,m)}catch(e){}
+T("Scannez pour suivre la formation",780,20);
+T("Certification obtenue le",690,24,null,null,250);T(d,725,26,null,"bold",250);
+T("Numéro du certificat",690,24,null,null,950);T(String(S.certId),725,26,null,"bold",950);
+c.toBlob(function(b){var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="certificat-"+S.certId+".png";document.body.appendChild(a);a.click();a.remove()})}
+function need(f){return !S.authReady&&HINT?'<div class="c"><p>Chargement…</p></div>':!S.user?authView():f()}
+function formDetail(){return '<h1>Maîtriser le prompting IA</h1><span class="tag">En ligne</span><span class="tag">Certificat</span><span class="tag">'+L.length+' leçons</span>'+WHY+'<div class="c"><h2>Au programme</h2><p>'+L.map(function(l,i){return (i+1)+'. '+l.t}).join('<br>')+'</p></div><a class="b" href="#cours">Commencer la formation</a>'}
+function ring(p){return '<svg viewBox="0 0 120 120" width="110" height="110"><circle cx="60" cy="60" r="50" fill="none" style="stroke:var(--bd)" stroke-width="12"/><circle cx="60" cy="60" r="50" fill="none" style="stroke:'+(p>=100?'var(--ok)':'var(--pr)')+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(p*3.1416)+' 314.16" transform="rotate(-90 60 60)"/><text x="60" y="67" text-anchor="middle" font-size="22" font-weight="700" fill="currentColor">'+p+'%</text></svg>'}
+function evo(){var p=Math.round(S.done.length/L.length*100);return '<h1>Mon évolution</h1><div class="c" style="display:flex;gap:16px;align-items:center"><div>'+ring(p)+'</div><div><b>Maîtriser le prompting IA</b><br><span class="mu sm">'+S.done.length+' / '+L.length+' leçons validées</span><a class="b" href="#cours" onclick="S.sub=\''+(p>=100?'cert':'home')+'\'">'+(p>=100?'Voir mon certificat':p?'Continuer':'Commencer')+'</a></div></div><div class="c g"><p class="mu sm" style="margin:0">Quand le cercle est fermé à 100 %, la formation est terminée. D’autres formations arrivent bientôt.</p></div>'}
+function certs(){return '<h1>Mes certificats</h1>'+(S.certId||S.done.length>=L.length?'<div class="c"><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2>'+(S.certId?'<p class="mu sm">N° '+esc(S.certId)+'</p>':'')+'<a class="b" href="#cours" onclick="S.sub=\'cert\'">Voir et télécharger</a></div>':'<div class="c"><p>Aucun certificat pour le moment. Terminez une formation pour obtenir le vôtre.</p><a class="b" href="#formations">Voir les formations</a></div>')}
+function soon(t,d){return need(function(){return '<h1>'+t+'</h1><div class="c"><p>'+d+'</p><p class="mu sm">Cette rubrique est en préparation et sera bientôt disponible.</p><a class="b s" href="https://wa.me/'+WA+'?text='+encodeURIComponent("Bonjour, j’ai une question sur : "+t)+'" target="_blank" rel="noopener">Poser une question sur WhatsApp</a></div>'})}
+function drawer(){if(!S.menu||!S.user)return "";var l=function(h,t){return '<a href="#'+h+'" onclick="S.menu=0;render()">'+t+'</a>'};
+return '<div class="ov" onclick="S.menu=0;render()"></div><div class="pn"><p style="margin:0 0 8px"><b>'+esc(S.name||"Mon compte")+'</b><br><span class="mu sm">'+esc(S.user.email||"")+'</span></p>'+l("cours","Ma formation")+l("evolution","Mon évolution")+l("certificats","Mes certificats")+l("bourses","Bourses d’études")+l("infos","Informations")+l("opportunites","Opportunités")+'<a href="#accueil" onclick="S.menu=0;FB.out();return false">Se déconnecter</a></div>'}
 function val(i,raw){var e=document.getElementById(i);return e?(raw?e.value:e.value.trim()):""}
 function msg(x){var c=(x&&x.code)||"",m={"auth/email-already-in-use":"Cet e-mail a déjà un compte. Cliquez sur Se connecter.","auth/invalid-credential":"E-mail ou mot de passe incorrect.","auth/wrong-password":"E-mail ou mot de passe incorrect.","auth/user-not-found":"E-mail ou mot de passe incorrect.","auth/weak-password":"Mot de passe trop court (6 caractères minimum).","auth/invalid-email":"Adresse e-mail invalide.","auth/popup-closed-by-user":"","auth/cancelled-popup-request":"","auth/unauthorized-domain":"Ce domaine n’est pas autorisé dans Firebase.","auth/network-request-failed":"Problème de connexion internet."};return c in m?m[c]:"Erreur ("+c+"). Réessayez."}
-function authGo(k){if(!window.FB){S.err="Service indisponible. Réessayez dans un instant.";render();return}
+function authGo(k){if(!window.FB){S.err="Le service démarre, réessayez dans quelques secondes.";render();return}
 var e=val("em"),p=val("pw",1),n=val("nn");S.em=e;S.nn=n;S.err="";
 if(k!="g"){if(!e||!p){S.err="Entrez votre e-mail et votre mot de passe.";render();return}if(k=="s"&&n.length<2){S.err="Entrez votre nom complet.";render();return}}
 if(k=="s")S.pendingName=n;
 (k=="g"?FB.google():k=="s"?FB.signup(e,p):FB.login(e,p)).catch(function(x){S.err=msg(x);render()})}
 function authView(){var s=S.mode!="l";
-return '<h1 class="hero">Apprenez les compétences du futur</h1><p class="mu">Formations pratiques avec certificat, pour les jeunes qui veulent avancer.</p>'+scene()+'<div class="c"><h2>'+(s?'Créez votre compte gratuit':'Connexion')+'</h2><div style="display:flex;gap:8px"><button class="'+(s?'':'s')+'" onclick="S.mode=\'s\';S.err=\'\';render()">Créer un compte</button><button class="'+(s?'s':'')+'" onclick="S.mode=\'l\';S.err=\'\';render()">Se connecter</button></div>'+(s?'<input id="nn" placeholder="Prénom et nom" maxlength="40" value="'+esc(S.nn||"")+'">':'')+'<input id="em" type="email" placeholder="Adresse e-mail" value="'+esc(S.em||"")+'"><input id="pw" type="password" placeholder="Mot de passe (6 caractères minimum)"><button onclick="authGo(\''+(s?'s':'l')+'\')">'+(s?'Créer mon compte':'Me connecter')+'</button><p class="mu sm" style="text-align:center;margin:12px 0 0">ou</p><button class="s" onclick="authGo(\'g\')">Continuer avec Google</button>'+(S.err?'<p style="color:var(--ko)">'+esc(S.err)+'</p>':'')+'<p class="mu sm">Votre e-mail sert uniquement à créer votre compte et à vous informer de nos formations.</p></div>'+WHY}
+return '<h1 class="hero">Apprenez les compétences du futur</h1><p class="mu">Formations pratiques avec certificat, pour les jeunes qui veulent avancer.</p>'+scene()+'<div class="c"><h2>'+(s?'Créez votre compte gratuit':'Connexion')+'</h2><div style="display:flex;gap:8px"><button class="'+(s?'':'s')+'" onclick="S.mode=\'s\';S.err=\'\';render()">Créer un compte</button><button class="'+(s?'s':'')+'" onclick="S.mode=\'l\';S.err=\'\';render()">Se connecter</button></div>'+(s?'<input id="nn" placeholder="Prénom et nom" maxlength="40" value="'+esc(S.nn||"")+'">':'')+'<input id="em" type="email" placeholder="Adresse e-mail" value="'+esc(S.em||"")+'"><input id="pw" type="password" placeholder="Mot de passe (6 caractères minimum)"><button onclick="authGo(\''+(s?'s':'l')+'\')">'+(s?'Créer mon compte':'Me connecter')+'</button><p class="mu sm" style="text-align:center;margin:12px 0 0">ou</p><button class="s" onclick="authGo(\'g\')">Continuer avec Google</button>'+(S.err?'<p style="color:var(--ko)">'+esc(S.err)+'</p>':'')+'<p class="mu sm">Votre e-mail sert uniquement à créer votre compte et à vous informer de nos formations.</p></div>'+OFFER}
 function verify(){var id=val("vn").toUpperCase();if(!id)return;S.vn=id;S.vr="load";render();(window.FB?FB.verify(id):Promise.reject()).then(function(d){S.vr=d||"none";render()}).catch(function(){S.vr="err";render()})}
 function verif(){var r=S.vr,o="";
 if(r=="load")o='<p>Vérification…</p>';else if(r=="none")o='<p style="color:var(--ko)"><b>Aucun certificat trouvé pour ce numéro.</b></p>';else if(r=="err")o='<p>Vérification impossible pour le moment.</p>';else if(r)o='<p style="color:var(--ok)"><b>Certificat valide</b></p><p>'+esc(r.name)+'<br>'+esc(r.course)+'<br><span class="mu sm">Délivré le '+new Date(r.issuedAt).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})+'</span></p>';
@@ -181,8 +224,8 @@ if(!S.certId)S.certFail=true;
 S.issuing=false;render()}
 };
 onAuthStateChanged(auth,async function(u){
-if(!u){S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
-S.user={uid:u.uid,email:u.email};S.err="";
+if(!u){try{localStorage.removeItem("bf_in")}catch(e){}S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
+S.user={uid:u.uid,email:u.email};S.err="";try{localStorage.setItem("bf_in","1")}catch(e){}
 try{var x=await getDoc(doc(db,"users",u.uid));
 if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null}
 else{S.name=S.pendingName||u.displayName||"";S.done=[];S.certId=null;await setDoc(doc(db,"users",u.uid),{name:S.name,email:u.email||"",done:[],createdAt:Date.now()})}
