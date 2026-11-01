@@ -80,16 +80,17 @@ var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home"};
 function save(){try{if(window.FB)FB.save()}catch(e){}}
 function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
 function ytId(u){var m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?m[1]:""}
-var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["contact","Contact"]];
+var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["admin","Admin"],["contact","Contact"]];
 function page(){var h=(location.hash||"").replace("#","");return P.some(function(p){return p[0]==h})?h:"accueil"}
 function render(){var p=page(),a=document.getElementById("app"),h="";
-document.getElementById("nav").innerHTML=P.map(function(x){return '<a href="#'+x[0]+'" class="'+(x[0]==p?'on':'')+'">'+x[1]+'</a>'}).join("");
+document.getElementById("nav").innerHTML=P.filter(function(x){return x[0]!="admin"}).map(function(x){return '<a href="#'+x[0]+'" class="'+(x[0]==p?'on':'')+'">'+x[1]+'</a>'}).join("");
 if(p=="accueil")h='<h1>Des compétences pratiques pour transformer votre potentiel en opportunités.</h1><p class="mu">Bfamily Compétences Zone réunit des jeunes qui transmettent à d’autres jeunes des compétences concrètes, en ligne et en présentiel, avec certificat à la clé.</p><a class="b" href="#cours">Commencer la formation Prompting IA</a><a class="b s" href="#apropos">Découvrir Bfamily</a><div class="c g"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
 if(p=="apropos")h='<h1>À propos de Bfamily</h1><div class="c"><h2>Qui sommes-nous</h2><p>Bfamily est un collectif de jeunes qui ont choisi de mettre leurs compétences au service d’autres jeunes. Depuis 2018, nous transmettons des savoir-faire pratiques, en intelligence artificielle comme dans d’autres domaines, pour aider chacun à révéler son potentiel.</p></div><div class="c"><h2>Notre mission</h2><p>Aider les jeunes à découvrir leurs talents, acquérir des compétences utiles sur le marché et les valoriser pour trouver un emploi, entreprendre ou créer leurs propres revenus.</p></div><div class="c"><h2>Notre vision</h2><p>Une jeunesse compétente, autonome, capable de transformer ses connaissances et ses talents en vraies opportunités professionnelles.</p></div><div class="c g"><h2>Ce que nous faisons</h2><p><b>Orienter</b> : identifier vos talents et votre voie.<br><b>Former</b> : formations en ligne avec certificat et formations pratiques en présentiel.<br><b>Accompagner</b> : vous suivre vers l’emploi, l’entrepreneuriat ou la création de revenus.</p></div>';
 if(p=="formations")h='<h1>Nos formations</h1><div class="c"><span class="tag">En ligne</span><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2><p class="mu">3 leçons en vidéo, des quiz et un certificat à votre nom à partager sur les réseaux.</p><a class="b" href="#cours">Commencer</a></div><div class="c"><span class="tag">Présentiel</span><h2>Formations pratiques</h2><p class="mu">Des sessions sur place dans plusieurs domaines. Contactez-nous pour connaître les prochaines dates.</p><a class="b s" href="#contact">Nous contacter</a></div><div class="c g"><p class="sm mu" style="margin:0">D’autres formations en ligne arrivent bientôt.</p></div>';
 if(p=="contact")h='<h1>Contact</h1><div class="c"><p>Une question, une formation sur place, un partenariat ? Écrivez-nous sur WhatsApp.</p><a class="b" href="https://wa.me/'+WA+'?text='+encodeURIComponent(WAMSG)+'" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>';
 if(p=="cours")h=cours();
 if(p=="verifier")h=verif();
+if(p=="admin")h=adminView();
 if(p=="accueil"&&!S.authReady)h='<div class="c"><p>Chargement…</p></div>';
 if(p=="accueil"&&S.authReady&&!S.user)h=authView();
 a.innerHTML=h;drawQR()}
@@ -115,6 +116,18 @@ if(s=="cert"){if(!S.certId){if(S.certFail)return '<div class="c"><p>Impossible d
 return '<h1>Votre certificat</h1><div class="cert"><div>BFAMILY COMPÉTENCES ZONE</div><h2>CERTIFICAT</h2><div>de réussite décerné à</div><div class="n">'+esc(S.name)+'</div><div>pour avoir validé la formation <b>Maîtriser le prompting IA</b></div><div style="margin-top:12px"><b>Compétence acquise</b><br>Rédiger des prompts clairs et efficaces pour dialoguer avec une IA.</div><div style="margin-top:10px;font-size:14px;text-align:left;display:inline-block"><b>Cette personne sait désormais :</b><br>• structurer une demande avec la méthode Rôle, Contexte, Tâche, Format<br>• obtenir des réponses plus précises et plus utiles<br>• corriger et affiner les réponses d’une IA</div><div id="qr" style="width:96px;margin:14px auto 4px"></div><div style="font-size:12px">Scannez pour suivre la formation</div><div style="font-size:13px;margin-top:10px">Certification obtenue le '+d+'</div><div style="font-size:13px;margin-top:4px"><b>N° '+esc(S.certId)+'</b></div></div><div class="c"><p class="sm"><b>Sur votre CV :</b> ajoutez dans la section Formations « Maîtriser le prompting IA, Bfamily Compétences Zone ».</p><p class="mu sm">Faites une capture d’écran pour enregistrer ou partager votre certificat.</p><button onclick="share()">Partager sur les réseaux</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
 return h}
 function scene(){return '<svg viewBox="0 0 320 180" class="sc" role="img" aria-label="Étudiants en formation"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1e5b"/><stop offset="1" stop-color="#1f4fd8"/></linearGradient></defs><rect width="320" height="180" rx="16" fill="url(#gg)"/><path d="M0 120H320M0 140H320M0 160H320M60 100V180M130 100V180M200 100V180M270 100V180" stroke="#6ee7ff" stroke-opacity=".18" fill="none"/><path class="pl" d="M40 40L150 25L215 70L270 45" stroke="#6ee7ff" fill="none"/><g class="fl"><circle cx="40" cy="40" r="3" fill="#6ee7ff"/><circle cx="150" cy="25" r="2.5" fill="#fff"/><circle cx="270" cy="45" r="3" fill="#6ee7ff"/><circle cx="215" cy="70" r="2.5" fill="#fff"/></g><text x="160" y="58" fill="#fff" font-size="13" text-anchor="middle" opacity=".9">Apprendre · Créer · Réussir</text><g><circle cx="95" cy="102" r="11" fill="#ffd9b0"/><path d="M80 150q0-26 15-26t15 26z" fill="#ffb703"/><polygon class="scr" points="76,138 84,114 108,114 114,138" fill="#6ee7ff"/><rect x="62" y="138" width="66" height="6" rx="3" fill="#0e2a7a"/></g><g><circle cx="225" cy="102" r="11" fill="#ffd9b0"/><path d="M210 150q0-26 15-26t15 26z" fill="#ff6b9a"/><polygon class="scr" points="206,138 214,114 238,114 244,138" fill="#6ee7ff"/><rect x="192" y="138" width="66" height="6" rx="3" fill="#0e2a7a"/></g></svg>'}
+var ADMIN="bfamilyboutique@gmail.com";
+function adminView(){
+if(!S.authReady)return '<div class="c"><p>Chargement…</p></div>';
+if(!S.user)return authView();
+if((S.user.email||"").toLowerCase()!=ADMIN)return '<h1>Accès réservé</h1><div class="c"><p>Cette page est réservée à l’équipe Bfamily.</p></div>';
+if(!S.adm){if(!S.admLoad){S.admLoad=1;FB.adm().then(function(u){S.adm=u;render()}).catch(function(){S.adm=[];S.admErr=1;render()})}return '<div class="c"><p>Chargement…</p></div>'}
+var u=S.adm,n=u.filter(function(x){return x.certId}).length;
+return '<h1>Inscrits</h1><div class="c"><p><b>'+u.length+'</b> inscrits · <b>'+n+'</b> certificats</p>'+(S.admErr?'<p style="color:var(--ko)">Lecture impossible. Vérifiez les règles Firestore.</p>':'')+'<button onclick="admCsv()">Télécharger la liste (CSV)</button><button class="s" onclick="admCopy()">Copier tous les e-mails</button></div><div class="c" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:14px">'+u.map(function(x){return '<tr><td style="padding:6px 4px;border-bottom:1px solid var(--bd)">'+esc(x.name||"(sans nom)")+'<br><span class="mu sm">'+esc(x.email||"")+'</span></td><td style="padding:6px 4px;border-bottom:1px solid var(--bd);white-space:nowrap">'+(x.done||[]).length+'/'+L.length+(x.certId?' ✓':'')+'</td></tr>'}).join("")+'</table></div>'}
+function admCsv(){var q=function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
+var r=[["Nom","E-mail","Leçons validées","Certificat","Inscription"].map(q).join(",")].concat(S.adm.map(function(x){return [x.name,x.email,(x.done||[]).length,x.certId||"",x.createdAt?new Date(x.createdAt).toLocaleDateString("fr-FR"):""].map(q).join(",")}));
+var b=new Blob(["\ufeff"+r.join("\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="inscrits-bfamily.csv";document.body.appendChild(a);a.click();a.remove()}
+function admCopy(){var t=S.adm.map(function(x){return x.email}).filter(Boolean).join(", ");try{navigator.clipboard.writeText(t).then(function(){alert("E-mails copiés ("+S.adm.length+").")})}catch(e){prompt("Copiez les e-mails :",t)}}
 function val(i,raw){var e=document.getElementById(i);return e?(raw?e.value:e.value.trim()):""}
 function msg(x){var c=(x&&x.code)||"",m={"auth/email-already-in-use":"Cet e-mail a déjà un compte. Cliquez sur Se connecter.","auth/invalid-credential":"E-mail ou mot de passe incorrect.","auth/wrong-password":"E-mail ou mot de passe incorrect.","auth/user-not-found":"E-mail ou mot de passe incorrect.","auth/weak-password":"Mot de passe trop court (6 caractères minimum).","auth/invalid-email":"Adresse e-mail invalide.","auth/popup-closed-by-user":"","auth/cancelled-popup-request":"","auth/unauthorized-domain":"Ce domaine n’est pas autorisé dans Firebase.","auth/network-request-failed":"Problème de connexion internet."};return c in m?m[c]:"Erreur ("+c+"). Réessayez."}
 function authGo(k){if(!window.FB){S.err="Service indisponible. Réessayez dans un instant.";render();return}
@@ -143,7 +156,7 @@ setTimeout(function(){if(!S.authReady){S.authReady=true;S.err="Connexion au serv
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,getDocs,collection}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 /* CONFIGURATION FIREBASE (valeurs publiques) */
 var cfg={apiKey:"AIzaSyAG3fQkwhrfmklTiYRp1l9PYz-VL9AgYW4",authDomain:"bfamily-competences-zone.firebaseapp.com",projectId:"bfamily-competences-zone",storageBucket:"bfamily-competences-zone.firebasestorage.app",messagingSenderId:"839328126762",appId:"1:839328126762:web:094099073943d3e3ac7053"};
 var app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),COURSE="Maîtriser le prompting IA";
@@ -154,6 +167,7 @@ login:function(e,p){return signInWithEmailAndPassword(auth,e,p)},
 out:function(){S.sub="home";return signOut(auth)},
 save:function(){if(!S.user)return;setDoc(doc(db,"users",S.user.uid),{name:S.name,done:S.done},{merge:true}).catch(function(){})},
 verify:async function(id){var x=await getDoc(doc(db,"certificates",id));return x.exists()?x.data():null},
+adm:async function(){var q=await getDocs(collection(db,"users")),u=[];q.forEach(function(d){u.push(d.data())});return u},
 issue:async function(){
 if(S.issuing||S.certId||!S.user)return;S.issuing=true;
 var A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -167,7 +181,7 @@ if(!S.certId)S.certFail=true;
 S.issuing=false;render()}
 };
 onAuthStateChanged(auth,async function(u){
-if(!u){S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.authReady=true;render();return}
+if(!u){S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
 S.user={uid:u.uid,email:u.email};S.err="";
 try{var x=await getDoc(doc(db,"users",u.uid));
 if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null}
