@@ -3,17 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
+<script>try{if(localStorage.getItem("bf_theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
 <title>Bfamily Compétences Zone</title>
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js">
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js">
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js">
 <style>
-:root{color-scheme:light;--pr:#1f4fd8;--tx:#16192a;--mu:#5b6275;--bd:#e4e7ef;--bg:#f5f7fc;--ok:#1a8f4c;--ko:#c63b3b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{color-scheme:light;--pr:#1f4fd8;--tx:#16192a;--mu:#5b6275;--bd:#e4e7ef;--bg:#f5f7fc;--ok:#1a8f4c;--ko:#c63b3b;--page:#fff;--card:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:#fff;color:var(--tx);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-.w{max-width:640px;margin:0 auto;padding:0 18px 40px}
+a{color:var(--pr)}
+:root[data-theme="dark"]{color-scheme:dark;--page:#0b1120;--card:#131a2e;--bg:#1a2340;--tx:#e8ecf8;--mu:#9aa6c4;--bd:#27304d;--pr:#5b84ff;--ok:#4cc77f;--ko:#ff7b7b}
+select,textarea{background:var(--card);color:var(--tx)}
+body{margin:0;background:var(--page);color:var(--tx);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:0 18px 40px;position:relative;z-index:1}
 header{border-bottom:1px solid var(--bd);padding:12px 18px;max-width:640px;margin:0 auto}
 .lo{font-weight:800;font-size:19px;color:var(--pr)}.lo small{display:block;font-weight:400;font-size:12px;color:var(--mu)}
 nav{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
@@ -21,16 +25,16 @@ nav a{white-space:nowrap;padding:7px 12px;border-radius:20px;color:var(--tx);tex
 nav a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
 h1{font-size:28px;line-height:1.2;margin:28px 0 10px}h2{font-size:20px;margin:0 0 8px}
 .mu{color:var(--mu)}.sm{font-size:14px}
-.c{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px;margin:14px 0}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:14px 0}
 .g{background:var(--bg)}
 .b,button{display:block;width:100%;text-align:center;background:var(--pr);color:#fff;border:0;border-radius:10px;padding:13px 16px;margin-top:10px;font:inherit;text-decoration:none;cursor:pointer}
-.b.s,button.s{background:#fff;color:var(--pr);border:1px solid var(--pr)}
+.b.s,button.s{background:var(--card);color:var(--pr);border:1px solid var(--pr)}
 button:disabled{opacity:.4}
-.o{text-align:left;background:#fff;color:var(--tx);border:1px solid var(--bd)}
-.o.ok{border-color:var(--ok);background:#e9f7ef}.o.ko{border-color:var(--ko);background:#fdecec}
-input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--bd);font:inherit;margin-top:8px}
+.o{text-align:left;background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.o.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--card))}.o.ko{border-color:var(--ko);background:color-mix(in srgb,var(--ko) 20%,var(--card))}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--bd);font:inherit;margin-top:8px;background:var(--card);color:var(--tx)}
 .bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pr)}
-.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:#e8efff;color:var(--pr);margin:0 4px 4px 0}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:color-mix(in srgb,var(--pr) 16%,var(--card));color:var(--pr);margin:0 4px 4px 0}
 .vd{aspect-ratio:16/9;background:var(--bg);border:1px dashed var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--mu);font-size:14px;padding:10px}
 .vd iframe{width:100%;height:100%;border:0;border-radius:10px}
 .ex{background:var(--bg);border-left:4px solid var(--pr);padding:10px;border-radius:6px;font-size:14px;margin:8px 0}
@@ -53,25 +57,43 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--bd);font
 @keyframes dash{to{stroke-dashoffset:-24}}
 @keyframes glow{to{opacity:.45}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
-header{position:relative}
-#mb{display:none;position:absolute;right:12px;top:10px;width:40px;height:40px;padding:0;margin:0;background:#fff;color:var(--tx);border:1px solid var(--bd);border-radius:50%;font-size:22px;line-height:1}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 78%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#mb{display:none;position:absolute;right:12px;top:10px;width:40px;height:40px;padding:0;margin:0;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:50%;font-size:22px;line-height:1}
+#tg{position:absolute;right:60px;top:10px;width:40px;height:40px;padding:0;margin:0;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:50%;font-size:18px;line-height:1}
 #dr .ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:30}
-#dr .pn{position:fixed;top:0;right:0;bottom:0;width:78%;max-width:320px;background:#fff;z-index:31;padding:calc(20px + env(safe-area-inset-top,0px)) 18px 18px;box-shadow:-6px 0 24px rgba(0,0,0,.2);animation:sl .25s both;overflow-y:auto}
+#dr .pn{position:fixed;top:0;right:0;bottom:0;width:78%;max-width:320px;background:var(--card);z-index:31;padding:calc(20px + env(safe-area-inset-top,0px)) 18px 18px;box-shadow:-6px 0 24px rgba(0,0,0,.2);animation:sl .25s both;overflow-y:auto}
 @keyframes sl{from{transform:translateX(100%)}}
 #dr .pn a{display:block;padding:14px 4px;border-bottom:1px solid var(--bd);color:var(--tx);text-decoration:none}
 details{border-bottom:1px solid var(--bd);padding:10px 0}
 summary{cursor:pointer;font-weight:600}
 details p{margin:8px 0 0;color:var(--mu)}
-footer{text-align:center;font-size:13px;color:var(--mu);padding:20px}
+footer{margin-top:24px;background:linear-gradient(180deg,#0a1a44,#050d26);color:rgba(255,255,255,.85);padding:32px 18px 0;overflow:hidden;position:relative;z-index:1}
+.fw{max-width:640px;margin:0 auto}
+.fo{margin:0 0 16px}.fo b{display:block;color:#fff;font-size:17px}.fo span{font-size:14px;color:rgba(255,255,255,.7)}
+.fl{display:flex;flex-wrap:wrap;gap:6px 18px;margin:20px 0 10px}.fl a{color:#fff;text-decoration:none;font-size:14px;opacity:.9}
+.fc{font-size:12px;color:rgba(255,255,255,.55);margin:8px 0 0}
+.big{font-weight:900;font-size:clamp(52px,21vw,150px);letter-spacing:-.04em;line-height:.85;text-align:center;white-space:nowrap;margin:18px 0 -.14em;background:linear-gradient(110deg,rgba(255,255,255,.08) 35%,rgba(255,215,130,.65) 50%,rgba(255,255,255,.08) 65%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s ease-in-out infinite}
+@keyframes shine{0%,55%{background-position:150% 0}100%{background-position:-50% 0}}
+#fx{position:fixed;inset:0;z-index:0;pointer-events:none;display:none;overflow:hidden}
+body.auth #fx{display:block}
+#fx:before,#fx:after{content:"";position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(50px);opacity:.28;animation:blob 20s ease-in-out infinite alternate}
+#fx:before{background:radial-gradient(circle,#1f4fd8,transparent 65%);left:-22vmax;top:-18vmax}
+#fx:after{background:radial-gradient(circle,#06b6d4,transparent 65%);right:-22vmax;bottom:-18vmax;animation-delay:-8s}
+:root[data-theme="dark"] #fx:before,:root[data-theme="dark"] #fx:after{opacity:.38}
+@keyframes blob{to{transform:translate(12vmax,8vmax) scale(1.15)}}
+#fx canvas{position:absolute;inset:0;width:100%;height:100%}
+.ic{position:absolute;bottom:-12vh;opacity:.16;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-120vh) rotate(25deg)}}
 </style>
 </head>
 <body>
 <header><a class="lo" href="#accueil"><span class="l1">Bfamily</span><span class="l2">Compétences Zone</span></a>
-<nav id="nav"></nav><button id="mb" onclick="S.menu=!S.menu;render()" aria-label="Menu">⋮</button></header>
+<nav id="nav"></nav><button id="tg" onclick="toggleTheme()" aria-label="Mode nuit"></button><button id="mb" onclick="S.menu=!S.menu;render()" aria-label="Menu">⋮</button></header>
 <div id="dr"></div>
+<div id="fx"><canvas id="cv"></canvas></div>
 <div class="w" id="app"></div>
 <a class="wa" id="wa" href="https://wa.me/2290197610535" target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>WhatsApp</a>
-<footer>© Bfamily · Orienter, former, accompagner</footer>
+<footer><div class="fw"><div class="fo"><b>Orienter</b><span>Vous aider à trouver votre voie et à révéler vos talents.</span></div><div class="fo"><b>Former</b><span>Des formations pratiques avec certificat, en ligne et en présentiel.</span></div><div class="fo"><b>Accompagner</b><span>Vers l’emploi, l’entrepreneuriat ou la création de revenus.</span></div><nav class="fl"><a href="#accueil">Accueil</a><a href="#apropos">À propos</a><a href="#formations">Formations</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></nav><p class="fc">© Bfamily · Compétences Zone</p></div><div class="big" aria-hidden="true">BFAMILY</div></footer>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
@@ -121,7 +143,7 @@ if(p=="infos")h=soon("Informations","Actualités et informations utiles de Bfami
 if(p=="opportunites")h=soon("Opportunités","Offres d’emploi, stages, concours et opportunités pour les jeunes.");
 if(p=="accueil"&&!S.authReady)h=HINT?'<div class="c"><p>Chargement…</p></div>':authView();
 if(p=="accueil"&&S.authReady&&!S.user)h=authView();
-a.innerHTML=h;drawQR();document.getElementById("dr").innerHTML=drawer();document.getElementById("mb").style.display=S.user?"block":"none";if((p=="formations"||p=="formation")&&S.cm===undefined)loadCm()}
+a.innerHTML=h;drawQR();document.getElementById("dr").innerHTML=drawer();document.getElementById("mb").style.display=S.user?"block":"none";if((p=="formations"||p=="formation")&&S.cm===undefined)loadCm();setTg();fxSync(h)}
 function drawQR(){var e=document.getElementById("qr");if(!e)return;try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();e.innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true})}catch(x){}}
 function prog(){var n=Math.round(S.done.length/L.length*100);return '<div class="bar"><i style="width:'+n+'%"></i></div><p class="mu sm">'+S.done.length+' / '+L.length+' leçons validées</p>'}
 function cours(){var h="",s=S.sub;if(!S.authReady&&HINT)return '<div class="c"><p>Chargement…</p></div>';if(!S.user)return authView();
@@ -267,7 +289,22 @@ if(ce.length){sec("CERTIFICATIONS");ce.forEach(function(x){txt(x.title+", "+x.or
 if(c.skills){sec("COMPETENCES");txt(c.skills)}
 if(c.langs){sec("LANGUES");txt(c.langs)}
 d.save("CV-"+cl(S.name).replace(/[^A-Za-z0-9]+/g,"-")+".pdf")}
-function vbanner(){return S.user&&!S.verified?'<div class="c" style="border-color:#e0b100;background:#fff8e1"><b>Confirmez votre e-mail</b><p class="sm" style="margin:6px 0">Un message a été envoyé à '+esc(S.user.email)+'. Vous pouvez continuer la formation, mais la confirmation est nécessaire pour obtenir votre certificat. Pensez à vérifier vos spams.</p><button class="s" onclick="FB.resend().then(function(){alert(\'Message renvoyé.\')}).catch(function(){alert(\'Réessayez dans un instant.\')})">Renvoyer le message</button><button class="s" onclick="FB.check()">J’ai confirmé mon e-mail</button></div>':''}
+function setTg(){var b=document.getElementById("tg");if(b)b.textContent=document.documentElement.getAttribute("data-theme")==="dark"?"☀️":"🌙"}
+function toggleTheme(){var h=document.documentElement,d=h.getAttribute("data-theme")==="dark";if(d)h.removeAttribute("data-theme");else h.setAttribute("data-theme","dark");try{localStorage.setItem("bf_theme",d?"light":"dark")}catch(e){}setTg()}
+var FX={on:0,raf:0,pts:[]};
+function fxSync(h){var a=h.indexOf("Apprenez les compétences")>=0;document.body.classList.toggle("auth",a);if(a)fxStart();else fxStop()}
+function fxStop(){FX.on=0;if(FX.raf)cancelAnimationFrame(FX.raf);FX.raf=0;if(FX.sz)removeEventListener("resize",FX.sz)}
+function fxStart(){if(FX.on||(window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches))return;FX.on=1;
+var c=document.getElementById("cv"),x=c.getContext("2d");
+FX.sz=function(){c.width=innerWidth;c.height=innerHeight;var n=Math.min(50,Math.floor(c.width*c.height/22000));FX.pts=[];for(var i=0;i<n;i++)FX.pts.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4})};
+FX.sz();addEventListener("resize",FX.sz);
+if(!FX.ic){FX.ic=1;var fx=document.getElementById("fx");["📚","🎓","💡","🤖","🚀","✏️","🌍","💻"].forEach(function(e,i){var s=document.createElement("span");s.className="ic";s.textContent=e;s.style.left=(6+i*12)+"%";s.style.fontSize=(22+i%3*8)+"px";s.style.animationDuration=(16+i*3)+"s";s.style.animationDelay=(-i*4)+"s";fx.appendChild(s)})}
+function loop(){if(!FX.on)return;if(!document.hidden){x.clearRect(0,0,c.width,c.height);var col=document.documentElement.getAttribute("data-theme")==="dark"?"110,200,255":"31,79,216",P=FX.pts;
+for(var i=0;i<P.length;i++){var a=P[i];a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>c.width)a.vx*=-1;if(a.y<0||a.y>c.height)a.vy*=-1;x.fillStyle="rgba("+col+",.55)";x.beginPath();x.arc(a.x,a.y,2,0,6.283);x.fill();
+for(var j=i+1;j<P.length;j++){var b=P[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){x.strokeStyle="rgba("+col+","+((1-d/110)*.35)+")";x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}}}
+FX.raf=requestAnimationFrame(loop)}
+loop()}
+function vbanner(){return S.user&&!S.verified?'<div class="c" style="border-color:#e0b100;background:color-mix(in srgb,#e0b100 16%,var(--card))"><b>Confirmez votre e-mail</b><p class="sm" style="margin:6px 0">Un message a été envoyé à '+esc(S.user.email)+'. Vous pouvez continuer la formation, mais la confirmation est nécessaire pour obtenir votre certificat. Pensez à vérifier vos spams.</p><button class="s" onclick="FB.resend().then(function(){alert(\'Message renvoyé.\')}).catch(function(){alert(\'Réessayez dans un instant.\')})">Renvoyer le message</button><button class="s" onclick="FB.check()">J’ai confirmé mon e-mail</button></div>':''}
 function welcome(){return '<h1 class="hero">Félicitations !</h1><div class="c"><p>Votre adresse e-mail est confirmée. Bienvenue sur Bfamily Compétences Zone !</p><a class="b" href="#cours">Accéder à ma formation</a><a class="b s" href="#formations">Découvrir les formations</a></div>'}
 function forgot(){var e=val("em");S.em=e;S.err="";S.info="";
 if(!e){S.err="Entrez votre e-mail ci-dessus, puis appuyez sur Mot de passe oublié.";render();return}
