@@ -93,6 +93,37 @@ body.auth #fx{display:block}
 #fx canvas{position:absolute;inset:0;width:100%;height:100%}
 .ic{position:absolute;bottom:-12vh;opacity:.16;animation:rise linear infinite}
 @keyframes rise{to{transform:translateY(-120vh) rotate(25deg)}}
+
+/* ===== Tablette et ordinateur ===== */
+@media (min-width:700px){
+header{max-width:900px;padding:14px 24px}
+h1{font-size:32px}
+#app{max-width:760px;padding:0 24px 56px}
+.c{padding:20px}
+#app.g2{max-width:1100px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px;align-items:start}
+#app.g2>h1,#app.g2>p,#app.g2>a.b{grid-column:1/-1}
+#app.au{max-width:1060px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr;column-gap:48px;align-items:start}
+#app.au>h1{grid-column:1;grid-row:1;font-size:42px;margin-top:44px}
+#app.au>p.mu{grid-column:1;grid-row:2}
+#app.au>svg.sc{grid-column:1;grid-row:3}
+#app.au>.c:not(.g){grid-column:2;grid-row:1/span 3;margin-top:44px}
+#app.au>h2,#app.au>.mq,#app.au>.c.g{grid-column:1/-1}
+#app.au .mq{margin:0}
+.mi{width:320px}
+footer{padding:44px 24px 0}
+.fw{max-width:1100px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 32px}
+.fl,.fc{grid-column:1/-1}
+.big{font-size:min(17vw,230px)}
+}
+@media (min-width:1100px){
+header{max-width:none;display:flex;align-items:center;gap:32px;padding:12px 40px}
+nav{margin:0 190px 0 auto;overflow:visible;flex-wrap:nowrap}
+#mb{right:40px}
+#tg{right:40px}
+body.in #tg{right:88px}
+#av{right:136px}
+.l1{font-size:30px}
+}
 </style>
 </head>
 <body>
@@ -155,7 +186,7 @@ if(p=="infos")h=soon("Informations","Actualités et informations utiles de Bfami
 if(p=="opportunites")h=soon("Opportunités","Offres d’emploi, stages, concours et opportunités pour les jeunes.");
 if(p=="accueil"&&!S.authReady)h=HINT?'<div class="c"><p>Chargement…</p></div>':authView();
 if(p=="accueil"&&S.authReady&&!S.user)h=authView();
-a.innerHTML=h;drawQR();document.getElementById("dr").innerHTML=drawer();document.getElementById("mb").style.display=S.user?"block":"none";if((p=="formations"||p=="formation"||h.indexOf("Apprenez les compétences")>=0)&&S.cm===undefined)loadCm();setTg();var av=document.getElementById("av");if(av){av.style.display=S.user?"block":"none";av.innerHTML=S.user?avatar((S.profile||{}).photo,40,S.name):""}document.body.classList.toggle("in",!!S.user);fxSync(h)}
+var au=h.indexOf("Apprenez les compétences")>=0;a.className="w"+(au?" au":(["apropos","formations","faq","confidentialite","conditions","parametres"].indexOf(p)>=0?" g2":""));a.innerHTML=h;drawQR();document.getElementById("dr").innerHTML=drawer();document.getElementById("mb").style.display=S.user?"block":"none";if((p=="formations"||p=="formation"||h.indexOf("Apprenez les compétences")>=0)&&S.cm===undefined)loadCm();setTg();var av=document.getElementById("av");if(av){av.style.display=S.user?"block":"none";av.innerHTML=S.user?avatar((S.profile||{}).photo,40,S.name):""}document.body.classList.toggle("in",!!S.user);fxSync(h)}
 function drawQR(){var e=document.getElementById("qr");if(!e)return;try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();e.innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true})}catch(x){}}
 function prog(){var n=Math.round(S.done.length/L.length*100);return '<div class="bar"><i style="width:'+n+'%"></i></div><p class="mu sm">'+S.done.length+' / '+L.length+' leçons validées</p>'}
 function cours(){var h="",s=S.sub;if(!S.authReady&&HINT)return '<div class="c"><p>Chargement…</p></div>';if(!S.user)return authView();
