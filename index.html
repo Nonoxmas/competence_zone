@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -18,7 +18,7 @@
 a{color:var(--pr);text-decoration:none}
 :root[data-theme="dark"]{color-scheme:dark;--page:#0f172a;--card:#1e293b;--bg:#0f172a;--tx:#f1f5f9;--mu:#94a3b8;--bd:#334155;--pr:#3b82f6;--pr-dark:#2563eb;--ok:#34d399;--ko:#f87171}
 select,textarea{background:var(--card);color:var(--tx)}
-body{margin:0;background:var(--page);color:var(--tx);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--page);color:var(--tx);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .w{max-width:680px;margin:0 auto;padding:0 20px 60px;position:relative;z-index:1}
 header{border-bottom:1px solid var(--bd);padding:14px 20px;max-width:680px;margin:0 auto}
 .lo{font-weight:800;font-size:20px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px}
@@ -106,6 +106,10 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 .social-btn{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;transition:all .3s}
 .social-btn:hover{background:#fff;color:#0f172a;transform:translateY(-4px)}
 .social-btn svg{width:24px;height:24px;fill:currentColor}
+.reply-box{margin-left:44px;margin-top:12px;padding-left:16px;border-left:2px solid var(--bd)}
+.reply-item{background:var(--bg);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:14px}
+
+
 @media (min-width:700px){
 header{max-width:960px;padding:16px 32px}
 h1{font-size:42px}
@@ -168,7 +172,9 @@ q:[{q:"Si la réponse n’est pas parfaite, il faut…",o:["Abandonner","Demande
 var WHY='<div class="c g reveal"><h2>Pourquoi cette formation ?</h2><p>On ne peut pas tirer le meilleur d’une IA sans maîtriser le prompting. Face à une demande floue, même une IA très puissante donne une réponse moyenne. Face à une demande bien posée, elle donne d’excellents résultats. Cette formation vous apprend à parler à l’IA.</p></div><div class="c reveal"><h2>Ce que vous gagnez</h2><p>• Savoir écrire des demandes claires et obtenir de meilleurs résultats.<br>• Gagner du temps dans vos études, votre travail ou votre activité.<br>• Un certificat Bfamily Compétences Zone à votre nom, à ajouter à votre CV et à partager.</p></div>';
 var OFFER='<div class="c g reveal"><h2>Ce que nous offrons</h2><p><b>Orienter</b> : trouver votre voie.<br><b>Former</b> : formations pratiques avec certificat.<br><b>Accompagner</b> : vers l’emploi, l’entrepreneuriat ou vos propres revenus.</p><a class="b s" href="#apropos">À propos de Bfamily</a></div>';
 var LW=["C’est le point de départ : avant de bien écrire à une IA, il faut comprendre ce qu’est un prompt et pourquoi la précision change tout.","Vous savez maintenant qu’un prompt précis donne de meilleures réponses. Cette leçon vous donne une méthode simple (Rôle, Contexte, Tâche, Format) pour être précis à chaque fois.","Même avec une bonne structure, la première réponse n’est pas toujours parfaite. Cette dernière leçon vous apprend à corriger et affiner, pour obtenir un résultat prêt à utiliser."];
-var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home",editCmId:null,replyTo:null,stats:null};
+var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home",editCmId:null,replyTo:null,stats:null,certName:null,replies:{},replyingTo:null,editReplyId:null};
+
+
 function save(){try{if(window.FB)FB.save()}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function ytId(u){var m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?m[1]:""}
@@ -176,7 +182,7 @@ var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"]
 function page(){var h=(location.hash||"").replace("#","");if(h.indexOf("membre-")==0)return "membre";return P.some(function(p){return p[0]==h})?h:"accueil"}
 function render(){var p=page(),a=document.getElementById("app"),h="";
 document.getElementById("nav").innerHTML=P.filter(function(x){return HIDE.indexOf(x[0])<0}).map(function(x){return '<a href="#'+x[0]+'" class="'+((x[0]==p||(x[0]=="formations"&&(p=="formation"||p=="cours")))?'on':'')+'">'+x[1]+'</a>'}).join("");
-if(p=="accueil")h='<h1 class="hero">Des compétences pratiques pour transformer votre potentiel en opportunités.</h1><p class="mu reveal">Bfamily Compétences Zone réunit des jeunes qui transmettent à d’autres jeunes des compétences concrètes, en ligne et en présentiel, avec certificat à la clé.</p><a class="b reveal" href="#cours" style="animation-delay:0.1s">Commencer la formation Prompting IA</a><a class="b s reveal" href="#apropos" style="animation-delay:0.2s">Découvrir Bfamily</a><div class="c g reveal" style="animation-delay:0.3s"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
+if(p=="accueil")h='<h1 class="hero">Des compétences pratiques pour transformer votre potentiel en opportunités.</h1><p class="mu reveal">Apprendre, se certifier, saisir les opportunités. Bfamily Compétences Zone est une communauté ouverte à tous : étudiants, salariés, entrepreneurs. Des formations concrètes, en ligne et en présentiel, pour développer ce qui compte vraiment.</p><a class="b reveal" href="#cours" style="animation-delay:0.1s">Commencer la formation Prompting IA</a><a class="b s reveal" href="#apropos" style="animation-delay:0.2s">Découvrir Bfamily</a><div class="c g reveal" style="animation-delay:0.3s"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
 if(p=="apropos")h='<h1>À propos de Bfamily</h1><div class="c reveal"><h2>Qui sommes-nous</h2><p>Bfamily est un collectif de jeunes qui ont choisi de mettre leurs compétences au service d’autres jeunes. Depuis 2018, nous transmettons des savoir-faire pratiques, en intelligence artificielle comme dans d’autres domaines, pour aider chacun à révéler son potentiel.</p></div><div class="c reveal"><h2>Notre mission</h2><p>Aider les jeunes à découvrir leurs talents, acquérir des compétences utiles sur le marché et les valoriser pour trouver un emploi, entreprendre ou créer leurs propres revenus.</p></div><div class="c reveal"><h2>Notre vision</h2><p>Permettre aux jeunes d’acquérir des compétences solides, recherchées sur le marché, et de les exploiter pour s’en sortir : trouver un emploi ou se lancer eux-mêmes. Nous voulons une jeunesse compétente, autonome, capable de transformer ses connaissances et ses talents en vraies opportunités professionnelles.</p></div><div class="c reveal"><h2>Notre engagement qualité</h2><p>Nous choisissons des formations de qualité, dispensées par des professionnels de qualité, pour que chaque apprenant acquière un vrai bagage de compétences, que ce soit dans nos formations en ligne, nos ateliers ou nos séances en présentiel. Selon les cas, elles sont gratuites ou payantes.</p></div><div class="c g reveal"><h2>Ce que nous faisons</h2><p><b>Orienter</b> : identifier vos talents et votre voie.<br><b>Former</b> : formations gratuites ou payantes, ateliers et séances de formation, en ligne et en présentiel, auprès de professionnels de qualité.<br><b>Accompagner</b> : vous suivre vers l’emploi, l’entrepreneuriat ou la création de revenus.</p></div>';
 if(p=="formations")h='<h1>Nos formations</h1>'+(S.user?'':'<p class="mu sm reveal">Inscription gratuite : elle vous sera demandée pour ouvrir une formation.</p>')+'<div class="c reveal"><span class="tag">En ligne</span><span class="tag">Certificat</span><span class="tag">Environ 1 h</span><h2>Maîtriser le prompting IA</h2><p class="mu">3 leçons en vidéo, des quiz et un certificat à votre nom à partager sur les réseaux.</p><p><b>Pourquoi ?</b> On ne peut pas tirer le meilleur d’une IA sans maîtriser le prompting. Vous apprenez à lui parler pour obtenir de meilleurs résultats.</p><p class="sm mu"><b>Durée estimée :</b> environ 1 heure, certificat compris.</p><a class="b" href="#formation">Voir la formation</a></div>'+cmView()+'<div class="c reveal"><span class="tag">Présentiel</span><h2>Formations pratiques</h2><p class="mu">Des sessions sur place dans plusieurs domaines. Contactez-nous pour connaître les prochaines dates.</p><a class="b s" href="#contact">Nous contacter</a></div><div class="c g reveal"><p class="sm mu" style="margin:0">D’autres formations en ligne arrivent bientôt.</p></div>';
 if(p=="contact")h='<h1>Contact</h1>'+
@@ -223,7 +229,7 @@ if(s=="result"){var tot=L[S.i].q.length,ok=S.sc>=Math.ceil(tot*.8);
 return '<div class="c reveal"><h2>Résultat : '+S.sc+' / '+tot+'</h2>'+(ok?'<p>Bravo, leçon validée !</p><button onclick="validate()">Continuer</button>':'<p>Il faut au moins '+Math.ceil(tot*.8)+' bonnes réponses sur '+tot+' pour avancer. Relisez la leçon et réessayez.</p><button onclick="go(\'lesson\')">Relire la leçon</button><button class="s" onclick="go(\'quiz\')">Refaire le quiz</button>')+'</div>'}
 if(s=="cert"&&!S.verified&&!S.certId)return '<h1>Votre certificat</h1>'+vbanner()+'<div class="c reveal"><p>Bravo, vous avez terminé la formation ! Confirmez votre e-mail pour recevoir votre certificat.</p></div>';
 if(s=="cert"){if(!S.certId){if(S.certFail)return '<div class="c"><p>Impossible de créer votre certificat pour le moment.</p><button onclick="S.certFail=false;render()">Réessayer</button></div>';FB.issue();return '<div class="c"><p>Création de votre certificat…</p></div>'}var d=new Date(S.certDate||Date.now()).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
-return '<h1>Votre certificat</h1><div class="cert reveal"><div style="font-size:14px;letter-spacing:2px;font-weight:700;color:#8a6212">BFAMILY COMPÉTENCES ZONE</div><h2>CERTIFICAT</h2><div>de réussite décerné à</div><div class="n">'+esc(S.name)+'</div><div>pour avoir validé la formation <b>Maîtriser le prompting IA</b></div><div style="margin-top:16px"><b>Compétence acquise</b><br>Rédiger des prompts clairs et efficaces pour dialoguer avec une IA.</div><div style="margin-top:16px;font-size:14px;text-align:left;display:inline-block"><b>Cette personne sait désormais :</b><br>• structurer une demande avec la méthode Rôle, Contexte, Tâche, Format<br>• obtenir des réponses plus précises et plus utiles<br>• corriger et affiner les réponses d’une IA</div><div id="qr" style="width:96px;margin:20px auto 8px"></div><div style="font-size:12px;color:#666">Scannez pour suivre la formation</div><div style="font-size:14px;margin-top:16px">Certification obtenue le '+d+'</div><div style="font-size:14px;margin-top:4px"><b>N° '+esc(S.certId)+'</b></div></div><div class="c reveal"><p class="sm"><b>Sur votre CV :</b> ajoutez dans la section Formations « Maîtriser le prompting IA, Bfamily Compétences Zone ».</p><p class="mu sm">Le certificat s’enregistre en image (PNG) dans les téléchargements de votre téléphone.</p><a class="b s" href="#formation">Donner mon avis sur la formation</a><button onclick="certPng()">Télécharger mon certificat (image)</button><button class="s" onclick="shareCert()">Partager sur les réseaux</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
+return '<h1>Votre certificat</h1><div class="cert reveal"><div style="font-size:14px;letter-spacing:2px;font-weight:700;color:#8a6212">BFAMILY COMPÉTENCES ZONE</div><h2>CERTIFICAT</h2><div>de réussite décerné à</div><div class="n">'+esc(S.certName||S.name)+'</div><div>pour avoir validé la formation <b>Maîtriser le prompting IA</b></div><div style="margin-top:16px"><b>Compétence acquise</b><br>Rédiger des prompts clairs et efficaces pour dialoguer avec une IA.</div><div style="margin-top:16px;font-size:14px;text-align:left;display:inline-block"><b>Cette personne sait désormais :</b><br>• structurer une demande avec la méthode Rôle, Contexte, Tâche, Format<br>• obtenir des réponses plus précises et plus utiles<br>• corriger et affiner les réponses d’une IA</div><div id="qr" style="width:96px;margin:20px auto 8px"></div><div style="font-size:12px;color:#666">Scannez pour suivre la formation</div><div style="font-size:14px;margin-top:16px">Certification obtenue le '+d+'</div><div style="font-size:14px;margin-top:4px"><b>N° '+esc(S.certId)+'</b></div></div><div class="c reveal"><p class="sm"><b>Sur votre CV :</b> ajoutez dans la section Formations « Maîtriser le prompting IA, Bfamily Compétences Zone ».</p><p class="mu sm">Le certificat s’enregistre en image (PNG) dans les téléchargements de votre téléphone.</p><a class="b s" href="#formation">Donner mon avis sur la formation</a><button onclick="certPng()">Télécharger mon certificat (image)</button><button class="s" onclick="shareCert()">Partager sur les réseaux</button><button class="s" onclick="go(\'home\')">Retour</button></div>'}
 return h}
 function scene(){return '<svg viewBox="0 0 320 180" class="sc reveal" role="img" aria-label="Étudiants en formation"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><rect width="320" height="180" rx="20" fill="url(#gg)"/><path d="M0 120H320M0 140H320M0 160H320M60 100V180M130 100V180M200 100V180M270 100V180" stroke="#6ee7ff" stroke-opacity=".1" fill="none"/><path class="pl" d="M40 40L150 25L215 70L270 45" stroke="#6ee7ff" fill="none"/><g class="fl"><circle cx="40" cy="40" r="4" fill="#6ee7ff"/><circle cx="150" cy="25" r="3" fill="#fff"/><circle cx="270" cy="45" r="4" fill="#6ee7ff"/><circle cx="215" cy="70" r="3" fill="#fff"/></g><text x="160" y="58" fill="#fff" font-size="14" font-weight="600" text-anchor="middle" opacity=".9">Apprendre · Créer · Réussir</text><g><circle cx="95" cy="102" r="12" fill="#ffd9b0"/><path d="M80 150q0-26 15-26t15 26z" fill="#ffb703"/><polygon class="scr" points="76,138 84,114 108,114 114,138" fill="#6ee7ff"/><rect x="62" y="138" width="66" height="6" rx="3" fill="#0f172a"/></g><g><circle cx="225" cy="102" r="12" fill="#ffd9b0"/><path d="M210 150q0-26 15-26t15 26z" fill="#ff6b9a"/><polygon class="scr" points="206,138 214,114 238,114 244,138" fill="#6ee7ff"/><rect x="192" y="138" width="66" height="6" rx="3" fill="#0f172a"/></g></svg>'}
 var ADMIN="bfamilyboutique@gmail.com";
@@ -246,8 +252,8 @@ x.textAlign="center";
 var T=function(t,y,sz,col,w,xp){x.font=(w||"")+" "+sz+"px Georgia,serif";x.fillStyle=col||"#2a2210";x.fillText(t,xp||W/2,y)};
 var d=new Date(S.certDate||Date.now()).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
 T("BFAMILY COMPÉTENCES ZONE",130,34,"#2563eb","bold");T("CERTIFICAT",220,76,"#8a6212","bold");T("de réussite décerné à",275,30);
-var sz=64;x.font="bold "+sz+"px Georgia,serif";while(x.measureText(S.name).width>W-200&&sz>24){sz-=2;x.font="bold "+sz+"px Georgia,serif"}
-T(S.name,370,sz,null,"bold");x.fillStyle="#b8892b";x.fillRect(250,390,W-500,3);
+var sz=64;x.font="bold "+sz+"px Georgia,serif";var nName=S.certName||S.name;while(x.measureText(nName).width>W-200&&sz>24){sz-=2;x.font="bold "+sz+"px Georgia,serif"}
+T(nName,370,sz,null,"bold");x.fillStyle="#b8892b";x.fillRect(250,390,W-500,3);
 T("pour avoir validé la formation",450,30);T("Maîtriser le prompting IA",505,44,null,"bold");
 T("Compétence acquise : rédiger des prompts clairs et efficaces avec une IA.",570,26);
 try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();var n=q.getModuleCount(),m=Math.floor(130/n),o=(W-m*n)/2;x.fillStyle="#000";for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(o+k*m,620+r*m,m,m)}catch(e){}
@@ -321,6 +327,14 @@ function loadCm(){if(S.cm!==undefined||!window.FB)return;S.cm=null;FB.comments()
 function cmView(){var a=S.cm;if(a===undefined||a===null)return '<div class="c reveal"><h2>Avis des participants</h2><p class="mu sm">Chargement…</p></div>';
 var avg=a.length?a.reduce(function(t,x){return t+x.rating},0)/a.length:0;
 return '<div class="c reveal"><h2>Avis des participants</h2>'+(a.length?'<p style="display:flex;align-items:center;gap:8px"><b style="color:#e0a100;font-size:18px">'+stars(Math.round(avg))+'</b> <span style="font-weight:600">'+avg.toFixed(1).replace(".",",")+' / 5</span> <span class="mu sm">· '+a.length+' avis</span></p>':'<p class="mu sm">Aucun avis pour le moment. Les participants certifiés peuvent donner le leur.</p>')+a.map(function(x){var own=S.user&&(x.uid==S.user.uid||(S.user.email||"").toLowerCase()==ADMIN);var liked=S.user&&x.likes&&x.likes.includes(S.user.uid);var likesCount=(x.likes||[]).length;
+var reps = S.replies[x.id] || [];
+var repHtml = reps.map(function(r){
+    var canEdit = S.user && (r.uid == S.user.uid);
+    var canDelete = S.user && (r.uid == S.user.uid || own || (S.user.email||"").toLowerCase()==ADMIN);
+    return '<div class="reply-item"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><b>'+esc(r.name)+'</b><span style="font-size:11px;color:var(--mu)">'+new Date(r.createdAt).toLocaleDateString("fr-FR")+'</span></div><p style="margin:0 0 4px">'+esc(r.text)+'</p>'+(canEdit?'<a href="#" class="sm" onclick="editReply(\''+r.id+'\', \''+esc(r.text).replace(/'/g,"\\'")+'\');return false" style="color:var(--pr);margin-right:8px">Modifier</a>':'')+(canDelete?'<a href="#" class="sm" onclick="delReply(\''+r.id+'\');return false" style="color:var(--ko)">Supprimer</a>':'')+'</div>';
+}).join('');
+
+
 return '<div style="border-top:1px solid var(--bd);padding:20px 0;animation:up .4s both">'+
 '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
 '<a href="#membre-'+x.uid+'" class="avatar-link" title="Voir le profil de '+esc(x.name)+'">'+
@@ -331,9 +345,12 @@ avatar(x.photo,40,x.name)+
 '<p style="margin:12px 0;font-size:15px;line-height:1.6">'+esc(x.text)+'</p>'+
 '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+
 '<div class="like-btn '+(liked?'liked':'')+'" onclick="FB.likecm(\''+x.id+'\')">'+(liked?'❤️':'🤍')+' '+likesCount+'</div>'+
-(S.user?'<button class="o" onclick="replyTo(\''+esc(x.name)+'\')" style="width:auto;display:inline-flex;padding:6px 14px;margin:0;font-size:13px;font-weight:700;border-radius:20px">Répondre</button>':'')+
+(S.user?'<button class="o" onclick="S.replyingTo=\''+x.id+'\';render();setTimeout(function(){var el=document.getElementById(\'reply-'+x.id+'\');if(el)el.focus()},100)" style="width:auto;display:inline-flex;padding:6px 14px;margin:0;font-size:13px;font-weight:700;border-radius:20px">Répondre</button>':'')+
 (own?'<a href="#" class="sm" onclick="editCm(\''+x.id+'\', \''+esc(x.text).replace(/'/g,"\\'")+'\', '+x.rating+');return false" style="color:var(--pr);margin-left:auto;text-decoration:none;font-weight:600">Modifier</a> <a href="#" class="sm" onclick="delCm(\''+x.id+'\');return false" style="color:var(--ko);text-decoration:none;font-weight:600">Supprimer</a>':'')+
-'</div></div>'}).join("")+'</div>'}
+'</div>'+
+(S.replyingTo==x.id?'<div class="reply-box"><textarea id="reply-'+x.id+'" rows="2" placeholder="Votre réponse..." style="margin-top:0;font-size:14px"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="s" style="margin-top:0;padding:8px 16px;font-size:14px" onclick="postReply(\''+x.id+'\')">Envoyer</button><button class="s" style="margin-top:0;padding:8px 16px;font-size:14px;color:var(--mu);border-color:var(--mu)" onclick="S.replyingTo=null;render()">Annuler</button></div></div>':'')+
+(reps.length?'<div class="reply-box">'+repHtml+'</div>':'')+
+'</div>'}).join("")+'</div>'}
 function cmForm(){if(!S.user)return '';if(!S.certId)return '<div class="c g reveal"><p class="mu sm" style="margin:0">Terminez la formation et obtenez votre certificat pour donner votre avis.</p></div>';
 var m=(S.cm||[]).filter(function(x){return x.uid==S.user.uid})[0];
 var isEditing = S.editCmId;
@@ -344,8 +361,37 @@ return '<div class="c reveal"><h2>'+(isEditing?'Modifier mon avis':(m?'Modifier 
 function postCm(){var t=val("ct"),r=parseInt(val("cr"),10)||5;if(t.length<3){S.cerr="Écrivez au moins quelques mots.";render();return}S.cerr="";
 FB.postcm(r,t).then(function(){S.cm=undefined;S.editCmId=null;S.replyTo=null;render()}).catch(function(){S.cerr="Publication impossible. Vérifiez que votre certificat est bien généré.";render()})}
 function editCm(id, text, rating){S.editCmId=id;S.cmDraftText=text;S.cmDraftRating=rating;render();setTimeout(function(){var el=document.getElementById("ct");if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.focus()}},100)}
-function replyTo(name){S.replyTo=name;render();setTimeout(function(){var el=document.getElementById("ct");if(el){el.value="@"+name+" "+el.value;el.focus();el.scrollIntoView({behavior:"smooth",block:"center"})}},100)}
 function delCm(id){if(confirm("Supprimer cet avis ?"))FB.delcm(id).then(function(){S.cm=undefined;render()}).catch(function(){alert("Suppression impossible.")})}
+
+
+function postReply(commentId){
+  var t = document.getElementById("reply-"+commentId).value.trim();
+  if(t.length<1) return;
+  FB.postReply(commentId, t).then(function(){
+    S.replyingTo = null;
+    S.replies = {};
+    loadCm();
+  }).catch(function(e){alert("Erreur : "+e)});
+}
+function editReply(id, text){
+  var newText = prompt("Modifier votre réponse :", text);
+  if(newText && newText.trim().length>0){
+    FB.editReply(id, newText.trim()).then(function(){
+      S.replies = {};
+      loadCm();
+    });
+  }
+}
+function delReply(id){
+  if(confirm("Supprimer cette réponse ?")){
+    FB.delReply(id).then(function(){
+      S.replies = {};
+      loadCm();
+    });
+  }
+}
+
+
 var STATUS=["","En recherche d'emploi","Étudiant(e)","Salarié(e)","Entrepreneur(e)","Je propose une activité ou un service","Autre"];
 function avatar(ph,z,nm){var ok=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(ph||"");return ok?'<img src="'+ph+'" alt="" style="width:'+z+'px;height:'+z+'px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.1)">':'<div style="width:'+z+'px;height:'+z+'px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);display:inline-flex;align-items:center;justify-content:center;font-size:'+z/2.5+'px;color:#fff;font-weight:800;box-shadow:0 2px 8px rgba(37,99,235,0.2)">'+esc(((nm||S.name||"?")[0]||"?").toUpperCase())+'</div>'}
 function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked}
@@ -513,7 +559,7 @@ if(k=="s"&&!S.cg){S.err="Veuillez accepter les conditions pour créer un compte.
 if(k=="s")S.pendingName=n;
 (k=="g"?FB.google():k=="s"?FB.signup(e,p):FB.login(e,p)).catch(function(x){S.err=msg(x);render()})}
 function authView(){var s=S.mode!="l";
-return '<h1 class="hero reveal">Apprenez les compétences du futur</h1><p class="mu reveal" style="font-size:18px;max-width:500px">Formations pratiques avec certificat, pour les jeunes qui veulent avancer.</p>'+scene()+'<div class="c reveal"><h2 style="text-align:center;margin-bottom:20px">'+(s?'Créez votre compte gratuit':'Connexion')+'</h2><div style="display:flex;gap:12px;margin-bottom:16px"><button class="'+(s?'':'s')+'" onclick="S.mode=\'s\';S.err=\'\';render()" style="flex:1">Créer un compte</button><button class="'+(s?'s':'')+'" onclick="S.mode=\'l\';S.err=\'\';render()" style="flex:1">Se connecter</button></div>'+(s?'<input id="nn" placeholder="Prénom et nom" maxlength="40" value="'+esc(S.nn||"")+'">':'')+'<input id="em" type="email" placeholder="Adresse e-mail" value="'+esc(S.em||"")+'"><input id="pw" type="password" placeholder="Mot de passe (6 caractères minimum)">'+(s?chk():'')+'<button onclick="authGo(\''+(s?'s':'l')+'\')" style="margin-top:24px">'+(s?'Créer mon compte':'Me connecter')+'</button>'+(s?'':'<p style="text-align:center;margin:16px 0 0"><a href="#" onclick="forgot();return false" style="font-weight:600">Mot de passe oublié ?</a></p>')+'<div style="display:flex;align-items:center;gap:16px;margin:24px 0"><div style="flex:1;height:1px;background:var(--bd)"></div><span class="mu sm" style="font-weight:600">OU</span><div style="flex:1;height:1px;background:var(--bd)"></div></div><button class="s" onclick="authGo(\'g\')">Continuer avec Google</button><p class="mu sm" style="margin:16px 0 0;text-align:center;font-size:12px">En continuant avec Google, vous acceptez nos <a href="#conditions">Conditions d’utilisation</a> et notre <a href="#confidentialite">Politique de confidentialité</a>.</p>'+(S.err?'<p style="color:var(--ko);font-weight:600;background:color-mix(in srgb,var(--ko) 10%,var(--card));padding:12px;border-radius:8px;margin-top:16px">'+esc(S.err)+'</p>':'')+(S.info?'<p style="color:var(--ok);font-weight:600;background:color-mix(in srgb,var(--ok) 10%,var(--card));padding:12px;border-radius:8px;margin-top:16px">'+esc(S.info)+'</p>':'')+'<p class="mu sm" style="margin:16px 0 0;text-align:center;font-size:12px">Votre e-mail sert uniquement à créer votre compte et à vous informer de nos formations.</p></div>'+avisBand()}
+return '<h1 class="hero reveal">Apprenez les compétences du futur</h1><p class="mu reveal" style="font-size:18px;max-width:500px">Formations pratiques avec certificat, pour les jeunes qui veulent avancer.</p>'+scene()+'<div id="auth-form" class="c reveal"><h2 style="text-align:center;margin-bottom:20px">'+(s?'Créez votre compte gratuit':'Connexion')+'</h2><div style="display:flex;gap:12px;margin-bottom:16px"><button class="'+(s?'':'s')+'" onclick="S.mode=\'s\';S.err=\'\';render()" style="flex:1">Créer un compte</button><button class="'+(s?'s':'')+'" onclick="S.mode=\'l\';S.err=\'\';render()" style="flex:1">Se connecter</button></div>'+(s?'<input id="nn" placeholder="Prénom et nom" maxlength="40" value="'+esc(S.nn||"")+'">':'')+'<input id="em" type="email" placeholder="Adresse e-mail" value="'+esc(S.em||"")+'"><input id="pw" type="password" placeholder="Mot de passe (6 caractères minimum)">'+(s?chk():'')+'<button onclick="authGo(\''+(s?'s':'l')+'\')" style="margin-top:24px">'+(s?'Créer mon compte':'Me connecter')+'</button>'+(s?'':'<p style="text-align:center;margin:16px 0 0"><a href="#" onclick="forgot();return false" style="font-weight:600">Mot de passe oublié ?</a></p>')+'<div style="display:flex;align-items:center;gap:16px;margin:24px 0"><div style="flex:1;height:1px;background:var(--bd)"></div><span class="mu sm" style="font-weight:600">OU</span><div style="flex:1;height:1px;background:var(--bd)"></div></div><button class="s" onclick="authGo(\'g\')" style="display:flex;align-items:center;justify-content:center;gap:10px"><svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continuer avec Google</button><p class="mu sm" style="margin:16px 0 0;text-align:center;font-size:12px">En continuant avec Google, vous acceptez nos <a href="#conditions">Conditions d’utilisation</a> et notre <a href="#confidentialite">Politique de confidentialité</a>.</p>'+(S.err?'<p style="color:var(--ko);font-weight:600;background:color-mix(in srgb,var(--ko) 10%,var(--card));padding:12px;border-radius:8px;margin-top:16px">'+esc(S.err)+'</p>':'')+(S.info?'<p style="color:var(--ok);font-weight:600;background:color-mix(in srgb,var(--ok) 10%,var(--card));padding:12px;border-radius:8px;margin-top:16px">'+esc(S.info)+'</p>':'')+'<p class="mu sm" style="margin:16px 0 0;text-align:center;font-size:12px">Votre e-mail sert uniquement à créer votre compte et à vous informer de nos formations.</p></div>'}
 function verify(){var id=val("vn").toUpperCase();if(!id)return;S.vn=id;S.vr="load";render();(window.FB?FB.verify(id):Promise.reject()).then(function(d){S.vr=d||"none";render()}).catch(function(){S.vr="err";render()})}
 function verif(){var r=S.vr,o="";
 if(r=="load")o='<p>Vérification…</p>';else if(r=="none")o='<p style="color:var(--ko);font-weight:600"><b>Aucun certificat trouvé pour ce numéro.</b></p>';else if(r=="err")o='<p>Vérification impossible pour le moment.</p>';else if(r)o='<div style="background:color-mix(in srgb,var(--ok) 10%,var(--card));border:1px solid var(--ok);padding:16px;border-radius:12px;margin-top:16px"><p style="color:var(--ok);font-weight:800;margin:0 0 8px">Certificat valide</p><p style="margin:0;font-size:16px">'+esc(r.name)+'<br><b>'+esc(r.course)+'</b><br><span class="mu sm">Délivré le '+new Date(r.issuedAt).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})+'</span></p></div>';
@@ -575,7 +621,17 @@ try{await deleteDoc(doc(db,"comments","prompting_"+uid))}catch(e){}
 comments:async function(){var q=await getDocs(query(collection(db,"comments"),where("course","==","prompting"))),a=[];q.forEach(function(d){var x=d.data();x.id=d.id;a.push(x)});a.sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)});
 var ids=[];a.forEach(function(x){if(ids.indexOf(x.uid)<0)ids.push(x.uid)});var ph={},pb={};
 await Promise.all(ids.map(async function(u){try{var d=await getDoc(doc(db,"profiles",u));if(d.exists()){ph[u]=d.data().photo||"";pb[u]=1}}catch(e){}}));
-a.forEach(function(x){x.photo=ph[x.uid]||"";x.pub=!!pb[x.uid]});return a},
+a.forEach(function(x){x.photo=ph[x.uid]||"";x.pub=!!pb[x.uid]});
+var rq = await getDocs(collection(db,"replies"));
+var allReplies = {};
+rq.forEach(function(d){
+  var r = d.data(); r.id = d.id;
+  if(!allReplies[r.commentId]) allReplies[r.commentId] = [];
+  allReplies[r.commentId].push(r);
+});
+for(var k in allReplies){ allReplies[k].sort(function(a,b){return a.createdAt - b.createdAt}) }
+S.replies = allReplies;
+return a},
 postcm:async function(r,t){
 var id=S.editCmId||"prompting_"+S.user.uid;
 await setDoc(doc(db,"comments",id),{uid:S.user.uid,name:shortName(S.name),text:t,rating:r,course:"prompting",createdAt:Date.now()},{merge:true})},
@@ -595,6 +651,21 @@ render();
 }
 },
 delcm:async function(id){await deleteDoc(doc(db,"comments",id))},
+postReply:async function(commentId, text){
+  await setDoc(doc(collection(db,"replies")), {
+    commentId: commentId,
+    uid: S.user.uid,
+    name: shortName(S.name),
+    text: text,
+    createdAt: Date.now()
+  });
+},
+editReply:async function(id, newText){
+  await updateDoc(doc(db,"replies",id), { text: newText });
+},
+delReply:async function(id){
+  await deleteDoc(doc(db,"replies",id));
+},
 issue:async function(){
 if(S.issuing||S.certId||!S.user)return;S.issuing=true;
 var A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -602,16 +673,17 @@ for(var t=0;t<5&&!S.certId;t++){
 var b=crypto.getRandomValues(new Uint8Array(6)),r="";for(var i=0;i<6;i++)r+=A[b[i]%A.length];
 var id="BF-"+new Date().getFullYear()+"-"+r,now=Date.now();
 try{await setDoc(doc(db,"certificates",id),{uid:S.user.uid,name:S.name,course:COURSE,issuedAt:now});
-S.certId=id;S.certDate=now;S.certs=(S.certs||[]).concat([{title:COURSE,org:"Bfamily Compétences Zone",date:now,id:id}]);await setDoc(doc(db,"users",S.user.uid),{certId:id,certDate:now,certs:S.certs},{merge:true});try{if(S.profile&&S.profile.pub!==false)await FB.saveProfile()}catch(x){}}catch(e){}
+S.certId=id;S.certDate=now;S.certName=S.name;
+S.certs=(S.certs||[]).concat([{title:COURSE,org:"Bfamily Compétences Zone",date:now,id:id}]);await setDoc(doc(db,"users",S.user.uid),{certId:id,certDate:now,certName:S.name,certs:S.certs},{merge:true});try{if(S.profile&&S.profile.pub!==false)await FB.saveProfile()}catch(x){}}catch(e){}
 }
 if(!S.certId)S.certFail=true;
 S.issuing=false;render()}
 };
 onAuthStateChanged(auth,async function(u){
-if(!u){try{localStorage.removeItem("bf_in")}catch(e){}S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.profile=null;S.cv=null;S.certs=[];S.prefs=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
+if(!u){try{localStorage.removeItem("bf_in")}catch(e){}S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.certName=null;S.profile=null;S.cv=null;S.certs=[];S.prefs=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
 S.user={uid:u.uid,email:u.email};S.err="";try{localStorage.setItem("bf_in","1")}catch(e){}try{await u.reload()}catch(e){}S.verified=u.emailVerified;S.prov=(u.providerData||[]).some(function(x){return x.providerId=="password"})?"password":"google";
 try{var x=await getDoc(doc(db,"users",u.uid));
-if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}}
+if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.certName=d.certName||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}}
 else{S.name=S.pendingName||u.displayName||"";S.done=[];S.certId=null;S.profile={};S.cv={auto:true};S.certs=[];S.prefs={news:true};await setDoc(doc(db,"users",u.uid),{name:S.name,email:u.email||"",done:[],createdAt:Date.now(),consentAt:Date.now(),prefs:{news:true}})}
 }catch(e){S.err="Impossible de charger votre compte."}
 if(!location.hash||location.hash=="#accueil")location.hash="cours";S.authReady=true;render()});
