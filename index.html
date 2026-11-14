@@ -23,13 +23,13 @@ body{margin:0;background:var(--page);color:var(--tx);font-family:var(--font);fon
 
 
 /* HEADER & SEARCH */
-header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent)}
-.lo{font-weight:800;font-size:18px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap}
-.l2{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-top:2px;font-weight:600}
-.search-wrap{flex:1;position:relative}
+header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent)}
+.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap}
+.l2{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mu);margin-top:2px;font-weight:600}
+.search-wrap{flex:1;position:relative;min-width:0}
 .search-input{width:100%;padding:10px 16px 10px 36px;border-radius:20px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:14px;transition:all .2s}
-.search-input:focus{outline:none;border-color:var(--pr);background:var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 15%,transparent)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--mu)}
+.search-input:focus{outline:none;border-color:var(--pr);background:var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 15%,transparent);padding-right:16px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--mu);pointer-events:none}
 .search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-top:8px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none;max-height:300px;overflow-y:auto;z-index:50}
 .search-results.active{display:block}
 .search-item{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s}
@@ -41,9 +41,8 @@ header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margi
 #av{display:none;width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid var(--card);box-shadow:0 0 0 2px var(--bd);transition:all .2s;flex-shrink:0}
 #av:hover{transform:scale(1.05);box-shadow:0 0 0 2px var(--pr)}
 #av img,#av div{width:36px!important;height:36px!important}
-#tg{width:36px;height:36px;padding:0;margin:0;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:50%;font-size:18px;line-height:1;box-shadow:0 2px 10px rgba(0,0,0,0.05);transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-#tg:hover{background:var(--bg);transform:scale(1.05)}
-#mb{display:none}
+#mb{width:36px;height:36px;padding:0;margin:0;background:transparent;color:var(--tx);border:none;border-radius:50%;font-size:24px;line-height:1;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.7}
+#mb:hover{opacity:1;background:var(--bg)}
 
 
 /* BOTTOM NAV */
@@ -186,8 +185,7 @@ header{max-width:100%}
     <div class="search-results" id="searchResults"></div>
   </div>
   <a id="av" href="#profil" aria-label="Mon profil"></a>
-  <button id="tg" onclick="toggleTheme()" aria-label="Mode nuit">🌙</button>
-  <button id="mb" onclick="S.menu=!S.menu;render()" aria-label="Menu">⋮</button>
+  <button id="mb" onclick="S.menu=!S.menu;render()" aria-label="Menu">☰</button>
 </header>
 
 
@@ -289,11 +287,9 @@ function doSearch(){
   var res=document.getElementById('searchResults');
   if(q.length<2){ res.classList.remove('active'); return; }
   var matches=[];
-  // Chercher dans les pages
   P.forEach(function(p){
     if(p[1].toLowerCase().indexOf(q)>-1 && HIDE.indexOf(p[0])<0) matches.push({title:p[1], link:'#'+p[0], type:'Page'});
   });
-  // Chercher dans les formations
   L.forEach(function(l, i){
     if(l.t.toLowerCase().indexOf(q)>-1 || l.c.toLowerCase().indexOf(q)>-1) matches.push({title:l.t, link:'#cours', type:'Formation'});
   });
