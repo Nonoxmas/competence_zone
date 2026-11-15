@@ -17,14 +17,18 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 a{color:var(--pr);text-decoration:none;-webkit-tap-highlight-color:transparent}
 button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(100,116,139,0.3);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,0.6)}
 :root[data-theme="dark"]{color-scheme:dark;--page:#0f172a;--card:#1e293b;--bg:#0f172a;--tx:#f1f5f9;--mu:#94a3b8;--bd:#334155;--pr:#3b82f6;--pr-dark:#2563eb;--ok:#34d399;--ko:#f87171}
 select,textarea{background:var(--card);color:var(--tx)}
 body{margin:0;background:var(--page);color:var(--tx);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-bottom:70px;}
-.w{max-width:680px;margin:0 auto;padding:0 20px 60px;position:relative;z-index:1}
+.w{max-width:680px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1}
 
 /* HEADER & SEARCH */
-header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent)}
-.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap}
+header{border-bottom:1px solid var(--bd);padding:10px 16px;margin:0 auto;display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent);transition:all .3s}
+.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap;flex-shrink:0}
 .l2{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mu);margin-top:2px;font-weight:600}
 .search-wrap{flex:1;position:relative;min-width:0}
 .search-input{width:100%;padding:10px 16px 10px 36px;border-radius:20px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:14px;transition:all .2s}
@@ -32,8 +36,10 @@ header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margi
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--mu);pointer-events:none}
 .search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-top:8px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none;max-height:300px;overflow-y:auto;z-index:50}
 .search-results.active{display:block}
-.search-item{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s}
+.search-item{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;justify-content:center;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s;text-align:left}
 .search-item:hover{background:var(--bg)}
+.search-item b{color:var(--pr);margin-bottom:2px;font-size:15px}
+.search-item span{font-size:12px}
 .search-item:last-child{border-bottom:none}
 
 /* TOP BUTTONS */
@@ -42,9 +48,6 @@ header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margi
 #av img,#av div{width:36px!important;height:36px!important}
 #mb{width:36px;height:36px;padding:0;margin:0;background:transparent;color:var(--tx);border:none;border-radius:50%;font-size:24px;line-height:1;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.7}
 #mb:hover{opacity:1;background:var(--bg)}
-
-/* NAVIGATION HORIZONTALE (ORDINATEUR) */
-.top-nav{display:none}
 
 /* FLOATING PLUS BUTTON */
 .fab-plus{position:fixed;right:20px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:30;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:400;box-shadow:0 8px 24px -4px color-mix(in srgb,var(--pr) 50%,transparent);transition:all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);cursor:pointer}
@@ -160,19 +163,12 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 .btn-wa{background:#25d366;color:#fff;display:flex;align-items:center;gap:4px}
 .btn-wa svg{width:14px;height:14px;fill:#fff}
 
-/* ===== ORDINATEUR ===== */
+/* ===== ORDINATEUR (PC) ===== */
 @media (min-width:700px){
-header{max-width:900px;padding:16px 32px;display:flex;gap:32px}
+header{max-width:100%;padding:16px 40px;border-radius:0}
 .lo{font-size:20px}.l2{font-size:10px}
-.search-wrap{max-width:400px;margin-left:auto;margin-right:auto}
-#mb{display:none!important}
-#av{display:block!important;width:40px!important;height:40px!important}
-.top-nav{display:flex;gap:8px;align-items:center;margin-right:20px}
-.top-nav a{padding:8px 16px;border-radius:20px;color:var(--mu);text-decoration:none;font-size:14px;font-weight:600;transition:all .3s;border:1px solid transparent}
-.top-nav a:hover{color:var(--pr);background:color-mix(in srgb,var(--pr) 8%,transparent)}
-.top-nav a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
-.bottom-nav,.bottom-drawer,.drawer-overlay,.fab-plus{display:none!important}
-#app{max-width:900px;padding:0 32px 80px}
+.search-wrap{max-width:none;margin:0 40px}
+.w{max-width:900px;padding:0 32px 80px}
 .c{padding:32px}
 #app.g2{max-width:1200px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
 #app.g2>h1,#app.g2>p,#app.g2>a.b{grid-column:1/-1}
@@ -184,21 +180,16 @@ header{max-width:900px;padding:16px 32px;display:flex;gap:32px}
 #app.au>h2,#app.au>.mq,#app.au>.c.g{grid-column:1/-1}
 #app.au .mq{margin:0}
 .mi{width:340px}
-footer{padding:64px 32px 80px}
+footer{padding:64px 32px 80px;border-radius:32px 32px 0 0;margin-top:60px}
 .fw{max-width:1200px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 48px}
 .fl,.fc{grid-column:1/-1}
 .big{font-size:min(18vw,280px)}
-}
-@media (max-width:699px){
-header{max-width:100%}
-.w{max-width:100%}
 }
 </style>
 </head>
 <body>
 <header>
   <a class="lo" href="#accueil"><span class="l1">Bfamily</span><span class="l2">Compétences Zone</span></a>
-  <nav class="top-nav" id="top-nav"></nav>
   <div class="search-wrap">
     <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input type="text" class="search-input" id="searchBar" placeholder="Rechercher..." oninput="doSearch()">
@@ -307,7 +298,8 @@ function doSearch(){
     if(l.t.toLowerCase().indexOf(q)>-1 || l.c.toLowerCase().indexOf(q)>-1) matches.push({title:l.t, link:'#cours', type:'Formation'});
   });
   if(matches.length>0){
-    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><span style="font-size:16px">🔍</span><div><b>'+m.title+'</b><br><span class="mu sm">'+m.type+'</span></div></a>'}).join('');
+    // Résultats propres sans emojis
+    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><b>'+m.title+'</b><span class="mu">'+m.type+'</span></a>'}).join('');
     res.classList.add('active');
   } else {
     res.innerHTML='<div class="search-item" style="color:var(--mu)">Aucun résultat trouvé.</div>';
@@ -323,10 +315,6 @@ function page(){var h=(location.hash||"").replace("#","");if(h.indexOf("membre-"
 function render(){
   var p=page(),a=document.getElementById("app"),h="";
   updateBottomNav(p);
-  
-  document.getElementById('top-nav').innerHTML=P.filter(function(x){return HIDE.indexOf(x[0])<0 && x[0]!="verifier" && x[0]!="cours"}).map(function(x){
-    return '<a href="#'+x[0]+'" class="'+((x[0]==p)?'on':'')+'">'+x[1]+'</a>';
-  }).join('');
 
   if(p=="accueil")h='<h1 class="hero">Transformez votre potentiel en opportunités.</h1><p class="mu reveal">Bfamily Compétences Zone est une communauté d\'apprentissage ouverte à tous. Nous vous aidons à développer des compétences concrètes, à obtenir des certifications reconnues et à saisir les opportunités de demain, en ligne comme en présentiel.</p><a class="b reveal" href="#cours" style="animation-delay:0.1s">Commencer la formation Prompting IA</a><a class="b s reveal" href="#apropos" style="animation-delay:0.2s">Découvrir Bfamily</a><div class="c g reveal" style="animation-delay:0.3s"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
   if(p=="apropos")h='<h1>À propos de Bfamily</h1><div class="c reveal"><h2>Qui sommes-nous</h2><p>Née en 2018 de la volonté de transmettre, Bfamily est un collectif d\'experts et de passionnés. Nous mettons notre savoir-faire pratique, notamment en intelligence artificielle, au service de tous ceux qui souhaitent révéler leur potentiel et transformer leurs ambitions en réalité.</p></div><div class="c reveal"><h2>Notre mission</h2><p>Inspirer, former et propulser. Notre mission est de donner à chacun les clés pour découvrir ses talents, maîtriser les compétences recherchées sur le marché et les valoriser concrètement : décrocher un emploi, entreprendre ou créer ses propres revenus.</p></div><div class="c reveal"><h2>Notre vision</h2><p>Permettre aux jeunes d’acquérir des compétences solides, recherchées sur le marché, et de les exploiter pour s’en sortir : trouver un emploi ou se lancer eux-mêmes. Nous voulons une jeunesse compétente, autonome, capable de transformer ses connaissances et ses talents en vraies opportunités professionnelles.</p></div><div class="c reveal"><h2>Notre engagement qualité</h2><p>Nous choisissons des formations de qualité, dispensées par des professionnels de qualité, pour que chaque apprenant acquière un vrai bagage de compétences, que ce soit dans nos formations en ligne, nos ateliers ou nos séances en présentiel. Selon les cas, elles sont gratuites ou payantes.</p></div><div class="c g reveal"><h2>Ce que nous faisons</h2><p><b>Orienter</b> : identifier vos talents et votre voie.<br><b>Former</b> : formations gratuites ou payantes, ateliers et séances de formation, en ligne et en présentiel, auprès de professionnels de qualité.<br><b>Accompagner</b> : vous suivre vers l’emploi, l’entrepreneuriat ou la création de revenus.</p></div>';
@@ -372,22 +360,23 @@ function render(){
 }
 
 function loadNetwork(){
-  if(S.networkData) return;
+  if(S.networkData==="loading"||S.networkData) return;
   S.networkData="loading";
   render();
   FB.getNetwork().then(function(data){
     S.networkData=data;
     render();
-  }).catch(function(e){ S.networkData="error"; render(); });
+  }).catch(function(e){ S.networkData={users:[],connections:[],requestsIn:[],requestsOut:[],error:true}; render(); });
 }
 
 function reseauView(){
   if(!S.authReady) return '<div class="c"><p>Chargement…</p></div>';
   if(!S.user) return authView();
   if(S.networkData==="loading"||S.networkData===null) return '<div class="c"><p>Chargement de votre réseau…</p></div>';
-  if(S.networkData==="error") return '<div class="c" style="color:var(--ko)"><p>Impossible de charger le réseau. Vérifiez votre connexion.</p><button class="s" onclick="S.networkData=null;render()">Réessayer</button></div>';
 
   var d=S.networkData;
+  if(!d || d.error) return '<div class="c"><p style="color:var(--mu)">Vous n\'avez pas encore de connexions. Recherchez des membres pour commencer.</p></div>';
+
   var h='<h1>Mon réseau</h1>';
   
   // Tabs
@@ -401,7 +390,7 @@ function reseauView(){
 
   if(S.networkTab==="connections"){
     if(d.connections.length===0){
-      h+='<div class="c g"><p>Aucune connexion pour le moment. Allez dans "Demandes" ou trouvez de nouvelles personnes ci-dessous.</p></div>';
+      h+='<div class="c g"><p>Vous n\'avez pas encore de connexions. Recherchez des membres pour commencer.</p></div>';
     } else {
       var filtered = d.connections.filter(function(c){return (c.name+" "+c.headline).toLowerCase().indexOf(S.networkSearch.toLowerCase())>-1});
       if(filtered.length===0) h+='<div class="c g"><p>Aucun résultat pour cette recherche.</p></div>';
@@ -411,7 +400,7 @@ function reseauView(){
         var waLink="https://wa.me/"+c.whatsapp+"?text="+encodeURIComponent(msg);
         h+='<div class="user-card">';
         h+='<a href="#membre-'+c.uid+'" class="avatar-link" style="flex:none">'+avatar(c.photo,50,c.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(c.name)+'</h3><p>'+esc(c.headline||c.status||"Membre")+'</p></div>';
+        h+='<div class="user-info"><h3>'+esc(c.name)+'</h3><p>'+esc(c.headline||c.offer||"Membre")+'</p></div>';
         h+='<div class="user-actions">';
         if(c.whatsapp) h+='<a href="'+waLink+'" target="_blank" class="btn-small btn-wa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>WhatsApp</a>';
         h+='<button class="btn-small s" onclick="FB.removeConnection(\''+c.uid+'\')" style="color:var(--ko);border:1px solid var(--ko)">Retirer</button>';
@@ -427,7 +416,7 @@ function reseauView(){
         if(!sender) return;
         h+='<div class="user-card" style="border-color:var(--pr)">';
         h+='<a href="#membre-'+sender.uid+'" class="avatar-link" style="flex:none">'+avatar(sender.photo,50,sender.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(sender.name)+'</h3><p>'+esc(sender.headline||"Membre")+'</p></div>';
+        h+='<div class="user-info"><h3>'+esc(sender.name)+'</h3><p>'+esc(sender.headline||sender.offer||"Membre")+'</p></div>';
         h+='<div class="user-actions">';
         h+='<button class="btn-small" onclick="FB.acceptRequest(\''+r.id+'\',\''+sender.uid+'\')">Accepter</button>';
         h+='<button class="btn-small s" onclick="FB.rejectRequest(\''+r.id+'\')" style="color:var(--ko);border:1px solid var(--ko)">Refuser</button>';
@@ -441,7 +430,7 @@ function reseauView(){
         if(!target) return;
         h+='<div class="user-card">';
         h+='<a href="#membre-'+target.uid+'" class="avatar-link" style="flex:none">'+avatar(target.photo,50,target.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(target.name)+'</h3><p>'+esc(target.headline||"Membre")+'</p></div>';
+        h+='<div class="user-info"><h3>'+esc(target.name)+'</h3><p>'+esc(target.headline||target.offer||"Membre")+'</p></div>';
         h+='<div class="user-actions"><span class="sm mu">En attente</span></div>';
         h+='</div>';
       });
@@ -465,7 +454,7 @@ function reseauView(){
     others.forEach(function(u){
       h+='<div class="user-card">';
       h+='<a href="#membre-'+u.uid+'" class="avatar-link" style="flex:none">'+avatar(u.photo,50,u.name)+'</a>';
-      h+='<div class="user-info"><h3>'+esc(u.name)+'</h3><p>'+esc(u.headline||"Membre")+'</p></div>';
+      h+='<div class="user-info"><h3>'+esc(u.name)+'</h3><p>'+esc(u.headline||u.offer||"Membre")+'</p></div>';
       h+='<div class="user-actions">';
       h+='<button class="btn-small" onclick="FB.sendRequest(\''+u.uid+'\')">Se connecter</button>';
       h+='</div></div>';
@@ -936,7 +925,6 @@ getNetwork:async function(){
   var uq = await getDocs(collection(db,"users"));
   uq.forEach(function(d){
     var data = d.data();
-    // Si le profil est public ou si c'est nous-même, on l'ajoute
     if((data.profile && data.profile.pub !== false) || d.id === S.user.uid) {
       allUsers.push({
         uid: d.id,
@@ -975,7 +963,6 @@ getNetwork:async function(){
 },
 sendRequest:async function(toUid){
   if(!S.user) return;
-  // Vérifier qu'une demande n'existe pas déjà
   var reqId = S.user.uid + "_" + toUid;
   await setDoc(doc(db,"requests",reqId), {
     from: S.user.uid,
