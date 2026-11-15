@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -31,11 +31,13 @@ header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margi
 .search-input{width:100%;padding:10px 16px 10px 36px;border-radius:20px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:14px;transition:all .2s}
 .search-input:focus{outline:none;border-color:var(--pr);background:var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 15%,transparent);padding-right:16px}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--mu);pointer-events:none}
-.search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-top:8px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none;max-height:300px;overflow-y:auto;z-index:50}
+.search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:16px;margin-top:8px;box-shadow:0 12px 30px rgba(0,0,0,0.15);display:none;max-height:350px;overflow-y:auto;z-index:50;padding:8px 0;scrollbar-width:thin}
 .search-results.active{display:block}
-.search-item{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s}
+.search-item{padding:14px 20px;display:flex;flex-direction:column;align-items:flex-start;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s;text-decoration:none}
 .search-item:hover{background:var(--bg)}
-.search-item:last-child{border-bottom:none}
+.search-item-title{font-weight:600;font-size:15px;color:var(--tx);margin-bottom:2px}
+.search-item-type{font-size:13px;color:var(--mu)}
+.search-no-results{padding:20px;text-align:center;color:var(--mu);font-size:14px}
 
 
 /* TOP BUTTONS */
@@ -158,7 +160,8 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 @media (min-width:700px){
 header{max-width:900px;padding:16px 32px;display:flex;gap:32px}
 .lo{font-size:20px}.l2{font-size:10px}
-.search-wrap{max-width:400px;margin-left:auto;margin-right:auto}
+.search-wrap{width:320px;transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1);margin-left:auto;margin-right:auto}
+.search-wrap:focus-within{width:500px;max-width:100%}
 #mb{display:none!important}
 #av{display:block!important;width:40px!important;height:40px!important}
 .top-nav{display:flex;gap:8px;align-items:center;margin-right:20px}
@@ -277,7 +280,6 @@ var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home",editCmId:null,replyTo:n
 var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["admin","Admin"],["formation","F"],["evolution","E"],["certificats","C"],["bourses","B"],["infos","I"],["opportunites","O"],["profil","P"],["cv","V"],["confidentialite","C"],["conditions","D"],["parametres","S"],["faq","FAQ"],["bienvenue","W"],["contact","Contact"]];var HIDE=["parametres","confidentialite","conditions","profil","cv","bienvenue","cours","admin","formation","evolution","certificats","bourses","infos","opportunites"];
 
 
-// Gestion Bottom Nav
 function updateBottomNav(p){
   var bns=document.querySelectorAll('.bn-item');
   bns.forEach(function(b){b.classList.remove('on')});
@@ -310,10 +312,10 @@ function doSearch(){
     if(l.t.toLowerCase().indexOf(q)>-1 || l.c.toLowerCase().indexOf(q)>-1) matches.push({title:l.t, link:'#cours', type:'Formation'});
   });
   if(matches.length>0){
-    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><span style="font-size:16px">🔍</span><div><b>'+m.title+'</b><br><span class="mu sm">'+m.type+'</span></div></a>'}).join('');
+    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><div class="search-item-title">'+m.title+'</div><div class="search-item-type">'+m.type+'</div></a>'}).join('');
     res.classList.add('active');
   } else {
-    res.innerHTML='<div class="search-item" style="color:var(--mu)">Aucun résultat trouvé.</div>';
+    res.innerHTML='<div class="search-no-results">Aucun résultat trouvé.</div>';
     res.classList.add('active');
   }
 }
