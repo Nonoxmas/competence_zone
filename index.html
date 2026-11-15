@@ -24,20 +24,17 @@ body{margin:0;background:var(--page);color:var(--tx);font-family:var(--font);fon
 
 /* HEADER & SEARCH */
 header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent)}
-.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap;flex-shrink:0}
+.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap}
 .l2{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mu);margin-top:2px;font-weight:600}
 .search-wrap{flex:1;position:relative;min-width:0}
 .search-input{width:100%;padding:10px 16px 10px 36px;border-radius:20px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:14px;transition:all .2s}
 .search-input:focus{outline:none;border-color:var(--pr);background:var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 15%,transparent);padding-right:16px}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--mu);pointer-events:none}
-.search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:16px;margin-top:8px;box-shadow:0 12px 30px rgba(0,0,0,0.15);display:none;max-height:350px;overflow-y:auto;z-index:50;padding:8px 0;scrollbar-width:thin}
+.search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-top:8px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none;max-height:300px;overflow-y:auto;z-index:50}
 .search-results.active{display:block}
-.search-item{padding:14px 20px;display:block;text-align:left;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s;text-decoration:none;border-bottom:1px solid var(--bd)}
+.search-item{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--tx);cursor:pointer;transition:background .2s}
 .search-item:hover{background:var(--bg)}
 .search-item:last-child{border-bottom:none}
-.search-item-title{font-weight:600;font-size:15px;color:var(--tx);margin-bottom:2px}
-.search-item-type{font-size:13px;color:var(--mu)}
-.search-no-results{padding:20px;text-align:center;color:var(--mu);font-size:14px}
 
 /* TOP BUTTONS */
 #av{display:none;width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid var(--card);box-shadow:0 0 0 2px var(--bd);transition:all .2s;flex-shrink:0}
@@ -45,6 +42,9 @@ header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margi
 #av img,#av div{width:36px!important;height:36px!important}
 #mb{width:36px;height:36px;padding:0;margin:0;background:transparent;color:var(--tx);border:none;border-radius:50%;font-size:24px;line-height:1;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.7}
 #mb:hover{opacity:1;background:var(--bg)}
+
+/* NAVIGATION HORIZONTALE (ORDINATEUR) */
+.top-nav{display:none}
 
 /* FLOATING PLUS BUTTON */
 .fab-plus{position:fixed;right:20px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:30;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:400;box-shadow:0 8px 24px -4px color-mix(in srgb,var(--pr) 50%,transparent);transition:all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);cursor:pointer}
@@ -146,13 +146,31 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 .reply-box{margin-left:44px;margin-top:12px;padding-left:16px;border-left:2px solid var(--bd)}
 .reply-item{background:var(--bg);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:14px}
 
+/* NETWORK STYLES */
+.network-tabs{display:flex;gap:10px;margin-bottom:20px}
+.network-tab{flex:1;padding:10px;text-align:center;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid var(--bd);background:var(--card);transition:all .2s}
+.network-tab.active{background:var(--pr);color:#fff;border-color:var(--pr)}
+.user-card{display:flex;gap:16px;align-items:flex-start;padding:16px;border:1px solid var(--bd);border-radius:16px;margin-bottom:12px;background:var(--card);transition:all .2s}
+.user-card:hover{border-color:var(--pr);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+.user-info{flex:1;min-width:0}
+.user-info h3{margin:0 0 4px;font-size:16px;font-weight:700}
+.user-info p{margin:0;font-size:13px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.btn-small{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;text-align:center;width:auto;margin:0}
+.btn-wa{background:#25d366;color:#fff;display:flex;align-items:center;gap:4px}
+.btn-wa svg{width:14px;height:14px;fill:#fff}
+
 /* ===== ORDINATEUR ===== */
 @media (min-width:700px){
-header{max-width:900px;padding:16px 32px;display:flex;gap:20px;align-items:center}
+header{max-width:900px;padding:16px 32px;display:flex;gap:32px}
 .lo{font-size:20px}.l2{font-size:10px}
-.search-wrap{flex:1;max-width:600px;margin-left:auto;margin-right:auto}
-#av{display:block!important;width:40px!important;height:40px!important;margin-left:auto}
-#mb{display:flex!important;width:44px!important;height:44px!important;margin-left:10px}
+.search-wrap{max-width:400px;margin-left:auto;margin-right:auto}
+#mb{display:none!important}
+#av{display:block!important;width:40px!important;height:40px!important}
+.top-nav{display:flex;gap:8px;align-items:center;margin-right:20px}
+.top-nav a{padding:8px 16px;border-radius:20px;color:var(--mu);text-decoration:none;font-size:14px;font-weight:600;transition:all .3s;border:1px solid transparent}
+.top-nav a:hover{color:var(--pr);background:color-mix(in srgb,var(--pr) 8%,transparent)}
+.top-nav a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
 .bottom-nav,.bottom-drawer,.drawer-overlay,.fab-plus{display:none!important}
 #app{max-width:900px;padding:0 32px 80px}
 .c{padding:32px}
@@ -180,6 +198,7 @@ header{max-width:100%}
 <body>
 <header>
   <a class="lo" href="#accueil"><span class="l1">Bfamily</span><span class="l2">Compétences Zone</span></a>
+  <nav class="top-nav" id="top-nav"></nav>
   <div class="search-wrap">
     <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input type="text" class="search-input" id="searchBar" placeholder="Rechercher..." oninput="doSearch()">
@@ -192,6 +211,7 @@ header{max-width:100%}
 <div id="dr"></div>
 <div class="w" id="app"></div>
 
+<!-- FLOATING + BUTTON -->
 <div class="fab-plus" onclick="toggleDrawer()">+</div>
 
 <footer><div class="fw"><div class="fo"><b>Orienter</b><span>Vous aider à trouver votre voie et à révéler vos talents.</span></div><div class="fo"><b>Former</b><span>Des formations pratiques avec certificat, en ligne et en présentiel.</span></div><div class="fo"><b>Accompagner</b><span>Vers l’emploi, l’entrepreneuriat ou la création de revenus.</span></div><nav class="fl"><a href="#accueil">Accueil</a><a href="#apropos">À propos</a><a href="#formations">Formations</a><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="#confidentialite">Confidentialité</a><a href="#conditions">Conditions</a></nav><p class="fc">© Bfamily · Compétences Zone · <a href="mailto:bfamilycompetencezone@gmail.com" style="color:inherit">bfamilycompetencezone@gmail.com</a></p>
@@ -201,6 +221,7 @@ header{max-width:100%}
 </div>
 </div><div class="big" aria-hidden="true">BFAMILY</div></footer>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a href="#accueil" class="bn-item" id="bn-accueil" onclick="closeDrawer()">
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -220,11 +241,14 @@ header{max-width:100%}
   </a>
 </nav>
 
+<!-- BOTTOM DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="bottom-drawer" id="bottomDrawer">
   <div class="drawer-handle"></div>
   <div class="drawer-title">Plus d'options</div>
-  <div class="drawer-grid" id="drawerGrid"></div>
+  <div class="drawer-grid" id="drawerGrid">
+    <!-- Rempli en JS -->
+  </div>
 </div>
 
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
@@ -247,10 +271,11 @@ q:[{q:"Si la réponse n’est pas parfaite, il faut…",o:["Abandonner","Demande
 var WHY='<div class="c g reveal"><h2>Pourquoi cette formation ?</h2><p>On ne peut pas tirer le meilleur d’une IA sans maîtriser le prompting. Face à une demande floue, même une IA très puissante donne une réponse moyenne. Face à une demande bien posée, elle donne d’excellents résultats. Cette formation vous apprend à parler à l’IA.</p></div><div class="c reveal"><h2>Ce que vous gagnez</h2><p>• Savoir écrire des demandes claires et obtenir de meilleurs résultats.<br>• Gagner du temps dans vos études, votre travail ou votre activité.<br>• Un certificat Bfamily Compétences Zone à votre nom, à ajouter à votre CV et à partager.</p></div>';
 var OFFER='<div class="c g reveal"><h2>Ce que nous offrons</h2><p><b>Orienter</b> : trouver votre voie.<br><b>Former</b> : formations pratiques avec certificat.<br><b>Accompagner</b> : vers l’emploi, l’entrepreneuriat ou vos propres revenus.</p><a class="b s" href="#apropos">À propos de Bfamily</a></div>';
 var LW=["C’est le point de départ : avant de bien écrire à une IA, il faut comprendre ce qu’est un prompt et pourquoi la précision change tout.","Vous savez maintenant qu’un prompt précis donne de meilleures réponses. Cette leçon vous donne une méthode simple (Rôle, Contexte, Tâche, Format) pour être précis à chaque fois.","Même avec une bonne structure, la première réponse n’est pas toujours parfaite. Cette dernière leçon vous apprend à corriger et affiner, pour obtenir un résultat prêt à utiliser."];
-var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home",editCmId:null,replyTo:null,stats:null,certName:null,replies:{},replyingTo:null,editReplyId:null};
+var S={name:"",done:[],i:0,qi:0,sc:0,ans:null,sub:"home",editCmId:null,replyTo:null,stats:null,certName:null,replies:{},replyingTo:null,editReplyId:null,networkData:null,networkTab:"connections",networkSearch:""};
 
-var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["admin","Admin"],["formation","F"],["evolution","E"],["certificats","C"],["bourses","B"],["infos","I"],["opportunites","O"],["profil","P"],["cv","V"],["confidentialite","C"],["conditions","D"],["parametres","S"],["faq","FAQ"],["bienvenue","W"],["contact","Contact"]];var HIDE=["parametres","confidentialite","conditions","profil","cv","bienvenue","cours","admin","formation","evolution","certificats","bourses","infos","opportunites"];
+var P=[["accueil","Accueil"],["apropos","À propos"],["formations","Formations"],["cours","Prompting IA"],["verifier","Vérifier un certificat"],["admin","Admin"],["formation","F"],["evolution","E"],["certificats","C"],["bourses","B"],["infos","I"],["opportunites","O"],["reseau","Mon réseau"],["profil","P"],["cv","V"],["confidentialite","C"],["conditions","D"],["parametres","S"],["faq","FAQ"],["bienvenue","W"],["contact","Contact"]];var HIDE=["parametres","confidentialite","conditions","profil","cv","bienvenue","cours","admin","formation","evolution","certificats","bourses","infos","opportunites","reseau"];
 
+// Gestion Bottom Nav
 function updateBottomNav(p){
   var bns=document.querySelectorAll('.bn-item');
   bns.forEach(function(b){b.classList.remove('on')});
@@ -266,7 +291,7 @@ function closeDrawer(){
   document.getElementById('drawerOverlay').classList.remove('active');
 }
 function buildDrawer(){
-  var items=[["bourses","Bourses","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"],["infos","Infos","M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"],["opportunites","Opportunités","M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"],["apropos","À propos","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"],["faq","FAQ","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"],["verifier","Vérifier","M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"],["parametres","Paramètres","M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"],["contact","Contact","M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"]];
+  var items=[["reseau","Mon réseau","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"],["bourses","Bourses","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"],["infos","Infos","M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"],["opportunites","Opportunités","M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"],["apropos","À propos","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"],["faq","FAQ","M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"],["verifier","Vérifier","M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"],["parametres","Paramètres","M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"],["contact","Contact","M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"]];
   document.getElementById('drawerGrid').innerHTML=items.map(function(x){return '<a href="#'+x[0]+'" class="drawer-item" onclick="closeDrawer()"><svg viewBox="0 0 24 24"><path d="'+x[2]+'"/></svg>'+x[1]+'</a>'}).join('');
 }
 
@@ -282,10 +307,10 @@ function doSearch(){
     if(l.t.toLowerCase().indexOf(q)>-1 || l.c.toLowerCase().indexOf(q)>-1) matches.push({title:l.t, link:'#cours', type:'Formation'});
   });
   if(matches.length>0){
-    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><div class="search-item-title">'+m.title+'</div><div class="search-item-type">'+m.type+'</div></a>'}).join('');
+    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><span style="font-size:16px">🔍</span><div><b>'+m.title+'</b><br><span class="mu sm">'+m.type+'</span></div></a>'}).join('');
     res.classList.add('active');
   } else {
-    res.innerHTML='<div class="search-no-results">Aucun résultat trouvé.</div>';
+    res.innerHTML='<div class="search-item" style="color:var(--mu)">Aucun résultat trouvé.</div>';
     res.classList.add('active');
   }
 }
@@ -298,6 +323,10 @@ function page(){var h=(location.hash||"").replace("#","");if(h.indexOf("membre-"
 function render(){
   var p=page(),a=document.getElementById("app"),h="";
   updateBottomNav(p);
+  
+  document.getElementById('top-nav').innerHTML=P.filter(function(x){return HIDE.indexOf(x[0])<0 && x[0]!="verifier" && x[0]!="cours"}).map(function(x){
+    return '<a href="#'+x[0]+'" class="'+((x[0]==p)?'on':'')+'">'+x[1]+'</a>';
+  }).join('');
 
   if(p=="accueil")h='<h1 class="hero">Transformez votre potentiel en opportunités.</h1><p class="mu reveal">Bfamily Compétences Zone est une communauté d\'apprentissage ouverte à tous. Nous vous aidons à développer des compétences concrètes, à obtenir des certifications reconnues et à saisir les opportunités de demain, en ligne comme en présentiel.</p><a class="b reveal" href="#cours" style="animation-delay:0.1s">Commencer la formation Prompting IA</a><a class="b s reveal" href="#apropos" style="animation-delay:0.2s">Découvrir Bfamily</a><div class="c g reveal" style="animation-delay:0.3s"><h2>Orienter · Former · Accompagner</h2><p class="sm mu" style="margin:0">Nous vous aidons à trouver votre voie, à apprendre ce qui est utile sur le marché et à passer à l’action.</p></div>';
   if(p=="apropos")h='<h1>À propos de Bfamily</h1><div class="c reveal"><h2>Qui sommes-nous</h2><p>Née en 2018 de la volonté de transmettre, Bfamily est un collectif d\'experts et de passionnés. Nous mettons notre savoir-faire pratique, notamment en intelligence artificielle, au service de tous ceux qui souhaitent révéler leur potentiel et transformer leurs ambitions en réalité.</p></div><div class="c reveal"><h2>Notre mission</h2><p>Inspirer, former et propulser. Notre mission est de donner à chacun les clés pour découvrir ses talents, maîtriser les compétences recherchées sur le marché et les valoriser concrètement : décrocher un emploi, entreprendre ou créer ses propres revenus.</p></div><div class="c reveal"><h2>Notre vision</h2><p>Permettre aux jeunes d’acquérir des compétences solides, recherchées sur le marché, et de les exploiter pour s’en sortir : trouver un emploi ou se lancer eux-mêmes. Nous voulons une jeunesse compétente, autonome, capable de transformer ses connaissances et ses talents en vraies opportunités professionnelles.</p></div><div class="c reveal"><h2>Notre engagement qualité</h2><p>Nous choisissons des formations de qualité, dispensées par des professionnels de qualité, pour que chaque apprenant acquière un vrai bagage de compétences, que ce soit dans nos formations en ligne, nos ateliers ou nos séances en présentiel. Selon les cas, elles sont gratuites ou payantes.</p></div><div class="c g reveal"><h2>Ce que nous faisons</h2><p><b>Orienter</b> : identifier vos talents et votre voie.<br><b>Former</b> : formations gratuites ou payantes, ateliers et séances de formation, en ligne et en présentiel, auprès de professionnels de qualité.<br><b>Accompagner</b> : vous suivre vers l’emploi, l’entrepreneuriat ou la création de revenus.</p></div>';
@@ -319,6 +348,7 @@ function render(){
   if(p=="membre")h=membreView();
   if(p=="evolution")h=need(evo);
   if(p=="certificats")h=need(certs);
+  if(p=="reseau")h=need(reseauView);
   if(p=="bourses")h=soon("Bourses d’études","Retrouvez ici les bourses d’études disponibles et comment postuler.");
   if(p=="infos")h=soon("Informations","Actualités et informations utiles de Bfamily Compétences Zone.");
   if(p=="opportunites")h=soon("Opportunités","Offres d’emploi, stages, concours et opportunités pour les jeunes.");
@@ -330,7 +360,7 @@ function render(){
   a.innerHTML=h;
   drawQR();
   document.getElementById("dr").innerHTML=drawer();
-  document.getElementById("mb").style.display="flex";
+  document.getElementById("mb").style.display=S.user?"block":"none";
   if((p=="formations"||p=="formation"||h.indexOf("Apprenez les compétences")>=0)&&S.cm===undefined)loadCm();
   setTg();
   var av=document.getElementById("av");
@@ -338,6 +368,111 @@ function render(){
   document.body.classList.toggle("in",!!S.user);
   fxSync(h);
   initReveal();
+  if(p=="reseau"&&S.user&&!S.networkData) loadNetwork();
+}
+
+function loadNetwork(){
+  if(S.networkData) return;
+  S.networkData="loading";
+  render();
+  FB.getNetwork().then(function(data){
+    S.networkData=data;
+    render();
+  }).catch(function(e){ S.networkData="error"; render(); });
+}
+
+function reseauView(){
+  if(!S.authReady) return '<div class="c"><p>Chargement…</p></div>';
+  if(!S.user) return authView();
+  if(S.networkData==="loading"||S.networkData===null) return '<div class="c"><p>Chargement de votre réseau…</p></div>';
+  if(S.networkData==="error") return '<div class="c" style="color:var(--ko)"><p>Impossible de charger le réseau. Vérifiez votre connexion.</p><button class="s" onclick="S.networkData=null;render()">Réessayer</button></div>';
+
+  var d=S.networkData;
+  var h='<h1>Mon réseau</h1>';
+  
+  // Tabs
+  h+='<div class="network-tabs">';
+  h+='<div class="network-tab '+(S.networkTab==="connections"?"active":"")+'" onclick="S.networkTab=\'connections\';render()">Mes connexions ('+d.connections.length+')</div>';
+  h+='<div class="network-tab '+(S.networkTab==="requests"?"active":"")+'" onclick="S.networkTab=\'requests\';render()">Demandes ('+(d.requestsIn.length+d.requestsOut.length)+')</div>';
+  h+='</div>';
+
+  // Search
+  h+='<div class="c" style="padding:12px 16px;margin-bottom:16px"><input type="text" placeholder="Rechercher un nom, une profession..." value="'+esc(S.networkSearch)+'" oninput="S.networkSearch=this.value;render();setTimeout(function(){var i=document.querySelector(\'#app input\');if(i){i.focus();i.selectionStart=i.value.length}},50)"></div>';
+
+  if(S.networkTab==="connections"){
+    if(d.connections.length===0){
+      h+='<div class="c g"><p>Aucune connexion pour le moment. Allez dans "Demandes" ou trouvez de nouvelles personnes ci-dessous.</p></div>';
+    } else {
+      var filtered = d.connections.filter(function(c){return (c.name+" "+c.headline).toLowerCase().indexOf(S.networkSearch.toLowerCase())>-1});
+      if(filtered.length===0) h+='<div class="c g"><p>Aucun résultat pour cette recherche.</p></div>';
+      filtered.forEach(function(c){
+        var myOffer=(S.profile&&S.profile.offer)?S.profile.offer:"";
+        var msg="Bonjour "+c.name+", je vous contacte via Bfamily Compétences Zone. Je viens de vous ajouter à mon réseau. "+(myOffer?"Pour info, voici ce que je propose de mon côté : "+myOffer+". ":"")+"Au plaisir d'échanger !";
+        var waLink="https://wa.me/"+c.whatsapp+"?text="+encodeURIComponent(msg);
+        h+='<div class="user-card">';
+        h+='<a href="#membre-'+c.uid+'" class="avatar-link" style="flex:none">'+avatar(c.photo,50,c.name)+'</a>';
+        h+='<div class="user-info"><h3>'+esc(c.name)+'</h3><p>'+esc(c.headline||c.status||"Membre")+'</p></div>';
+        h+='<div class="user-actions">';
+        if(c.whatsapp) h+='<a href="'+waLink+'" target="_blank" class="btn-small btn-wa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>WhatsApp</a>';
+        h+='<button class="btn-small s" onclick="FB.removeConnection(\''+c.uid+'\')" style="color:var(--ko);border:1px solid var(--ko)">Retirer</button>';
+        h+='</div></div>';
+      });
+    }
+  } else {
+    // Onglet Demandes
+    if(d.requestsIn.length>0){
+      h+='<h2>Demandes reçues</h2>';
+      d.requestsIn.forEach(function(r){
+        var sender = d.users.find(function(u){return u.uid==r.from});
+        if(!sender) return;
+        h+='<div class="user-card" style="border-color:var(--pr)">';
+        h+='<a href="#membre-'+sender.uid+'" class="avatar-link" style="flex:none">'+avatar(sender.photo,50,sender.name)+'</a>';
+        h+='<div class="user-info"><h3>'+esc(sender.name)+'</h3><p>'+esc(sender.headline||"Membre")+'</p></div>';
+        h+='<div class="user-actions">';
+        h+='<button class="btn-small" onclick="FB.acceptRequest(\''+r.id+'\',\''+sender.uid+'\')">Accepter</button>';
+        h+='<button class="btn-small s" onclick="FB.rejectRequest(\''+r.id+'\')" style="color:var(--ko);border:1px solid var(--ko)">Refuser</button>';
+        h+='</div></div>';
+      });
+    }
+    if(d.requestsOut.length>0){
+      h+='<h2>Demandes envoyées</h2>';
+      d.requestsOut.forEach(function(r){
+        var target = d.users.find(function(u){return u.uid==r.to});
+        if(!target) return;
+        h+='<div class="user-card">';
+        h+='<a href="#membre-'+target.uid+'" class="avatar-link" style="flex:none">'+avatar(target.photo,50,target.name)+'</a>';
+        h+='<div class="user-info"><h3>'+esc(target.name)+'</h3><p>'+esc(target.headline||"Membre")+'</p></div>';
+        h+='<div class="user-actions"><span class="sm mu">En attente</span></div>';
+        h+='</div>';
+      });
+    }
+    if(d.requestsIn.length===0 && d.requestsOut.length===0) h+='<div class="c g"><p>Aucune demande en attente.</p></div>';
+  }
+
+  // Découvrir d'autres membres
+  h+='<h2 style="margin-top:32px">Découvrir des membres</h2>';
+  var others = d.users.filter(function(u){ 
+    return u.uid!=S.user.uid 
+      && d.connections.findIndex(function(c){return c.uid==u.uid})<0
+      && d.requestsOut.findIndex(function(r){return r.to==u.uid})<0
+      && d.requestsIn.findIndex(function(r){return r.from==u.uid})<0;
+  });
+  if(S.networkSearch) others = others.filter(function(u){return (u.name+" "+u.headline).toLowerCase().indexOf(S.networkSearch.toLowerCase())>-1});
+  
+  if(others.length===0){
+    h+='<div class="c g"><p>Aucun nouveau membre à découvrir.</p></div>';
+  } else {
+    others.forEach(function(u){
+      h+='<div class="user-card">';
+      h+='<a href="#membre-'+u.uid+'" class="avatar-link" style="flex:none">'+avatar(u.photo,50,u.name)+'</a>';
+      h+='<div class="user-info"><h3>'+esc(u.name)+'</h3><p>'+esc(u.headline||"Membre")+'</p></div>';
+      h+='<div class="user-actions">';
+      h+='<button class="btn-small" onclick="FB.sendRequest(\''+u.uid+'\')">Se connecter</button>';
+      h+='</div></div>';
+    });
+  }
+
+  return h;
 }
 
 function initReveal(){var els=document.querySelectorAll('.reveal');var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('active');obs.unobserve(e.target)}})},{threshold:0.1});els.forEach(function(el){obs.observe(el)})}
@@ -416,7 +551,7 @@ function evo(){var p=Math.round(S.done.length/L.length*100);return '<h1>Mon évo
 function certs(){return '<h1>Mes certificats</h1>'+(S.certId||S.done.length>=L.length?'<div class="c reveal"><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2>'+(S.certId?'<p class="mu sm">N° '+esc(S.certId)+'</p>':'')+'<a class="b" href="#cours" onclick="S.sub=\'cert\'">Voir et télécharger</a></div>':'<div class="c reveal"><p>Aucun certificat pour le moment. Terminez une formation pour obtenir le vôtre.</p><a class="b" href="#formations">Voir les formations</a></div>')}
 function soon(t,d){return need(function(){return '<h1>'+t+'</h1><div class="c reveal"><p>'+d+'</p><p class="mu sm">Cette rubrique est en préparation et sera bientôt disponible.</p><a class="b s" href="https://wa.me/'+WA+'?text='+encodeURIComponent("Bonjour, j’ai une question sur : "+t)+'" target="_blank" rel="noopener">Poser une question sur WhatsApp</a></div>'})}
 function drawer(){if(!S.menu||!S.user)return "";var l=function(h,t){return '<a href="#'+h+'" onclick="S.menu=0;render()">'+t+'</a>'};
-return '<div class="ov" onclick="S.menu=0;render()"></div><div class="pn"><div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bd)">'+'<a href="#profil" onclick="S.menu=0;render()" style="flex:none;text-decoration:none">'+avatar((S.profile||{}).photo,60,S.name)+'</a><div style="min-width:0"><b style="font-size:18px;display:block">'+esc(S.name||"Mon compte")+'</b><span class="mu sm" style="word-break:break-all;font-size:13px">'+esc(S.user.email||"")+'</span></div></div>'+l("cours","Ma formation")+l("profil","Mon profil")+l("cv","Mon CV")+l("evolution","Mon évolution")+l("certificats","Mes certificats")+l("bourses","Bourses d’études")+l("infos","Informations")+l("opportunites","Opportunités")+l("parametres","Paramètres")+'<a href="#accueil" onclick="S.menu=0;FB.out();return false" style="color:var(--ko);margin-top:16px">Se déconnecter</a></div>'}
+return '<div class="ov" onclick="S.menu=0;render()"></div><div class="pn"><div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bd)">'+'<a href="#profil" onclick="S.menu=0;render()" style="flex:none;text-decoration:none">'+avatar((S.profile||{}).photo,60,S.name)+'</a><div style="min-width:0"><b style="font-size:18px;display:block">'+esc(S.name||"Mon compte")+'</b><span class="mu sm" style="word-break:break-all;font-size:13px">'+esc(S.user.email||"")+'</span></div></div>'+l("reseau","Mon réseau")+l("cours","Ma formation")+l("profil","Mon profil")+l("cv","Mon CV")+l("evolution","Mon évolution")+l("certificats","Mes certificats")+l("bourses","Bourses d’études")+l("infos","Informations")+l("opportunites","Opportunités")+l("parametres","Paramètres")+'<a href="#accueil" onclick="S.menu=0;FB.out();return false" style="color:var(--ko);margin-top:16px">Se déconnecter</a></div>'}
 function val(i,raw){var e=document.getElementById(i);return e?(raw?e.value:e.value.trim()):""}
 function msg(x){var c=(x&&x.code)||"",m={"auth/email-already-in-use":"Cet e-mail a déjà un compte. Cliquez sur Se connecter.","auth/invalid-credential":"E-mail ou mot de passe incorrect.","auth/wrong-password":"E-mail ou mot de passe incorrect.","auth/user-not-found":"E-mail ou mot de passe incorrect.","auth/weak-password":"Mot de passe trop court (6 caractères minimum).","auth/invalid-email":"Adresse e-mail invalide.","auth/popup-closed-by-user":"","auth/cancelled-popup-request":"","auth/unauthorized-domain":"Ce domaine n’est pas autorisé dans Firebase.","auth/network-request-failed":"Problème de connexion internet."};return c in m?m[c]:"Erreur ("+c+"). Réessayez."}
 var FAQ=[["Sur Bfamily Compétences Zone",[
@@ -523,7 +658,7 @@ function delReply(id){
 
 var STATUS=["","En recherche d'emploi","Étudiant(e)","Salarié(e)","Entrepreneur(e)","Je propose une activité ou un service","Autre"];
 function avatar(ph,z,nm){var ok=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(ph||"");return ok?'<img src="'+ph+'" alt="" style="width:'+z+'px;height:'+z+'px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.1)">':'<div style="width:'+z+'px;height:'+z+'px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);display:inline-flex;align-items:center;justify-content:center;font-size:'+z/2.5+'px;color:#fff;font-weight:800;box-shadow:0 2px 8px rgba(37,99,235,0.2)">'+esc(((nm||S.name||"?")[0]||"?").toUpperCase())+'</div>'}
-function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked;p.phoneWA=g("pwa");p.waAccept=document.getElementById("waAcc").checked}
+function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked;p.whatsapp=g("pwa")}
 function readCv(){
   var c=S.cv=S.cv||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null};
   if(g("cp")===null)return;
@@ -541,7 +676,7 @@ function saveAll(){S.pmsg="Enregistrement…";render();FB.saveProfile().then(fun
 function saveProfile(){readProfile();if((S.name||"").length<2){alert("Entrez votre nom.");return}saveAll()}
 function saveCv(){readCv();saveAll()}
 function profilView(){var p=S.profile||{},st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
-return '<h1>Mon profil</h1><div class="c reveal" style="text-align:center">'+avatar(p.photo,110)+'<input id="pf" type="file" accept="image/*" onchange="pickPhoto(this)" style="margin-top:16px"></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Nom affiché</label><input id="pn" value="'+esc(S.name)+'" maxlength="40"><label class="sm mu" style="font-weight:600">Profession ou titre</label><input id="ph" value="'+esc(p.headline||"")+'" maxlength="60" placeholder="Ex. Étudiante en comptabilité"><label class="sm mu" style="font-weight:600">Statut</label><select id="ps" style="'+st+'">'+STATUS.map(function(o){return '<option'+(o==(p.status||"")?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select><label class="sm mu" style="font-weight:600">Bio</label><textarea id="pb" rows="3" maxlength="300" style="'+st+'" placeholder="Qui êtes-vous ? Que faites-vous ?">'+esc(p.bio||"")+'</textarea><label class="sm mu" style="font-weight:600">Ce que je propose (activité, service)</label><textarea id="po" rows="2" maxlength="200" style="'+st+'">'+esc(p.offer||"")+'</textarea><label class="sm mu" style="font-weight:600">Ville et pays (facultatif)</label><input id="pc" value="'+esc(p.city||"")+'" maxlength="60"></div><div class="c reveal"><h2>Contact WhatsApp</h2><label class="sm mu" style="font-weight:600">Numéro WhatsApp (format international, ex: +229...)</label><input id="pwa" value="'+esc(p.phoneWA||"")+'" maxlength="20" placeholder="Ex: +2290197610535"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin-top:12px"><input type="checkbox" id="waAcc" style="width:auto;margin-top:4px"'+(p.waAccept?' checked':'')+'><span class="sm" style="color:var(--tx)"><b>J\'accepte d\'être contacté(e) sur WhatsApp</b><br><span class="mu">Le bouton "Se connecter" apparaîtra sur votre profil public. Votre numéro ne sera jamais visible en clair.</span></span></label></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pp" style="width:auto;margin-top:4px"'+(p.pub!==false?' checked':'')+'><span><b>Profil public</b><br><span class="sm mu">Visible par toute personne qui a votre lien : nom, photo, titre, statut, bio, ville et certifications, et votre CV si vous le choisissez dans Mon CV. Décochez pour le garder privé. Votre e-mail et votre téléphone ne sont jamais affichés.</span></span></label></div><button onclick="saveProfile()" class="reveal">Enregistrer mon profil</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+(p.pub!==false?'<a class="b s reveal" href="#membre-'+S.user.uid+'">Voir mon profil public</a>':'')+'<a class="b s reveal" href="#cv">Mon CV</a><a class="b s reveal" href="#parametres">Paramètres du compte</a>'}
+return '<h1>Mon profil</h1><div class="c reveal" style="text-align:center">'+avatar(p.photo,110)+'<input id="pf" type="file" accept="image/*" onchange="pickPhoto(this)" style="margin-top:16px"></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Nom affiché</label><input id="pn" value="'+esc(S.name)+'" maxlength="40"><label class="sm mu" style="font-weight:600">Profession ou titre</label><input id="ph" value="'+esc(p.headline||"")+'" maxlength="60" placeholder="Ex. Étudiante en comptabilité"><label class="sm mu" style="font-weight:600">Statut</label><select id="ps" style="'+st+'">'+STATUS.map(function(o){return '<option'+(o==(p.status||"")?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select><label class="sm mu" style="font-weight:600">Bio</label><textarea id="pb" rows="3" maxlength="300" style="'+st+'" placeholder="Qui êtes-vous ? Que faites-vous ?">'+esc(p.bio||"")+'</textarea><label class="sm mu" style="font-weight:600">Ce que je propose (activité, service)</label><textarea id="po" rows="2" maxlength="200" style="'+st+'">'+esc(p.offer||"")+'</textarea><label class="sm mu" style="font-weight:600">Ville et pays (facultatif)</label><input id="pc" value="'+esc(p.city||"")+'" maxlength="60"><label class="sm mu" style="font-weight:600">Mon numéro WhatsApp (privé)</label><input id="pwa" value="'+esc(p.whatsapp||"")+'" maxlength="20" placeholder="Ex: 22900000000" style="background:var(--bg)"><p class="sm mu" style="margin-top:4px">Utilisé uniquement pour le bouton WhatsApp de votre réseau.</p></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pp" style="width:auto;margin-top:4px"'+(p.pub!==false?' checked':'')+'><span><b>Profil public</b><br><span class="sm mu">Visible par toute personne qui a votre lien : nom, photo, titre, statut, bio, ville et certifications, et votre CV si vous le choisissez dans Mon CV. Décochez pour le garder privé. Votre e-mail et votre téléphone ne sont jamais affichés.</span></span></label></div><button onclick="saveProfile()" class="reveal">Enregistrer mon profil</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+(p.pub!==false?'<a class="b s reveal" href="#membre-'+S.user.uid+'">Voir mon profil public</a>':'')+'<a class="b s reveal" href="#cv">Mon CV</a><a class="b s reveal" href="#parametres">Paramètres du compte</a>'}
 function cvView(){
   var c=S.cv||{},ce=S.certs||[],st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
   var customHtml = '';
@@ -560,12 +695,7 @@ if(!window.FB)return '<div class="c"><p>Chargement…</p></div>';
 if(S.memId!==uid){S.memId=uid;S.mem=null;FB.pub(uid).then(function(d){S.mem=d||"none";render()}).catch(function(){S.mem="none";render()})}
 var m=S.mem;if(m===null||m===undefined)return '<div class="c"><p>Chargement…</p></div>';
 if(m=="none")return '<h1>Profil introuvable</h1><div class="c reveal"><p>Ce profil n’existe pas ou il a été rendu privé par son propriétaire.</p><a class="b s" href="#formations" style="margin-top:20px">Retour aux formations</a></div>';
-var waBtn = '';
-if(m.phoneWA && m.waAccept && S.user) {
-  var msgWa = "Bonjour " + m.name + ", je vous contacte depuis Bfamily Compétences Zone. Je suis " + (S.profile.headline ? S.profile.headline + " - " : "") + S.profile.status + ". Je souhaite échanger avec vous.";
-  waBtn = '<a href="https://wa.me/'+m.phoneWA.replace(/[^0-9]/g, '')+'?text='+encodeURIComponent(msgWa)+'" target="_blank" class="b" style="background:#25d366;box-shadow:0 10px 15px -3px rgba(37,211,102,0.3);margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>Se connecter</a>';
-}
-return '<div class="c reveal" style="text-align:center;background:linear-gradient(180deg, color-mix(in srgb,var(--pr) 5%,var(--card)), var(--card))">'+avatar(m.photo,110,m.name)+'<h1 style="margin-top:16px;margin-bottom:8px">'+esc(m.name)+'</h1>'+(m.headline?'<p style="margin:0;font-weight:600;font-size:18px">'+esc(m.headline)+'</p>':'')+(m.status?'<div style="margin-top:12px"><span class="tag">'+esc(m.status)+'</span></div>':'')+(m.city?'<p class="mu sm" style="margin-top:8px">📍 '+esc(m.city)+'</p>':'')+waBtn+'</div>'+(m.bio?'<div class="c reveal"><h2>À propos</h2><p style="line-height:1.7">'+esc(m.bio)+'</p></div>':'')+(m.offer?'<div class="c reveal"><h2>Ce que je propose</h2><p style="line-height:1.7">'+esc(m.offer)+'</p></div>':'')+((m.certs||[]).length?'<div class="c reveal"><h2>Certifications</h2>'+m.certs.map(function(c){return '<div style="margin:12px 0;padding:12px;background:var(--bg);border-radius:12px;border-left:4px solid var(--ok)"><b>'+esc(c.title)+'</b><br><span class="mu sm">'+esc(c.org)+' · N° '+esc(c.id)+'</span></div>'}).join("")+'<p class="mu sm">Chaque numéro peut être vérifié dans la page Vérifier un certificat.</p></div>':'')+(m.cv?cvCard(m):'')}
+return '<div class="c reveal" style="text-align:center;background:linear-gradient(180deg, color-mix(in srgb,var(--pr) 5%,var(--card)), var(--card))">'+avatar(m.photo,110,m.name)+'<h1 style="margin-top:16px;margin-bottom:8px">'+esc(m.name)+'</h1>'+(m.headline?'<p style="margin:0;font-weight:600;font-size:18px">'+esc(m.headline)+'</p>':'')+(m.status?'<div style="margin-top:12px"><span class="tag">'+esc(m.status)+'</span></div>':'')+(m.city?'<p class="mu sm" style="margin-top:8px">📍 '+esc(m.city)+'</p>':'')+'</div>'+(m.bio?'<div class="c reveal"><h2>À propos</h2><p style="line-height:1.7">'+esc(m.bio)+'</p></div>':'')+(m.offer?'<div class="c reveal"><h2>Ce que je propose</h2><p style="line-height:1.7">'+esc(m.offer)+'</p></div>':'')+((m.certs||[]).length?'<div class="c reveal"><h2>Certifications</h2>'+m.certs.map(function(c){return '<div style="margin:12px 0;padding:12px;background:var(--bg);border-radius:12px;border-left:4px solid var(--ok)"><b>'+esc(c.title)+'</b><br><span class="mu sm">'+esc(c.org)+' · N° '+esc(c.id)+'</span></div>'}).join("")+'<p class="mu sm">Chaque numéro peut être vérifié dans la page Vérifier un certificat.</p></div>':'')+(m.cv?cvCard(m):'')}
 function avLink(x,z){var a=avatar(x.photo,z,x.name);return x.pub!==false?'<a href="#membre-'+x.uid+'" class="avatar-link" title="Voir le profil" style="flex:none;text-decoration:none">'+a+'</a>':a}
 function cvCard(m){var c=m.cv||{},sec=function(t,v){return v?'<h3 style="margin:20px 0 8px;font-size:16px;color:var(--pr);text-transform:uppercase;letter-spacing:1px;font-weight:800">'+t+'</h3><p style="margin:0;line-height:1.7">'+esc(v).replace(/\n/g,"<br>")+'</p>':''};
   var customStr = '';
@@ -741,9 +871,9 @@ try{await deleteDoc(doc(db,"users",uid))}catch(e){}
 await deleteUser(auth.currentUser)},
 pub:async function(uid){var x=await getDoc(doc(db,"profiles",uid));return x.exists()?x.data():null},
 saveProfile:async function(){var p=S.profile||{},ce=(S.certs||[]).map(function(c){return{title:c.title,org:c.org,date:c.date,id:c.id}});
-await setDoc(doc(db,"users",S.user.uid),{name:S.name,profile:p,cv:S.cv||{},certs:S.certs||[]},{merge:true});
-if(p.pub!==false){var pd={name:S.name,headline:p.headline||"",status:p.status||"",bio:p.bio||"",offer:p.offer||"",city:p.city||"",photo:p.photo||"",certs:ce,updatedAt:Date.now(),phoneWA:p.phoneWA||"",waAccept:p.waAccept||false},cc=S.cv||{};
-if(cc.pub){pd.cv={exp:(cc.exp||"").slice(0,1500),edu:(cc.edu||"").slice(0,1000),skills:(cc.skills||"").slice(0,500),langs:(cc.langs||"").slice(0,100),customSections:(cc.customSections||[]).slice(0,10)}}
+await setDoc(doc(db,"users",S.user.uid),{name:S.name,profile:p,whatsapp:p.whatsapp||"",cv:S.cv||{},certs:S.certs||[]},{merge:true});
+if(p.pub!==false){var pd={name:S.name,headline:p.headline||"",status:p.status||"",bio:p.bio||"",offer:p.offer||"",city:p.city||"",photo:p.photo||"",certs:ce,updatedAt:Date.now()},cc=S.cv||{};
+if(cc.pub){pd.cv={exp:(cc.exp||"").slice(0,1500),edu:(cc.edu||"").slice(0,1000),skills:(cc.skills||"").slice(0,500),langs:(cc.langs||"").slice(0,100)}}
 await setDoc(doc(db,"profiles",S.user.uid),pd)}else{try{await deleteDoc(doc(db,"profiles",S.user.uid))}catch(e){}}},
 adm:async function(){var q=await getDocs(collection(db,"users")),u=[];q.forEach(function(d){var x=d.data();x.uid=d.id;u.push(x)});return u},
 admDel:async function(uid){
@@ -801,6 +931,83 @@ editReply:async function(id, newText){
 delReply:async function(id){
   await deleteDoc(doc(db,"replies",id));
 },
+getNetwork:async function(){
+  var allUsers = [];
+  var uq = await getDocs(collection(db,"users"));
+  uq.forEach(function(d){
+    var data = d.data();
+    // Si le profil est public ou si c'est nous-même, on l'ajoute
+    if((data.profile && data.profile.pub !== false) || d.id === S.user.uid) {
+      allUsers.push({
+        uid: d.id,
+        name: data.name || "Membre",
+        headline: (data.profile && data.profile.headline) || "",
+        offer: (data.profile && data.profile.offer) || "",
+        photo: (data.profile && data.profile.photo) || "",
+        whatsapp: data.whatsapp || ""
+      });
+    }
+  });
+
+  var conns = [];
+  var reqIn = [];
+  var reqOut = [];
+
+  var rq = await getDocs(collection(db,"requests"));
+  rq.forEach(function(d){
+    var r = d.data(); r.id = d.id;
+    if(r.status === "pending") {
+      if(r.from === S.user.uid) reqOut.push(r);
+      if(r.to === S.user.uid) reqIn.push(r);
+    } else if(r.status === "accepted") {
+      if(r.from === S.user.uid) conns.push(r.to);
+      if(r.to === S.user.uid) conns.push(r.from);
+    }
+  });
+
+  var connProfiles = [];
+  for(var i=0;i<conns.length;i++){
+    var c = allUsers.find(function(u){return u.uid === conns[i]});
+    if(c) connProfiles.push(c);
+  }
+
+  return { users: allUsers, connections: connProfiles, requestsIn: reqIn, requestsOut: reqOut };
+},
+sendRequest:async function(toUid){
+  if(!S.user) return;
+  // Vérifier qu'une demande n'existe pas déjà
+  var reqId = S.user.uid + "_" + toUid;
+  await setDoc(doc(db,"requests",reqId), {
+    from: S.user.uid,
+    to: toUid,
+    status: "pending",
+    createdAt: Date.now()
+  });
+  S.networkData = null;
+  loadNetwork();
+},
+acceptRequest:async function(reqId, fromUid){
+  if(!S.user) return;
+  await updateDoc(doc(db,"requests",reqId), { status: "accepted" });
+  S.networkData = null;
+  loadNetwork();
+},
+rejectRequest:async function(reqId){
+  if(!S.user) return;
+  await deleteDoc(doc(db,"requests",reqId));
+  S.networkData = null;
+  loadNetwork();
+},
+removeConnection:async function(targetUid){
+  if(!S.user) return;
+  if(!confirm("Voulez-vous vraiment retirer cette personne de votre réseau ?")) return;
+  var reqId1 = S.user.uid + "_" + targetUid;
+  var reqId2 = targetUid + "_" + S.user.uid;
+  try{ await deleteDoc(doc(db,"requests",reqId1)); }catch(e){}
+  try{ await deleteDoc(doc(db,"requests",reqId2)); }catch(e){}
+  S.networkData = null;
+  loadNetwork();
+},
 issue:async function(){
 if(S.issuing||S.certId||!S.user)return;S.issuing=true;
 var A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -818,7 +1025,7 @@ onAuthStateChanged(auth,async function(u){
 if(!u){try{localStorage.removeItem("bf_in")}catch(e){}S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.certName=null;S.profile=null;S.cv=null;S.certs=[];S.prefs=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
 S.user={uid:u.uid,email:u.email};S.err="";try{localStorage.setItem("bf_in","1")}catch(e){}try{await u.reload()}catch(e){}S.verified=u.emailVerified;S.prov=(u.providerData||[]).some(function(x){return x.providerId=="password"})?"password":"google";
 try{var x=await getDoc(doc(db,"users",u.uid));
-if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.certName=d.certName||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}}
+if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.certName=d.certName||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}; S.profile.whatsapp = d.whatsapp || "";}
 else{S.name=S.pendingName||u.displayName||"";S.done=[];S.certId=null;S.profile={};S.cv={auto:true};S.certs=[];S.prefs={news:true};await setDoc(doc(db,"users",u.uid),{name:S.name,email:u.email||"",done:[],createdAt:Date.now(),consentAt:Date.now(),prefs:{news:true}})}
 }catch(e){S.err="Impossible de charger votre compte."}
 if(!location.hash||location.hash=="#accueil")location.hash="cours";S.authReady=true;render()});
