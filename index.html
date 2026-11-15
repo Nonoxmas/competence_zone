@@ -24,10 +24,10 @@ body{margin:0;background:var(--page);color:var(--tx);font-family:var(--font);fon
 
 
 /* HEADER & SEARCH */
-header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent)}
-.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap}
+header{border-bottom:1px solid var(--bd);padding:10px 16px;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:color-mix(in srgb,var(--page) 80%,transparent);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--bd) 50%,transparent);transition:all 0.3s ease}
+.lo{font-weight:800;font-size:16px;color:var(--pr);display:flex;flex-direction:column;line-height:1.1;text-decoration:none;letter-spacing:-0.5px;white-space:nowrap;flex-shrink:0}
 .l2{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mu);margin-top:2px;font-weight:600}
-.search-wrap{flex:1;position:relative;min-width:0}
+.search-wrap{flex:1;position:relative;min-width:0;transition:all 0.3s ease}
 .search-input{width:100%;padding:10px 16px 10px 36px;border-radius:20px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:14px;transition:all .2s}
 .search-input:focus{outline:none;border-color:var(--pr);background:var(--card);box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 15%,transparent);padding-right:16px}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--mu);pointer-events:none}
@@ -161,13 +161,15 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 header{max-width:900px;padding:16px 32px;display:flex;gap:32px}
 .lo{font-size:20px}.l2{font-size:10px}
 .search-wrap{width:320px;transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1);margin-left:auto;margin-right:auto}
-.search-wrap:focus-within{width:500px;max-width:100%}
-#mb{display:none!important}
-#av{display:block!important;width:40px!important;height:40px!important}
-.top-nav{display:flex;gap:8px;align-items:center;margin-right:20px}
+/* Animation de la barre de recherche au focus */
+header:focus-within .top-nav{opacity:0;pointer-events:none;transform:translateX(-20px)}
+header:focus-within .search-wrap{width:600px;max-width:100%}
+.top-nav{display:flex;gap:8px;align-items:center;margin-right:20px;transition:all 0.3s ease}
 .top-nav a{padding:8px 16px;border-radius:20px;color:var(--mu);text-decoration:none;font-size:14px;font-weight:600;transition:all .3s;border:1px solid transparent}
 .top-nav a:hover{color:var(--pr);background:color-mix(in srgb,var(--pr) 8%,transparent)}
 .top-nav a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+#mb{display:none!important}
+#av{display:block!important;width:40px!important;height:40px!important}
 .bottom-nav,.bottom-drawer,.drawer-overlay,.fab-plus{display:none!important}
 #app{max-width:900px;padding:0 32px 80px}
 .c{padding:32px}
@@ -210,7 +212,6 @@ header{max-width:100%}
 <div class="w" id="app"></div>
 
 
-<!-- FLOATING + BUTTON -->
 <div class="fab-plus" onclick="toggleDrawer()">+</div>
 
 
@@ -222,7 +223,6 @@ header{max-width:100%}
 </div><div class="big" aria-hidden="true">BFAMILY</div></footer>
 
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a href="#accueil" class="bn-item" id="bn-accueil" onclick="closeDrawer()">
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -243,14 +243,11 @@ header{max-width:100%}
 </nav>
 
 
-<!-- BOTTOM DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="bottom-drawer" id="bottomDrawer">
   <div class="drawer-handle"></div>
   <div class="drawer-title">Plus d'options</div>
-  <div class="drawer-grid" id="drawerGrid">
-    <!-- Rempli en JS -->
-  </div>
+  <div class="drawer-grid" id="drawerGrid"></div>
 </div>
 
 
@@ -312,7 +309,7 @@ function doSearch(){
     if(l.t.toLowerCase().indexOf(q)>-1 || l.c.toLowerCase().indexOf(q)>-1) matches.push({title:l.t, link:'#cours', type:'Formation'});
   });
   if(matches.length>0){
-    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\')"><div class="search-item-title">'+m.title+'</div><div class="search-item-type">'+m.type+'</div></a>'}).join('');
+    res.innerHTML=matches.map(function(m){return '<a href="'+m.link+'" class="search-item" onclick="document.getElementById(\'searchBar\').value=\'\';document.getElementById(\'searchResults\').classList.remove(\'active\');document.getElementById(\'searchBar\').blur()"><div class="search-item-title">'+m.title+'</div><div class="search-item-type">'+m.type+'</div></a>'}).join('');
     res.classList.add('active');
   } else {
     res.innerHTML='<div class="search-no-results">Aucun résultat trouvé.</div>';
@@ -564,7 +561,7 @@ function delReply(id){
 
 var STATUS=["","En recherche d'emploi","Étudiant(e)","Salarié(e)","Entrepreneur(e)","Je propose une activité ou un service","Autre"];
 function avatar(ph,z,nm){var ok=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(ph||"");return ok?'<img src="'+ph+'" alt="" style="width:'+z+'px;height:'+z+'px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.1)">':'<div style="width:'+z+'px;height:'+z+'px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);display:inline-flex;align-items:center;justify-content:center;font-size:'+z/2.5+'px;color:#fff;font-weight:800;box-shadow:0 2px 8px rgba(37,99,235,0.2)">'+esc(((nm||S.name||"?")[0]||"?").toUpperCase())+'</div>'}
-function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked}
+function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked;p.phoneWA=g("pwa");p.waAccept=document.getElementById("waAcc").checked}
 function readCv(){
   var c=S.cv=S.cv||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null};
   if(g("cp")===null)return;
@@ -582,7 +579,7 @@ function saveAll(){S.pmsg="Enregistrement…";render();FB.saveProfile().then(fun
 function saveProfile(){readProfile();if((S.name||"").length<2){alert("Entrez votre nom.");return}saveAll()}
 function saveCv(){readCv();saveAll()}
 function profilView(){var p=S.profile||{},st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
-return '<h1>Mon profil</h1><div class="c reveal" style="text-align:center">'+avatar(p.photo,110)+'<input id="pf" type="file" accept="image/*" onchange="pickPhoto(this)" style="margin-top:16px"></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Nom affiché</label><input id="pn" value="'+esc(S.name)+'" maxlength="40"><label class="sm mu" style="font-weight:600">Profession ou titre</label><input id="ph" value="'+esc(p.headline||"")+'" maxlength="60" placeholder="Ex. Étudiante en comptabilité"><label class="sm mu" style="font-weight:600">Statut</label><select id="ps" style="'+st+'">'+STATUS.map(function(o){return '<option'+(o==(p.status||"")?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select><label class="sm mu" style="font-weight:600">Bio</label><textarea id="pb" rows="3" maxlength="300" style="'+st+'" placeholder="Qui êtes-vous ? Que faites-vous ?">'+esc(p.bio||"")+'</textarea><label class="sm mu" style="font-weight:600">Ce que je propose (activité, service)</label><textarea id="po" rows="2" maxlength="200" style="'+st+'">'+esc(p.offer||"")+'</textarea><label class="sm mu" style="font-weight:600">Ville et pays (facultatif)</label><input id="pc" value="'+esc(p.city||"")+'" maxlength="60"></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pp" style="width:auto;margin-top:4px"'+(p.pub!==false?' checked':'')+'><span><b>Profil public</b><br><span class="sm mu">Visible par toute personne qui a votre lien : nom, photo, titre, statut, bio, ville et certifications, et votre CV si vous le choisissez dans Mon CV. Décochez pour le garder privé. Votre e-mail et votre téléphone ne sont jamais affichés.</span></span></label></div><button onclick="saveProfile()" class="reveal">Enregistrer mon profil</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+(p.pub!==false?'<a class="b s reveal" href="#membre-'+S.user.uid+'">Voir mon profil public</a>':'')+'<a class="b s reveal" href="#cv">Mon CV</a><a class="b s reveal" href="#parametres">Paramètres du compte</a>'}
+return '<h1>Mon profil</h1><div class="c reveal" style="text-align:center">'+avatar(p.photo,110)+'<input id="pf" type="file" accept="image/*" onchange="pickPhoto(this)" style="margin-top:16px"></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Nom affiché</label><input id="pn" value="'+esc(S.name)+'" maxlength="40"><label class="sm mu" style="font-weight:600">Profession ou titre</label><input id="ph" value="'+esc(p.headline||"")+'" maxlength="60" placeholder="Ex. Étudiante en comptabilité"><label class="sm mu" style="font-weight:600">Statut</label><select id="ps" style="'+st+'">'+STATUS.map(function(o){return '<option'+(o==(p.status||"")?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select><label class="sm mu" style="font-weight:600">Bio</label><textarea id="pb" rows="3" maxlength="300" style="'+st+'" placeholder="Qui êtes-vous ? Que faites-vous ?">'+esc(p.bio||"")+'</textarea><label class="sm mu" style="font-weight:600">Ce que je propose (activité, service)</label><textarea id="po" rows="2" maxlength="200" style="'+st+'">'+esc(p.offer||"")+'</textarea><label class="sm mu" style="font-weight:600">Ville et pays (facultatif)</label><input id="pc" value="'+esc(p.city||"")+'" maxlength="60"></div><div class="c reveal"><h2>Contact WhatsApp</h2><label class="sm mu" style="font-weight:600">Numéro WhatsApp (format international, ex: +229...)</label><input id="pwa" value="'+esc(p.phoneWA||"")+'" maxlength="20" placeholder="Ex: +2290197610535"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin-top:12px"><input type="checkbox" id="waAcc" style="width:auto;margin-top:4px"'+(p.waAccept?' checked':'')+'><span class="sm" style="color:var(--tx)"><b>J\'accepte d\'être contacté(e) sur WhatsApp</b><br><span class="mu">Le bouton "Se connecter" apparaîtra sur votre profil public. Votre numéro ne sera jamais visible en clair.</span></span></label></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pp" style="width:auto;margin-top:4px"'+(p.pub!==false?' checked':'')+'><span><b>Profil public</b><br><span class="sm mu">Visible par toute personne qui a votre lien : nom, photo, titre, statut, bio, ville et certifications, et votre CV si vous le choisissez dans Mon CV. Décochez pour le garder privé. Votre e-mail et votre téléphone ne sont jamais affichés.</span></span></label></div><button onclick="saveProfile()" class="reveal">Enregistrer mon profil</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+(p.pub!==false?'<a class="b s reveal" href="#membre-'+S.user.uid+'">Voir mon profil public</a>':'')+'<a class="b s reveal" href="#cv">Mon CV</a><a class="b s reveal" href="#parametres">Paramètres du compte</a>'}
 function cvView(){
   var c=S.cv||{},ce=S.certs||[],st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
   var customHtml = '';
@@ -601,7 +598,12 @@ if(!window.FB)return '<div class="c"><p>Chargement…</p></div>';
 if(S.memId!==uid){S.memId=uid;S.mem=null;FB.pub(uid).then(function(d){S.mem=d||"none";render()}).catch(function(){S.mem="none";render()})}
 var m=S.mem;if(m===null||m===undefined)return '<div class="c"><p>Chargement…</p></div>';
 if(m=="none")return '<h1>Profil introuvable</h1><div class="c reveal"><p>Ce profil n’existe pas ou il a été rendu privé par son propriétaire.</p><a class="b s" href="#formations" style="margin-top:20px">Retour aux formations</a></div>';
-return '<div class="c reveal" style="text-align:center;background:linear-gradient(180deg, color-mix(in srgb,var(--pr) 5%,var(--card)), var(--card))">'+avatar(m.photo,110,m.name)+'<h1 style="margin-top:16px;margin-bottom:8px">'+esc(m.name)+'</h1>'+(m.headline?'<p style="margin:0;font-weight:600;font-size:18px">'+esc(m.headline)+'</p>':'')+(m.status?'<div style="margin-top:12px"><span class="tag">'+esc(m.status)+'</span></div>':'')+(m.city?'<p class="mu sm" style="margin-top:8px">📍 '+esc(m.city)+'</p>':'')+'</div>'+(m.bio?'<div class="c reveal"><h2>À propos</h2><p style="line-height:1.7">'+esc(m.bio)+'</p></div>':'')+(m.offer?'<div class="c reveal"><h2>Ce que je propose</h2><p style="line-height:1.7">'+esc(m.offer)+'</p></div>':'')+((m.certs||[]).length?'<div class="c reveal"><h2>Certifications</h2>'+m.certs.map(function(c){return '<div style="margin:12px 0;padding:12px;background:var(--bg);border-radius:12px;border-left:4px solid var(--ok)"><b>'+esc(c.title)+'</b><br><span class="mu sm">'+esc(c.org)+' · N° '+esc(c.id)+'</span></div>'}).join("")+'<p class="mu sm">Chaque numéro peut être vérifié dans la page Vérifier un certificat.</p></div>':'')+(m.cv?cvCard(m):'')}
+var waBtn = '';
+if(m.phoneWA && m.waAccept && S.user) {
+  var msgWa = "Bonjour " + m.name + ", je vous contacte depuis Bfamily Compétences Zone. Je suis " + (S.profile.headline ? S.profile.headline + " - " : "") + S.profile.status + ". Je souhaite échanger avec vous.";
+  waBtn = '<a href="https://wa.me/'+m.phoneWA.replace(/[^0-9]/g, '')+'?text='+encodeURIComponent(msgWa)+'" target="_blank" class="b" style="background:#25d366;box-shadow:0 10px 15px -3px rgba(37,211,102,0.3);margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>Se connecter</a>';
+}
+return '<div class="c reveal" style="text-align:center;background:linear-gradient(180deg, color-mix(in srgb,var(--pr) 5%,var(--card)), var(--card))">'+avatar(m.photo,110,m.name)+'<h1 style="margin-top:16px;margin-bottom:8px">'+esc(m.name)+'</h1>'+(m.headline?'<p style="margin:0;font-weight:600;font-size:18px">'+esc(m.headline)+'</p>':'')+(m.status?'<div style="margin-top:12px"><span class="tag">'+esc(m.status)+'</span></div>':'')+(m.city?'<p class="mu sm" style="margin-top:8px">📍 '+esc(m.city)+'</p>':'')+waBtn+'</div>'+(m.bio?'<div class="c reveal"><h2>À propos</h2><p style="line-height:1.7">'+esc(m.bio)+'</p></div>':'')+(m.offer?'<div class="c reveal"><h2>Ce que je propose</h2><p style="line-height:1.7">'+esc(m.offer)+'</p></div>':'')+((m.certs||[]).length?'<div class="c reveal"><h2>Certifications</h2>'+m.certs.map(function(c){return '<div style="margin:12px 0;padding:12px;background:var(--bg);border-radius:12px;border-left:4px solid var(--ok)"><b>'+esc(c.title)+'</b><br><span class="mu sm">'+esc(c.org)+' · N° '+esc(c.id)+'</span></div>'}).join("")+'<p class="mu sm">Chaque numéro peut être vérifié dans la page Vérifier un certificat.</p></div>':'')+(m.cv?cvCard(m):'')}
 function avLink(x,z){var a=avatar(x.photo,z,x.name);return x.pub!==false?'<a href="#membre-'+x.uid+'" class="avatar-link" title="Voir le profil" style="flex:none;text-decoration:none">'+a+'</a>':a}
 function cvCard(m){var c=m.cv||{},sec=function(t,v){return v?'<h3 style="margin:20px 0 8px;font-size:16px;color:var(--pr);text-transform:uppercase;letter-spacing:1px;font-weight:800">'+t+'</h3><p style="margin:0;line-height:1.7">'+esc(v).replace(/\n/g,"<br>")+'</p>':''};
   var customStr = '';
@@ -778,7 +780,7 @@ await deleteUser(auth.currentUser)},
 pub:async function(uid){var x=await getDoc(doc(db,"profiles",uid));return x.exists()?x.data():null},
 saveProfile:async function(){var p=S.profile||{},ce=(S.certs||[]).map(function(c){return{title:c.title,org:c.org,date:c.date,id:c.id}});
 await setDoc(doc(db,"users",S.user.uid),{name:S.name,profile:p,cv:S.cv||{},certs:S.certs||[]},{merge:true});
-if(p.pub!==false){var pd={name:S.name,headline:p.headline||"",status:p.status||"",bio:p.bio||"",offer:p.offer||"",city:p.city||"",photo:p.photo||"",certs:ce,updatedAt:Date.now()},cc=S.cv||{};
+if(p.pub!==false){var pd={name:S.name,headline:p.headline||"",status:p.status||"",bio:p.bio||"",offer:p.offer||"",city:p.city||"",photo:p.photo||"",certs:ce,updatedAt:Date.now(),phoneWA:p.phoneWA||"",waAccept:p.waAccept||false},cc=S.cv||{};
 if(cc.pub){pd.cv={exp:(cc.exp||"").slice(0,1500),edu:(cc.edu||"").slice(0,1000),skills:(cc.skills||"").slice(0,500),langs:(cc.langs||"").slice(0,100),customSections:(cc.customSections||[]).slice(0,10)}}
 await setDoc(doc(db,"profiles",S.user.uid),pd)}else{try{await deleteDoc(doc(db,"profiles",S.user.uid))}catch(e){}}},
 adm:async function(){var q=await getDocs(collection(db,"users")),u=[];q.forEach(function(d){var x=d.data();x.uid=d.id;u.push(x)});return u},
