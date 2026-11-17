@@ -129,6 +129,34 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 @keyframes pop{0%{transform:scale(0.95);opacity:0}100%{transform:scale(1);opacity:1}}
 .reveal{opacity:0;transform:translateY(30px);transition:all 0.8s cubic-bezier(0.5, 0, 0, 1)}
 .reveal.active{opacity:1;transform:translateY(0)}
+
+/* PAGE INFOS */
+.inf-hero{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:20px;border:1px solid var(--bd);background:var(--bg);margin:0 0 18px}
+.inf-badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:6px 14px;border-radius:30px;background:linear-gradient(135deg,var(--pr),#06b6d4);color:#fff;margin:0 8px 8px 0}
+.inf-date{font-size:13px;color:var(--mu);font-weight:600}
+.inf-title{font-size:26px;line-height:1.25;margin:6px 0 14px;font-weight:800;letter-spacing:-0.5px}
+.inf-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.inf-meta span{font-size:13px;font-weight:600;padding:7px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--bd);color:var(--tx)}
+.inf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.inf-stat{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px 6px;text-align:center}
+.inf-stat b{display:block;font-size:22px;font-weight:800;color:var(--pr);line-height:1.2}
+.inf-stat span{display:block;font-size:12px;color:var(--mu);line-height:1.3;margin-top:4px}
+.inf-sec{display:flex;gap:14px;align-items:flex-start}
+.inf-n{flex:0 0 36px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+.inf-bd{flex:1;min-width:0}
+.inf-bd h2{font-size:18px;line-height:1.3;margin:5px 0 10px}
+.inf-bd p{margin:0 0 10px}
+.inf-bd ul{margin:8px 0 4px;padding-left:20px}
+.inf-bd li{margin-bottom:6px}
+.inf-lk{display:block;padding:14px 16px;border-top:1px solid var(--bd);border-radius:12px;text-decoration:none;transition:background .2s}
+.inf-lk:hover{background:var(--bg)}
+.inf-lk b{display:block;color:var(--pr);font-size:15px;line-height:1.35}
+.inf-lk span{font-size:13px;color:var(--mu);word-break:break-all}
+.inf-sub{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin:18px 0 4px}
+.inf-sign{text-align:center;margin:30px 0 10px}
+.inf-sign b{display:block;font-size:16px;letter-spacing:.5px;color:var(--pr)}
+@media (max-width:699px){.inf-title{font-size:22px}.inf-sec{gap:10px}.inf-n{flex-basis:32px;width:32px;height:32px;font-size:14px}}
+
 .avatar-link{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:inherit;transition:transform .2s;cursor:pointer}
 .avatar-link:hover{transform:scale(1.02)}
 .avatar-link:hover b{color:var(--pr)}
@@ -335,7 +363,7 @@ function render(){
   if(p=="certificats")h=need(certs);
   if(p=="reseau")h=need(reseauView);
   if(p=="bourses")h=soon("Bourses d’études","Retrouvez ici les bourses d’études disponibles et comment postuler.");
-  if(p=="infos")h=soon("Informations","Actualités et informations utiles de Bfamily Compétences Zone.");
+  if(p=="infos")h=need(infosView);
   if(p=="opportunites")h=soon("Opportunités","Offres d’emploi, stages, concours et opportunités pour les jeunes.");
   if(p=="accueil"&&!S.authReady)h=HINT?'<div class="c"><p>Chargement…</p></div>':authView();
   if(p=="accueil"&&S.authReady&&!S.user)h=authView();
@@ -551,6 +579,64 @@ function ring(p){return '<svg viewBox="0 0 120 120" width="120" height="120"><ci
 function evo(){var p=Math.round(S.done.length/L.length*100);return '<h1>Mon évolution</h1><div class="c reveal" style="display:flex;gap:24px;align-items:center"><div>'+ring(p)+'</div><div><b style="font-size:20px">Maîtriser le prompting IA</b><br><span class="mu sm" style="display:block;margin:8px 0">'+S.done.length+' / '+L.length+' leçons validées</span><a class="b" href="#cours" onclick="S.sub=\''+(p>=100?'cert':'home')+'\'" style="width:auto;display:inline-block;padding:10px 24px">'+(p>=100?'Voir mon certificat':p?'Continuer':'Commencer')+'</a></div></div><div class="c g reveal"><p class="mu sm" style="margin:0">Quand le cercle est fermé à 100 %, la formation est terminée. D’autres formations arrivent bientôt.</p></div>'}
 function certs(){return '<h1>Mes certificats</h1>'+(S.certId||S.done.length>=L.length?'<div class="c reveal"><span class="tag">Certificat</span><h2>Maîtriser le prompting IA</h2>'+(S.certId?'<p class="mu sm">N° '+esc(S.certId)+'</p>':'')+'<a class="b" href="#cours" onclick="S.sub=\'cert\'">Voir et télécharger</a></div>':'<div class="c reveal"><p>Aucun certificat pour le moment. Terminez une formation pour obtenir le vôtre.</p><a class="b" href="#formations">Voir les formations</a></div>')}
 function soon(t,d){return need(function(){return '<h1>'+t+'</h1><div class="c reveal"><p>'+d+'</p><p class="mu sm">Cette rubrique est en préparation et sera bientôt disponible.</p><a class="b s" href="https://wa.me/'+WA+'?text='+encodeURIComponent("Bonjour, j’ai une question sur : "+t)+'" target="_blank" rel="noopener">Poser une question sur WhatsApp</a></div>'})}
+
+var INFOS=[{
+img:"caf-jour1.jpg",
+alt:"Affiche du Cyber Africa Forum 2026 : Que faut-il retenir du Jour 1 ?",
+badge:"Rapport du Jour 1",
+date:"16 novembre 2026",
+title:"Cyber Africa Forum 2026 : que faut-il retenir du Jour 1 à Cotonou ?",
+meta:["16 et 17 novembre 2026","Sofitel Cotonou Marina Hotel & Spa, Bénin","Organisé par Kaydan Groupe","#CAF2026"],
+intro:["La capitale économique béninoise accueille les 16 et 17 novembre 2026 la sixième édition du **Cyber Africa Forum (CAF)**, un rendez-vous panafricain consacré aux enjeux de cybersécurité, d’intelligence artificielle, de souveraineté numérique et de transformation digitale.","Placée sous le thème « Construire la confiance numérique de demain », cette édition rassemble des décideurs publics, des responsables d’entreprises, des experts, des investisseurs, des entrepreneurs et des acteurs de l’écosystème numérique venus de plusieurs pays.","Alors que la deuxième journée est actuellement en cours, revenons sur les principaux enseignements et les moments forts de cette première journée."],
+stats:[["6e","édition du forum"],["2 jours","16 et 17 novembre"],["32 000","femmes et jeunes formés par DigiFemmes CI"]],
+secs:[
+{t:"Une ouverture tournée vers l’action et la coopération africaine",p:["La cérémonie officielle d’ouverture a notamment réuni **Franck Kié**, Commissaire général du Cyber Africa Forum, **Didier Kla**, directeur technologique du groupe Kaydan et président du comité d’organisation, ainsi que **Mahuna Akplogan**, ministre béninois de la Transformation digitale et de l’Innovation.","Dans son intervention, Franck Kié a rappelé le parcours du forum depuis sa création en 2020 et insisté sur la nécessité de transformer les échanges en projets concrets, en partenariats durables et en résultats mesurables."],lk:["Lire le reportage d’Ocean’s News","https://oceans-news.com/cyber-africa-forum-2026-benin-cybersecurite-ceremonie-douverture/"]},
+{t:"Le Bénin à l’honneur avec le Prix Léon Koffi Konan",p:["L’un des moments marquants de cette cérémonie a été la remise du **Prix Léon Koffi Konan** au ministre Mahuna Akplogan.","Cette distinction récompense sa contribution au développement de la cybersécurité et de la sécurité numérique.","Cette reconnaissance intervient dans un contexte où le Bénin poursuit ses efforts en matière de transformation digitale, de services publics numériques et de développement de ses capacités technologiques."]},
+{t:"La souveraineté numérique au cœur des discussions",p:["Les échanges inauguraux ont posé une question fondamentale : comment l’Afrique peut-elle garantir sa souveraineté numérique tout en poursuivant sa transformation technologique ?","Plusieurs enjeux ont été mis en avant :"],ul:["La maîtrise des infrastructures numériques.","La protection des données personnelles et professionnelles.","La réduction de la dépendance technologique.","La capacité des États africains à définir leurs propres orientations numériques.","Le renforcement de la coopération entre les pays africains."]},
+{t:"Intelligence artificielle, cybercriminalité et protection des données",p:["La première journée a également accordé une place importante aux évolutions technologiques et aux nouvelles formes de menaces numériques.","Les thématiques abordées dans le programme comprenaient notamment la cybersécurité mondiale et africaine, l’évaluation de la maturité cyber des organisations, l’utilisation de l’intelligence artificielle dans la sécurité informatique et les nouvelles formes de cybercriminalité.","La lutte contre la sextorsion et la protection des données personnelles ont également figuré parmi les sujets importants de cette journée."]},
+{t:"Investissement et développement de l’économie numérique africaine",p:["Le financement de l’innovation africaine a constitué un autre axe important du programme.","Les discussions autour des capitaux, des risques et des opportunités d’investissement numérique ont mis en lumière les défis liés au financement des entreprises technologiques et au développement des écosystèmes numériques africains."]},
+{t:"Cyber Africa Women : valoriser le leadership féminin",p:["La première journée a également mis en lumière la contribution des femmes au développement de l’écosystème technologique africain.","À travers l’initiative **Cyber Africa Women**, les discussions ont notamment porté sur le leadership féminin, l’accès aux investissements, la place des femmes dans les métiers technologiques et leur contribution à la cybersécurité.","**Nadine Zoro**, fondatrice et présidente de DigiFemmes Côte d’Ivoire, a remporté le Prix Cyber Africa Women 2026.","Elle a notamment rappelé que son organisation avait contribué à former 32 000 femmes et jeunes dans plus de 16 villes de Côte d’Ivoire."]},
+{t:"Ce que cette première journée nous apprend sur l’avenir des compétences en Afrique",hl:1,p:["Au-delà des discussions institutionnelles et technologiques, cette première journée du Cyber Africa Forum rappelle une réalité essentielle : la transformation numérique de l’Afrique dépend aussi des compétences de ses populations.","La cybersécurité, l’intelligence artificielle, la protection des données et l’innovation représentent des domaines dans lesquels les jeunes Africains doivent pouvoir se former, entreprendre et contribuer à la création de solutions.","Chez Bfamily Compétences Zone, nous considérons que l’orientation, l’acquisition de compétences et l’accompagnement des jeunes sont des leviers essentiels pour participer à cette transformation."]},
+{t:"Le Jour 2 est en cours : la suite des échanges",p:["Après cette première journée riche en réflexions et en rencontres, le Cyber Africa Forum poursuit ses travaux ce mardi 17 novembre 2026.","Les participants continuent d’explorer les enjeux de confiance numérique, de coopération, de cybersécurité et de développement des solutions technologiques africaines.","Bfamily Compétences Zone continuera de suivre les temps forts de cette rencontre et de partager les enseignements utiles à la jeunesse, aux entrepreneurs et aux acteurs de la formation."]}
+],
+resIntro:"Vous souhaitez découvrir les images de cette première journée ou approfondir certains sujets ? Retrouvez les publications et reportages des médias ainsi que les ressources officielles à travers les liens suivants.",
+res:[
+["Reportages et photographies du Jour 1",[
+["Ocean’s News : reportage sur la cérémonie d’ouverture","https://oceans-news.com/cyber-africa-forum-2026-benin-cybersecurite-ceremonie-douverture/"],
+["Le Potentiel : actualités du Cyber Africa Forum","https://lepotentiel.bj/?p=90181"],
+["La Nation : le continent appelé à bâtir sa confiance numérique","https://lanation.bj/actualites/cyber-africa-forum-2026-le-continent-appele-a-batir-sa-confiance-numerique-de-demain"]]],
+["Programme et informations officielles",[
+["Cyber Africa Forum : site officiel","https://www.cyberafricaforum.com/"],
+["Programme du Cyber Africa Forum","https://cyberafricaforum.com/programme"],
+["Cyber Africa Forum : présentation de l’édition 2026","https://www.cyberafricaforum.com/edition-2026"],
+["Cyber Africa Forum : galerie des temps forts","https://www.cyberafricaforum.com/highlight"]]]
+]
+}];
+var INFO_WA="https://whatsapp.com/channel/0029VbCBDvH3LdQPlADC5k2r";
+function infoTx(t){return esc(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}
+function infoLink(a){return '<a class="inf-lk" href="'+esc(a[1])+'" target="_blank" rel="noopener"><b>'+esc(a[0])+'</b><span>'+esc(a[1].replace(/^https?:\/\/(www\.)?/,""))+'</span></a>'}
+function infoSec(x,i){
+var h='<div class="c'+(x.hl?' g':'')+' reveal"><div class="inf-sec"><div class="inf-n">'+(i+1)+'</div><div class="inf-bd"><h2>'+esc(x.t)+'</h2>';
+(x.p||[]).forEach(function(t){h+='<p>'+infoTx(t)+'</p>'});
+if(x.ul)h+='<ul>'+x.ul.map(function(t){return '<li>'+infoTx(t)+'</li>'}).join("")+'</ul>';
+if(x.lk)h+='<p style="margin-top:12px"><b>Pour aller plus loin : </b><a href="'+esc(x.lk[1])+'" target="_blank" rel="noopener">'+esc(x.lk[0])+'</a></p>';
+return h+'</div></div></div>'}
+function infoArt(a){
+var h='<div class="c reveal">';
+if(a.img)h+='<img class="inf-hero" src="'+esc(a.img)+'" alt="'+esc(a.alt||"")+'" width="1080" height="1080" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">';
+h+='<span class="inf-badge">'+esc(a.badge)+'</span><span class="inf-date">'+esc(a.date)+'</span><h2 class="inf-title">'+esc(a.title)+'</h2>';
+h+='<div class="inf-meta">'+a.meta.map(function(m){return '<span>'+esc(m)+'</span>'}).join("")+'</div>';
+h+=a.intro.map(function(t){return '<p style="margin:12px 0 0">'+infoTx(t)+'</p>'}).join("")+'</div>';
+if(a.stats)h+='<div class="inf-stats reveal">'+a.stats.map(function(x){return '<div class="inf-stat"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join("")+'</div>';
+h+=a.secs.map(infoSec).join("");
+h+='<div class="c reveal"><h2>Photos et ressources complémentaires</h2><p class="mu sm">'+esc(a.resIntro)+' Ces liens mènent vers des sites externes, qui ne sont pas gérés par Bfamily.</p>';
+a.res.forEach(function(g){h+='<div class="inf-sub">'+esc(g[0])+'</div>'+g[1].map(infoLink).join("")});
+return h+'</div>'}
+function infosView(){
+return '<h1>Informations</h1><p class="mu reveal" style="margin-top:0">Actualités et informations utiles de Bfamily Compétences Zone.</p>'+INFOS.map(infoArt).join("")+
+'<div class="c g reveal"><h2>Rejoignez la communauté Bfamily Compétences Zone sur WhatsApp !</h2><p>Vous souhaitez rester informé des opportunités, des formations, des événements, des innovations et des initiatives qui contribuent au développement des compétences en Afrique ?</p><p>Rejoignez notre chaîne WhatsApp pour ne manquer aucune actualité et découvrir de nouvelles possibilités d’apprentissage, de collaboration et de développement professionnel.</p><p><b>Ne restez pas en marge des opportunités. Faites partie de la communauté !</b></p><a class="b" href="'+INFO_WA+'" target="_blank" rel="noopener">Cliquez ici pour rejoindre Bfamily Compétences Zone</a></div>'+
+'<div class="inf-sign reveal"><b>BFAMILY COMPÉTENCES ZONE</b><span class="mu sm">Orienter • Former • Accompagner</span><p class="mu sm" style="margin:6px 0 0">Ensemble, développons les compétences et construisons les opportunités de demain.</p></div>'}
+
 function drawer(){if(!S.menu||!S.user)return "";var l=function(h,t){return '<a href="#'+h+'" onclick="S.menu=0;render()">'+t+'</a>'};
 return '<div class="ov" onclick="S.menu=0;render()"></div><div class="pn"><div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bd)">'+'<a href="#profil" onclick="S.menu=0;render()" style="flex:none;text-decoration:none">'+avatar((S.profile||{}).photo,60,S.name)+'</a><div style="min-width:0"><b style="font-size:18px;display:block">'+esc(S.name||"Mon compte")+'</b><span class="mu sm" style="word-break:break-all;font-size:13px">'+esc(S.user.email||"")+'</span></div></div>'+l("reseau","Mon réseau")+l("cours","Ma formation")+l("profil","Mon profil")+l("cv","Mon CV")+l("evolution","Mon évolution")+l("certificats","Mes certificats")+l("bourses","Bourses d’études")+l("infos","Informations")+l("opportunites","Opportunités")+l("parametres","Paramètres")+'<a href="#accueil" onclick="S.menu=0;FB.out();return false" style="color:var(--ko);margin-top:16px">Se déconnecter</a></div>'}
 function val(i,raw){var e=document.getElementById(i);return e?(raw?e.value:e.value.trim()):""}
@@ -688,366 +774,4 @@ function cvView(){
       '<button type="button" class="s" onclick="this.parentNode.remove();" style="background:var(--ko);color:white;border:none;position:absolute;top:-10px;right:-10px;width:32px;height:32px;border-radius:50%;padding:0;margin:0;display:flex;align-items:center;justify-content:center;box-shadow:none">×</button>'+
     '</div>';
   });
-  return '<h1>Mon CV</h1><div class="c g reveal"><p class="sm mu" style="margin:0">Votre CV en PDF est créé à partir de votre profil et des informations ci-dessous. Il reste privé, sauf si vous cochez la case d’affichage sur votre profil public (en bas de cette page).</p></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Téléphone (facultatif)</label><input id="cp" value="'+esc(c.phone||"")+'" maxlength="30"><label class="sm mu" style="font-weight:600">Expériences (une par ligne)</label><textarea id="ce" rows="5" maxlength="1500" style="'+st+'" placeholder="Poste, organisation, période">'+esc(c.exp||"")+'</textarea><label class="sm mu" style="font-weight:600">Formations et diplômes (une par ligne)</label><textarea id="cf" rows="4" maxlength="1000" style="'+st+'">'+esc(c.edu||"")+'</textarea><label class="sm mu" style="font-weight:600">Compétences (séparées par des virgules)</label><textarea id="ck" rows="2" maxlength="500" style="'+st+'">'+esc(c.skills||"")+'</textarea><label class="sm mu" style="font-weight:600">Langues</label><input id="cl" value="'+esc(c.langs||"")+'" maxlength="100"></div>'+
-  '<div class="c reveal"><h2>Sections personnalisées</h2><p class="sm mu" style="margin-bottom:16px">Ajoutez des sections sur mesure (ex: Skype, Projets, Réseaux sociaux...).</p><div id="customSectionsContainer">'+customHtml+'</div><button type="button" class="s" onclick="addCvSection()" style="margin-top:16px">+ Ajouter une section</button></div>'+
-  '<div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="ca" style="width:auto;margin-top:4px"'+(c.auto!==false?' checked':'')+'><span><b>Ajouter automatiquement mes certifications</b><br><span class="sm mu">Chaque certificat obtenu sur Bfamily Compétences Zone s’ajoute à la partie Certifications de votre CV.</span></span></label><div style="margin-top:16px">'+(ce.length?ce.map(function(x){return '<p class="sm" style="margin:6px 0;background:var(--bg);padding:8px 12px;border-radius:8px">'+esc(x.title)+' <span class="mu">N° '+esc(x.id)+'</span></p>'}).join(""):'<p class="sm mu" style="margin:0">Aucune certification pour le moment.</p>')+'</div></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="cx" style="width:auto;margin-top:4px"'+(c.pub?' checked':'')+'><span><b>Afficher mon CV sur mon profil public</b><br><span class="sm mu">Réservé aux profils publics. Les visiteurs voient vos expériences, formations, compétences et langues, et peuvent télécharger le CV en PDF. Votre téléphone et votre e-mail n’y figurent jamais.</span></span></label></div><button onclick="saveCv()" class="reveal">Enregistrer</button><button class="s reveal" onclick="cvPdf()">Télécharger mon CV (PDF)</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+'<a class="b s reveal" href="#profil">Mon profil</a>'}
-function membreView(){var uid=(location.hash||"").slice(8);
-if(!window.FB)return '<div class="c"><p>Chargement…</p></div>';
-if(S.memId!==uid){S.memId=uid;S.mem=null;FB.pub(uid).then(function(d){S.mem=d||"none";render()}).catch(function(){S.mem="none";render()})}
-var m=S.mem;if(m===null||m===undefined)return '<div class="c"><p>Chargement…</p></div>';
-if(m=="none")return '<h1>Profil introuvable</h1><div class="c reveal"><p>Ce profil n’existe pas ou il a été rendu privé par son propriétaire.</p><a class="b s" href="#formations" style="margin-top:20px">Retour aux formations</a></div>';
-return '<div class="c reveal" style="text-align:center;background:linear-gradient(180deg, color-mix(in srgb,var(--pr) 5%,var(--card)), var(--card))">'+avatar(m.photo,110,m.name)+'<h1 style="margin-top:16px;margin-bottom:8px">'+esc(m.name)+'</h1>'+(m.headline?'<p style="margin:0;font-weight:600;font-size:18px">'+esc(m.headline)+'</p>':'')+(m.status?'<div style="margin-top:12px"><span class="tag">'+esc(m.status)+'</span></div>':'')+(m.city?'<p class="mu sm" style="margin-top:8px">📍 '+esc(m.city)+'</p>':'')+'</div>'+(m.bio?'<div class="c reveal"><h2>À propos</h2><p style="line-height:1.7">'+esc(m.bio)+'</p></div>':'')+(m.offer?'<div class="c reveal"><h2>Ce que je propose</h2><p style="line-height:1.7">'+esc(m.offer)+'</p></div>':'')+((m.certs||[]).length?'<div class="c reveal"><h2>Certifications</h2>'+m.certs.map(function(c){return '<div style="margin:12px 0;padding:12px;background:var(--bg);border-radius:12px;border-left:4px solid var(--ok)"><b>'+esc(c.title)+'</b><br><span class="mu sm">'+esc(c.org)+' · N° '+esc(c.id)+'</span></div>'}).join("")+'<p class="mu sm">Chaque numéro peut être vérifié dans la page Vérifier un certificat.</p></div>':'')+(m.cv?cvCard(m):'')}
-function avLink(x,z){var a=avatar(x.photo,z,x.name);return x.pub!==false?'<a href="#membre-'+x.uid+'" class="avatar-link" title="Voir le profil" style="flex:none;text-decoration:none">'+a+'</a>':a}
-function cvCard(m){var c=m.cv||{},sec=function(t,v){return v?'<h3 style="margin:20px 0 8px;font-size:16px;color:var(--pr);text-transform:uppercase;letter-spacing:1px;font-weight:800">'+t+'</h3><p style="margin:0;line-height:1.7">'+esc(v).replace(/\n/g,"<br>")+'</p>':''};
-  var customStr = '';
-  (c.customSections || []).forEach(function(s) {
-      if(s.title || s.content) customStr += sec(s.title || "Section", s.content);
-  });
-  if(!(c.exp||c.edu||c.skills||c.langs||customStr))return '';
-  return '<div class="c reveal"><h2>CV</h2>'+sec("Expériences",c.exp)+sec("Formations",c.edu)+sec("Compétences",c.skills)+sec("Langues",c.langs)+customStr+'<button class="s" onclick="cvPdfMember()" style="margin-top:24px">Télécharger son CV (PDF)</button></div>'}
-function cvPdfMember(){var m=S.mem;if(!m||m=="none")return;var c=m.cv||{};cvPdf({name:m.name,photo:m.photo,headline:m.headline,bio:m.bio,city:m.city,exp:c.exp,edu:c.edu,skills:c.skills,langs:c.langs,certs:m.certs||[],customSections:c.customSections||[]})}
-function cvPdf(o){
-if(!window.jspdf){alert("Le générateur PDF est encore en chargement. Réessayez dans un instant.");return}
-if(!o){readCv();var c=S.cv||{},p=S.profile||{};o={name:S.name,photo:p.photo,headline:p.headline,bio:p.bio,city:p.city,email:S.user.email,phone:c.phone,exp:c.exp,edu:c.edu,skills:c.skills,langs:c.langs,certs:c.auto!==false?(S.certs||[]):[],customSections:c.customSections||[]}}
-var d=new window.jspdf.jsPDF({unit:"mm",format:"a4"}),W=210,M=18,y=M;
-var cl=function(t){return String(t||"").replace(/[’‘]/g,"'").replace(/[“”]/g,'"')};
-var nb=function(h){if(y+h>285){d.addPage();y=M}};
-var sec=function(t){nb(16);y+=6;d.setFont("helvetica","bold");d.setFontSize(12);d.setTextColor(37,99,235);d.text(t,M,y);y+=2;d.setDrawColor(37,99,235);d.line(M,y,W-M,y);y+=6;d.setTextColor(30,30,30)};
-var txt=function(t,bul){d.setFont("helvetica","normal");d.setFontSize(10.5);d.splitTextToSize((bul?"- ":"")+cl(t),W-2*M).forEach(function(l){nb(6);d.text(l,M,y);y+=5.5})};
-var lines=function(t){String(t||"").split("\n").map(function(x){return x.trim()}).filter(Boolean).forEach(function(x){txt(x,1)})};
-if(/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(o.photo||"")){try{d.addImage(o.photo,"JPEG",W-M-30,M-4,30,30)}catch(e){}}
-d.setFont("helvetica","bold");d.setFontSize(24);d.setTextColor(15,23,42);d.text(cl(o.name),M,y+6);y+=16;
-if(o.headline){d.setFont("helvetica","normal");d.setFontSize(13);d.setTextColor(37,99,235);d.text(cl(o.headline),M,y);y+=8}
-var ct=[o.email,o.phone,o.city].filter(Boolean).join("  |  ");if(ct){d.setFontSize(10);d.setTextColor(100,116,139);d.text(cl(ct),M,y);y+=10;d.setTextColor(30,30,30)}
-if(y<M+32)y=M+32;
-if(o.bio){sec("PROFIL");txt(o.bio)}
-if(o.exp){sec("EXPERIENCES");lines(o.exp)}
-if(o.edu){sec("FORMATION");lines(o.edu)}
-var ce=o.certs||[];
-if(ce.length){sec("CERTIFICATIONS");ce.forEach(function(x){txt(x.title+", "+x.org+" ("+new Date(x.date).toLocaleDateString("fr-FR",{month:"long",year:"numeric"})+"), certificat n° "+x.id,1)})}
-if(o.skills){sec("COMPETENCES");txt(o.skills)}
-if(o.langs){sec("LANGUES");txt(o.langs)}
-if(o.customSections){o.customSections.forEach(function(s){if(s.title||s.content){sec((s.title||"SECTION").toUpperCase());if(s.content)txt(s.content);}})}
-d.save("CV-"+cl(o.name).replace(/[^A-Za-z0-9]+/g,"-")+".pdf")}
-function setTg(){var b=document.getElementById("tg");if(b)b.textContent=document.documentElement.getAttribute("data-theme")==="dark"?"☀️":"🌙"}
-function toggleTheme(){var h=document.documentElement,d=h.getAttribute("data-theme")==="dark";if(d)h.removeAttribute("data-theme");else h.setAttribute("data-theme","dark");try{localStorage.setItem("bf_theme",d?"light":"dark")}catch(e){}setTg()}
-var FX={on:0,raf:0,pts:[]};
-function fxSync(h){var a=h.indexOf("Apprenez les compétences")>=0;document.body.classList.toggle("auth",a);if(a)fxStart();else fxStop()}
-function fxStop(){FX.on=0;if(FX.raf)cancelAnimationFrame(FX.raf);FX.raf=0;if(FX.sz)removeEventListener("resize",FX.sz)}
-function fxStart(){if(FX.on||(window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches))return;FX.on=1;
-var c=document.getElementById("cv"),x=c.getContext("2d");
-FX.sz=function(){c.width=innerWidth;c.height=innerHeight;var n=Math.min(50,Math.floor(c.width*c.height/22000));FX.pts=[];for(var i=0;i<n;i++)FX.pts.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4})};
-FX.sz();addEventListener("resize",FX.sz);
-if(!FX.ic){FX.ic=1;var fx=document.getElementById("fx");["📚","🎓","💡","🤖","🚀","✏️","🌍","💻"].forEach(function(e,i){var s=document.createElement("span");s.className="ic";s.textContent=e;s.style.left=(6+i*12)+"%";s.style.fontSize=(22+i%3*8)+"px";s.style.animationDuration=(16+i*3)+"s";s.style.animationDelay=(-i*4)+"s";fx.appendChild(s)})}
-function loop(){if(!FX.on)return;if(!document.hidden){x.clearRect(0,0,c.width,c.height);var col=document.documentElement.getAttribute("data-theme")==="dark"?"59,130,246":"37,99,235",P=FX.pts;
-for(var i=0;i<P.length;i++){var a=P[i];a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>c.width)a.vx*=-1;if(a.y<0||a.y>c.height)a.vy*=-1;x.fillStyle="rgba("+col+",.6)";x.beginPath();x.arc(a.x,a.y,2.5,0,6.283);x.fill();
-for(var j=i+1;j<P.length;j++){var b=P[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<120){x.strokeStyle="rgba("+col+","+((1-d/120)*.4)+")";x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}}}
-FX.raf=requestAnimationFrame(loop)}
-loop()}
-var COURSES={prompting:"Maîtriser le prompting IA"};
-var RES=[[
-{t:"Prompt : définition (IA générative)",s:"Futura Sciences",d:"Une définition claire en français",u:"https://www.futura-sciences.com/tech/definitions/intelligence-artificielle-prompt-ia-generative-21405/"},
-{t:"Qu’est-ce que le prompt engineering ?",s:"Coursera",d:"Définition et exemples, en français",u:"https://www.coursera.org/fr-FR/articles/what-is-prompt-engineering"},
-{t:"Qu’est-ce que le prompt engineering ?",s:"DataCamp",d:"Les bases pour bien parler à une IA, en français",u:"https://www.datacamp.com/fr/blog/what-is-prompt-engineering-the-future-of-ai-communication"},
-{t:"Prompt engineering best practices for ChatGPT",s:"OpenAI",d:"Guide officiel, en anglais",u:"https://help.openai.com/en/articles/10032626"}],[
-{t:"Best practices for prompt engineering",s:"OpenAI",d:"Être précis sur le contexte, le résultat, la longueur et le format, en anglais",u:"https://help.openai.com/en/articles/6654000-best-practices-for-crafting-prompts"},
-{t:"Prompt engineering overview",s:"Anthropic",d:"Guide officiel pour écrire de bons prompts, en anglais",u:"https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview"},
-{t:"Qu’est-ce que le prompt engineering ?",s:"Coursera",d:"Exemples de prompts, en français",u:"https://www.coursera.org/fr-FR/articles/what-is-prompt-engineering"}],[
-{t:"Qu’est-ce que les hallucinations d’IA ?",s:"IBM",d:"Comprendre pourquoi une IA invente des réponses, en français",u:"https://www.ibm.com/fr-fr/think/topics/ai-hallucinations"},
-{t:"Hallucination d’IA",s:"Office québécois de la langue française",d:"Définition officielle du terme, en français",u:"https://vitrinelinguistique.oqlf.gouv.qc.ca/fiche-gdt/fiche/26571221/hallucination-dia"},
-{t:"Comment savoir si une IA hallucine",s:"Clubic",d:"5 signes à repérer, en français",u:"https://www.clubic.com/actualite-595312-comment-savoir-si-une-IA-hallucine-5-signes-a-reperer-pour-en-avoir-le-coeur-net.html"},
-{t:"Intelligence artificielle : le plan d’action de la CNIL",s:"CNIL",d:"Protection des données personnelles face à l’IA, en français",u:"https://www.cnil.fr/fr/node/86135"},
-{t:"Prompt engineering best practices for ChatGPT",s:"OpenAI",d:"Affiner ses prompts par itérations, en anglais",u:"https://help.openai.com/en/articles/10032626"}]];
-function resView(i){var r=RES[i]||[];if(!r.length)return '';return '<div class="c reveal"><h2>Ressources pour aller plus loin</h2><p class="mu sm">Des lectures et des guides pour approfondir cette leçon. Ces liens mènent vers des sites externes, qui ne sont pas gérés par Bfamily.</p>'+r.map(function(x){return '<a href="'+x.u+'" target="_blank" rel="noopener" style="display:block;padding:16px;border-top:1px solid var(--bd);text-decoration:none;transition:all .2s;border-radius:12px" onmouseover="this.style.background=\'var(--bg)\';this.style.paddingLeft=\'20px\'" onmouseout="this.style.background=\'transparent\';this.style.paddingLeft=\'16px\'"><b style="color:var(--pr);font-size:16px">'+esc(x.t)+'</b><br><span class="mu sm">'+esc(x.s)+' · '+esc(x.d)+'</span></a>'}).join("")+'</div>'}
-function avisBand(){var a=S.cm;if(a===undefined||a===null)return '';
-if(!a.length)return '<div class="c g reveal"><h2>Avis</h2><p class="mu sm" style="margin:0">Les premiers avis des participants apparaîtront ici.</p></div>';
-var it=a.map(function(x){var t=String(x.text||"");return '<div class="mi">'+avLink(x,44)+'<div><b>'+esc(x.name)+'</b> <span style="color:#e0a100">'+stars(x.rating)+'</span><div class="sm mu">'+esc(COURSES[x.course]||"Formation")+'</div><p>'+esc(t.length>140?t.slice(0,140)+"…":t)+'</p></div></div>'}).join("");
-return '<h2 style="margin:32px 0 8px" class="reveal">Avis</h2><div class="mq reveal"><div class="mt" style="animation-duration:'+Math.max(20,a.length*8)+'s">'+it+it+'</div></div>'}
-var LEGAL={confidentialite:["Politique de confidentialité",[
-["Qui sommes-nous ?","Bfamily Compétences Zone est la plateforme de formations de Bfamily, organisation établie à Cotonou (Bénin) depuis 2018. Le responsable du traitement de vos données est Bfamily. Contact : {{C}}."],
-["Les données que nous collectons","• Votre nom et votre adresse e-mail, à l’inscription.<br>• Votre mot de passe, géré par le service d’authentification de Google (Firebase) : nous ne pouvons pas le lire.<br>• Votre progression et vos résultats aux quiz.<br>• Vos certificats : nom, formation, date et numéro.<br>• Vos avis : prénom et initiale, note, texte et date.<br>• Si vous le souhaitez : votre profil (photo, titre, statut, bio, activité, ville) et votre CV (téléphone, expériences, formations, compétences, langues)."],
-["Pourquoi nous les utilisons","Pour créer votre compte, enregistrer votre progression, vous délivrer des certificats et permettre de les vérifier, afficher les avis et les profils publics que vous choisissez de publier, et vous informer de nos formations par e-mail."],
-["Ce qui est visible par les autres","• Un certificat peut être vérifié par toute personne qui en connaît le numéro : elle voit le nom, la formation et la date.<br>• Vos avis sont publics, avec votre prénom et l’initiale de votre nom. Votre photo n’apparaît que si votre profil est public.<br>• Votre profil n’est visible que si vous le rendez public. Vous pouvez le repasser en privé à tout moment.<br>• Votre e-mail et votre téléphone ne sont jamais affichés publiquement. Votre CV n’est visible sur votre profil public que si vous cochez la case prévue dans Mon CV, et sans votre téléphone."],
-["Où sont stockées vos données","Dans les services Firebase de Google (authentification et base de données, hébergés en Europe). Les vidéos sont diffusées par YouTube. Le site est hébergé sur une plateforme d’hébergement web. Ces prestataires traitent des données pour notre compte."],
-["Combien de temps nous les gardons","Tant que votre compte existe. Si vous supprimez votre compte, votre profil, vos avis et vos certificats sont supprimés avec lui. Nous vous demandons alors la raison de votre départ : elle est conservée sans votre nom ni votre e-mail, pour améliorer nos formations."],
-["Vos droits","Vous pouvez à tout moment consulter vos données (bouton Télécharger mes données), les corriger (Mon profil et Mon CV), les supprimer (bouton Supprimer mon compte), ou vous opposer à l’envoi d’informations par e-mail en nous écrivant ({{C}}). Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir l’Autorité de protection des données personnelles du Bénin (APDP)."],
-["Mineurs","Si vous avez moins de 18 ans, demandez l’accord de votre parent ou tuteur avant de vous inscrire, et évitez de rendre votre profil public."],
-["Sécurité","La connexion au site est chiffrée. Les mots de passe sont gérés par Google. Chaque personne n’accède qu’à ses propres données grâce à des règles d’accès. Aucun système n’est infaillible : en cas d’incident touchant vos données, nous vous informerons ainsi que l’autorité compétente."],
-["Stockage local et cookies","Votre navigateur garde le choix du mode nuit et l’état de votre connexion. YouTube peut déposer ses propres cookies quand vous lisez une vidéo."]]],
-conditions:["Conditions d’utilisation",[
-["Objet","Ces conditions encadrent l’utilisation de Bfamily Compétences Zone : formations en ligne, quiz, certificats, avis, profils et CV."],
-["Votre compte","Vous devez fournir des informations exactes et garder votre mot de passe confidentiel. Un compte est personnel et vous êtes responsable de son usage."],
-["Formations et certificats","Bfamily Compétences Zone propose des formations en ligne gratuites avec certificat, mais aussi des formations payantes, des séances de formation et des semaines d’acquisition de compétences. Le certificat atteste d’une compétence acquise à l’issue d’une formation suivie et validée chez Bfamily Compétences Zone. C’est une certification de la plateforme, qui enrichit votre parcours et votre CV. Son numéro permet de le vérifier sur le site. Une fois la compétence acquise, c’est à vous de la mettre en pratique, de gagner en expérience et de continuer à vous former pour mieux vous positionner : dans votre CV, dans votre recherche d’emploi ou dans votre projet d’entreprise."],
-["Offres payantes","Pour une offre payante, le prix, le mode de paiement, la durée et les conditions d’annulation ou de remboursement sont indiqués avant votre inscription."],
-["Avis et profils","Vos avis et votre profil doivent rester respectueux, exacts et légaux. Nous pouvons supprimer un contenu qui ne respecte pas ces règles."],
-["Ce qui est interdit","• Fabriquer ou modifier un faux certificat, ou tenter de contourner les quiz.<br>• Usurper l’identité d’une autre personne.<br>• Publier des propos injurieux, discriminatoires ou illégaux.<br>• Perturber le fonctionnement du site ou tenter d’accéder aux données d’autres personnes.<br>En cas de manquement, nous pouvons suspendre ou supprimer un compte et invalider les certificats concernés."],
-["Contenus et propriété","Les textes, vidéos et visuels de la plateforme appartiennent à Bfamily ou à leurs auteurs. Vous pouvez les consulter pour votre formation personnelle. Toute reproduction ou revente sans accord est interdite. Certains contenus sont réalisés avec l’aide de l’intelligence artificielle."],
-["Liens externes","Les ressources proposées sous les leçons mènent vers des sites externes. Nous ne contrôlons pas leur contenu et n’en sommes pas responsables."],
-["Responsabilité","La plateforme est fournie telle quelle, sans garantie de disponibilité permanente. Bfamily s’engage à proposer des formations de qualité, avec des professionnels de qualité, mais les résultats dépendent aussi de l’investissement de chaque apprenant."],
-["Modifications","Nous pouvons faire évoluer ces conditions et la plateforme. La version en vigueur est celle affichée sur cette page."],
-["Contact et droit applicable","Pour toute question ou réclamation : {{C}}. Ces conditions sont régies par le droit applicable en République du Bénin."]]]};
-function legalView(k){var d=LEGAL[k];return '<h1>'+d[0]+'</h1><p class="mu sm reveal">Dernière mise à jour : novembre 2026.</p>'+d[1].map(function(x){return '<div class="c reveal"><h2>'+x[0]+'</h2><p style="line-height:1.7">'+ctcFill(x[1])+'</p></div>'}).join("")}
-function chk(){return '<label style="display:flex;gap:12px;align-items:flex-start;margin-top:16px;cursor:pointer"><input type="checkbox" id="cg" style="width:auto;margin-top:4px"'+(S.cg?' checked':'')+'><span class="sm" style="color:var(--mu)">J’accepte les <a href="#conditions">Conditions d’utilisation</a> et la <a href="#confidentialite">Politique de confidentialité</a>.</span></label>'}
-function exportMe(){var o={nom:S.name,email:S.user.email,progression:S.done,profil:S.profile||{},cv:S.cv||{},certifications:S.certs||[],exporte_le:new Date().toISOString()};var b=new Blob([JSON.stringify(o,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="mes-donnees-bfamily.json";document.body.appendChild(a);a.click();a.remove()}
-var REASONS=["","Je n’utilise plus la plateforme","J’ai terminé ma formation","Je n’ai pas trouvé ce que je cherchais","Je préfère ne pas partager mes données","J’ai rencontré un problème technique","Autre raison"];
-function reMsg(x){var c=(x&&x.code)||"";return c.indexOf("wrong-password")>=0||c.indexOf("invalid-credential")>=0?"Mot de passe incorrect.":(c=="auth/popup-closed-by-user"||c=="auth/cancelled-popup-request")?"Vérification annulée.":"Vérification impossible. Réessayez."}
-function pwReset(){FB.reset(S.user.email).then(function(){S.smsg="Un e-mail pour changer votre mot de passe vient d’être envoyé. Pensez à vérifier vos spams.";render()}).catch(function(x){S.serr=msg(x);render()})}
-function saveNews(){var e=document.getElementById("sn");S.prefs=S.prefs||{};S.prefs.news=e.checked;S.serr="";FB.savePrefs().then(function(){S.smsg="Préférence enregistrée.";render()}).catch(function(){S.serr="Enregistrement impossible.";render()})}
-function dlData(){S.serr="";S.smsg="";var p=val("dp",1);if(S.prov=="password"&&!p){S.serr="Entrez votre mot de passe pour télécharger vos données.";render();return}
-FB.reauth(p).then(function(){exportMe();S.smsg="Vos données ont été téléchargées.";render()}).catch(function(x){S.serr=reMsg(x);render()})}
-function delMe(){S.serr="";S.smsg="";var r=val("drs"),n=val("dn"),c=val("dc"),p=val("dq",1);
-if(!r){S.serr="Choisissez la raison de votre départ.";render();return}
-if(c.toUpperCase()!=="SUPPRIMER"){S.serr="Écrivez SUPPRIMER pour confirmer.";render();return}
-if(S.prov=="password"&&!p){S.serr="Entrez votre mot de passe.";render();return}
-if(!confirm("Dernière vérification : supprimer définitivement votre compte, votre profil, vos avis et vos certificats ?"))return;
-FB.reauth(p).then(function(){return FB.deletionReason(r,n)}).then(function(){return FB.deleteMe()}).then(function(){alert("Votre compte et vos données ont été supprimés.");location.hash="accueil"}).catch(function(x){S.serr=x&&x.code=="auth/requires-recent-login"?"Pour votre sécurité, reconnectez-vous puis réessayez.":reMsg(x);render()})}
-function settingsView(){var pw=S.prov=="password",dark=document.documentElement.getAttribute("data-theme")==="dark",st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
-return '<h1>Paramètres</h1>'+(S.smsg?'<div class="c reveal" style="border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,var(--card))"><p style="margin:0;color:var(--ok);font-weight:600">'+esc(S.smsg)+'</p></div>':'')+(S.serr?'<div class="c reveal" style="border-color:var(--ko);background:color-mix(in srgb,var(--ko) 10%,var(--card))"><p style="margin:0;color:var(--ko);font-weight:600">'+esc(S.serr)+'</p></div>':'')+
-'<div class="c reveal"><h2>Mon compte</h2><a class="b s" href="#profil">Modifier mon profil</a><a class="b s" href="#cv">Mon CV</a>'+(pw?'<button class="s" onclick="pwReset()">Changer mon mot de passe par e-mail</button>':'<p class="mu sm" style="margin-top:12px">Vous êtes connecté avec Google : votre mot de passe est géré par Google.</p>')+'</div>'+
-'<div class="c reveal"><h2>Apparence</h2><button class="s" onclick="toggleTheme();render()">Mode nuit : '+(dark?'activé':'désactivé')+'</button></div>'+
-'<div class="c reveal"><h2>Informations par e-mail</h2><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="sn" onchange="saveNews()" style="width:auto;margin-top:4px"'+(S.prefs?(S.prefs.news!==false?' checked':''):' checked')+'><span class="sm" style="color:var(--mu)">Recevoir les informations de Bfamily sur les nouvelles formations.</span></label></div>'+
-'<div class="c reveal"><h2>Légal</h2><a class="b s" href="#conditions">Conditions d’utilisation</a><a class="b s" href="#confidentialite">Politique de confidentialité</a></div>'+
-'<div class="c reveal"><h2>Télécharger mes données</h2><p class="mu sm">Pour votre sécurité, nous vérifions que c’est bien vous.'+(pw?' Entrez votre mot de passe.':' Une fenêtre Google s’ouvrira pour confirmer votre identité.')+'</p>'+(pw?'<input id="dp" type="password" placeholder="Votre mot de passe">':'')+'<button class="s" onclick="dlData()">Télécharger mes données</button></div>'+
-'<div class="c reveal" style="border-color:var(--ko)"><h2 style="color:var(--ko)">Supprimer mon compte</h2><p class="mu sm">Cette action est définitive : elle efface votre compte, votre profil, vos avis et vos certificats. Nous avons besoin de savoir pourquoi vous partez.</p><select id="drs" style="'+st+'">'+REASONS.map(function(r){return r?'<option>'+esc(r)+'</option>':'<option value="">Choisissez une raison</option>'}).join("")+'</select><textarea id="dn" rows="3" maxlength="500" style="'+st+'" placeholder="Dites-nous en plus (facultatif)"></textarea><input id="dc" placeholder="Écrivez SUPPRIMER pour confirmer" autocomplete="off">'+(pw?'<input id="dq" type="password" placeholder="Votre mot de passe">':'')+'<button style="background:var(--ko);box-shadow:0 10px 15px -3px rgba(239,68,68,0.4)" onclick="delMe()">Supprimer mon compte définitivement</button></div>'}
-function ctc(){return MAIL?'<a href="mailto:'+MAIL+'">'+MAIL+'</a>':"via le bouton WhatsApp du site"}
-function ctcFill(t){return String(t).replace(/\{\{C\}\}/g,ctc())}
-function vbanner(){return S.user&&!S.verified?'<div class="c reveal" style="border-color:#eab308;background:color-mix(in srgb,#eab308 10%,var(--card))"><b style="font-size:18px;color:#854d0e">Confirmez votre e-mail</b><p class="sm" style="margin:8px 0">Un message a été envoyé à <b>'+esc(S.user.email)+'</b>. Vous pouvez continuer la formation, mais la confirmation est nécessaire pour obtenir votre certificat. Pensez à vérifier vos spams.</p><button class="s" onclick="FB.resend().then(function(){alert(\'Message renvoyé.\')}).catch(function(){alert(\'Réessayez dans un instant.\')})">Renvoyer le message</button><button class="s" onclick="FB.check()">J’ai confirmé mon e-mail</button></div>':''}
-function welcome(){return '<h1 class="hero reveal">Félicitations !</h1><div class="c reveal"><p style="font-size:18px">Votre adresse e-mail est confirmée. Bienvenue sur Bfamily Compétences Zone !</p><a class="b" href="#cours">Accéder à ma formation</a><a class="b s" href="#formations">Découvrir les formations</a></div>'}
-function forgot(){var e=val("em");S.em=e;S.err="";S.info="";
-if(!e){S.err="Entrez votre e-mail ci-dessus, puis appuyez sur Mot de passe oublié.";render();return}
-if(!window.FB){S.err="Le service démarre, réessayez dans quelques secondes.";render();return}
-FB.reset(e).then(function(){S.info="Si un compte existe avec cet e-mail, un message de réinitialisation vient d’être envoyé. Pensez à vérifier vos spams.";render()}).catch(function(x){S.err=msg(x);render()})}
-function authGo(k){if(!window.FB){S.err="Le service démarre, réessayez dans quelques secondes.";render();return}
-var e=val("em"),p=val("pw",1),n=val("nn"),cg=document.getElementById("cg");if(cg)S.cg=cg.checked;S.em=e;S.nn=n;S.err="";S.info="";
-if(k!="g"){if(!e||!p){S.err="Entrez votre e-mail et votre mot de passe.";render();return}if(k=="s"&&n.length<2){S.err="Entrez votre nom complet.";render();return}}
-if(k=="s"&&!S.cg){S.err="Veuillez accepter les conditions pour créer un compte.";render();return}
-if(k=="s")S.pendingName=n;
-(k=="g"?FB.google():k=="s"?FB.signup(e,p):FB.login(e,p)).catch(function(x){S.err=msg(x);render()})}
-function authView(){var s=S.mode!="l";
-return '<h1 class="hero reveal">Apprenez les compétences du futur</h1><p class="mu reveal" style="font-size:18px;max-width:500px">Apprendre, se certifier, saisir les opportunités. Bfamily Compétences Zone est une communauté ouverte à tous : étudiants, salariés, entrepreneurs. Des formations concrètes, en ligne et en présentiel, pour développer ce qui compte vraiment.</p>'+scene()+'<div id="auth-form" class="c reveal"><h2 style="text-align:center;margin-bottom:20px">'+(s?'Créez votre compte gratuit':'Connexion')+'</h2><div style="display:flex;gap:12px;margin-bottom:16px"><button class="'+(s?'':'s')+'" onclick="S.mode=\'s\';S.err=\'\';render()" style="flex:1">Créer un compte</button><button class="'+(s?'s':'')+'" onclick="S.mode=\'l\';S.err=\'\';render()" style="flex:1">Se connecter</button></div>'+(s?'<input id="nn" placeholder="Prénom et nom" maxlength="40" value="'+esc(S.nn||"")+'">':'')+'<input id="em" type="email" placeholder="Adresse e-mail" value="'+esc(S.em||"")+'"><input id="pw" type="password" placeholder="Mot de passe (6 caractères minimum)">'+(s?chk():'')+'<button onclick="authGo(\''+(s?'s':'l')+'\')" style="margin-top:24px">'+(s?'Créer mon compte':'Me connecter')+'</button>'+(s?'':'<p style="text-align:center;margin:16px 0 0"><a href="#" onclick="forgot();return false" style="font-weight:600">Mot de passe oublié ?</a></p>')+'<div style="display:flex;align-items:center;gap:16px;margin:24px 0"><div style="flex:1;height:1px;background:var(--bd)"></div><span class="mu sm" style="font-weight:600">OU</span><div style="flex:1;height:1px;background:var(--bd)"></div></div><button class="s" onclick="authGo(\'g\')" style="display:flex;align-items:center;justify-content:center;gap:10px"><svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continuer avec Google</button><p class="mu sm" style="margin:16px 0 0;text-align:center;font-size:12px">En continuant avec Google, vous acceptez nos <a href="#conditions">Conditions d’utilisation</a> et notre <a href="#confidentialite">Politique de confidentialité</a>.</p>'+(S.err?'<p style="color:var(--ko);font-weight:600;background:color-mix(in srgb,var(--ko) 10%,var(--card));padding:12px;border-radius:8px;margin-top:16px">'+esc(S.err)+'</p>':'')+(S.info?'<p style="color:var(--ok);font-weight:600;background:color-mix(in srgb,var(--ok) 10%,var(--card));padding:12px;border-radius:8px;margin-top:16px">'+esc(S.info)+'</p>':'')+'<p class="mu sm" style="margin:16px 0 0;text-align:center;font-size:12px">Votre e-mail sert uniquement à créer votre compte et à vous informer de nos formations.</p></div>'}
-function verify(){var id=val("vn").toUpperCase();if(!id)return;S.vn=id;S.vr="load";render();(window.FB?FB.verify(id):Promise.reject()).then(function(d){S.vr=d||"none";render()}).catch(function(){S.vr="err";render()})}
-function verif(){var r=S.vr,o="";
-if(r=="load")o='<p>Vérification…</p>';else if(r=="none")o='<p style="color:var(--ko);font-weight:600"><b>Aucun certificat trouvé pour ce numéro.</b></p>';else if(r=="err")o='<p>Vérification impossible pour le moment.</p>';else if(r)o='<div style="background:color-mix(in srgb,var(--ok) 10%,var(--card));border:1px solid var(--ok);padding:16px;border-radius:12px;margin-top:16px"><p style="color:var(--ok);font-weight:800;margin:0 0 8px">Certificat valide</p><p style="margin:0;font-size:16px">'+esc(r.name)+'<br><b>'+esc(r.course)+'</b><br><span class="mu sm">Délivré le '+new Date(r.issuedAt).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})+'</span></p></div>';
-return '<h1>Vérifier un certificat</h1><div class="c reveal"><p class="mu sm">Entrez le numéro inscrit sur le certificat, par exemple BF-2026-AB12CD.</p><input id="vn" placeholder="Numéro du certificat" value="'+esc(S.vn||"")+'"><button onclick="verify()">Vérifier</button>'+o+'</div>'}
-function go(s,i){S.sub=s;if(i!=null)S.i=i;S.qi=0;S.sc=0;S.ans=null;render();window.scrollTo(0,0)}
-function setName(){var v=document.getElementById("nm").value.trim();if(v.length<2)return;S.name=v;save();render()}
-function pick(k){S.ans=k;if(k==L[S.i].q[S.qi].a)S.sc++;render()}
-function nextQ(){S.ans=null;if(S.qi+1<L[S.i].q.length){S.qi++}else{S.sub="result"}render()}
-function validate(){if(S.done.indexOf(S.i)<0)S.done.push(S.i);save();go(S.done.length>=L.length?"cert":"home")}
-function reset(){if(confirm("Effacer votre progression ?")){S.done=[];S.name="";save();go("home")}}
-function share(){var t=shareTxt();try{if(navigator.share){navigator.share({text:t});return}}catch(e){}try{window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}catch(e){}}
-try{document.getElementById("wa").href="https://wa.me/"+WA+"?text="+encodeURIComponent(WAMSG)}catch(e){}
-window.addEventListener("hashchange",function(){window.scrollTo(0,0);S.pmsg="";S.smsg="";S.serr="";closeDrawer();document.getElementById('searchResults').classList.remove('active');render()});
-buildDrawer();
-render();
-setTimeout(function(){if(!S.authReady){S.authReady=true;S.err="Connexion au service impossible. Vérifiez votre internet.";render()}},8000);
-</script>
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import{getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,sendEmailVerification,deleteUser,reauthenticateWithCredential,EmailAuthProvider,reauthenticateWithPopup}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,getDocs,collection,deleteDoc,query,where,updateDoc,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-var cfg={apiKey:"AIzaSyAG3fQkwhrfmklTiYRp1l9PYz-VL9AgYW4",authDomain:"bfamily-competences-zone.firebaseapp.com",projectId:"bfamily-competences-zone",storageBucket:"bfamily-competences-zone.firebasestorage.app",messagingSenderId:"839328126762",appId:"1:839328126762:web:094099073943d3e3ac7053"};
-var app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),COURSE="Maîtriser le prompting IA";
-window.FB={
-google:function(){return signInWithPopup(auth,new GoogleAuthProvider())},
-signup:async function(e,p){var c=await createUserWithEmailAndPassword(auth,e,p);try{await sendEmailVerification(c.user,{url:SITE+"#bienvenue"})}catch(x){}return c},
-resend:async function(){if(auth.currentUser)await sendEmailVerification(auth.currentUser,{url:SITE+"#bienvenue"})},
-check:async function(){var u=auth.currentUser;if(u){await u.reload();S.verified=u.emailVerified;render()}},
-login:function(e,p){return signInWithEmailAndPassword(auth,e,p)},
-reset:function(e){return sendPasswordResetEmail(auth,e)},
-out:function(){S.sub="home";return signOut(auth)},
-save:function(){if(!S.user)return;setDoc(doc(db,"users",S.user.uid),{name:S.name,done:S.done},{merge:true}).catch(function(){})},
-verify:async function(id){var x=await getDoc(doc(db,"certificates",id));return x.exists()?x.data():null},
-stats:async function(){var q=await getDocs(collection(db,"users")),t=0,c=0;q.forEach(function(d){t++;if(d.data().certId)c++;});return{total:t,certs:c}},
-reauth:async function(pw){var u=auth.currentUser,ids=(u.providerData||[]).map(function(x){return x.providerId});
-if(ids.indexOf("password")>=0){await reauthenticateWithCredential(u,EmailAuthProvider.credential(u.email,pw))}else{await reauthenticateWithPopup(u,new GoogleAuthProvider())}},
-deletionReason:async function(r,n){await setDoc(doc(collection(db,"deletionReasons")),{reason:r,note:n||"",at:Date.now()})},
-savePrefs:async function(){await setDoc(doc(db,"users",S.user.uid),{prefs:S.prefs||{news:true}},{merge:true})},
-deleteMe:async function(){var uid=S.user.uid;
-try{await deleteDoc(doc(db,"profiles",uid))}catch(e){}
-try{await deleteDoc(doc(db,"comments","prompting_"+uid))}catch(e){}
-var ids=(S.certs||[]).map(function(c){return c.id});if(S.certId&&ids.indexOf(S.certId)<0)ids.push(S.certId);
-for(var i=0;i<ids.length;i++){try{await deleteDoc(doc(db,"certificates",ids[i]))}catch(e){}}
-try{await deleteDoc(doc(db,"users",uid))}catch(e){}
-await deleteUser(auth.currentUser)},
-pub:async function(uid){var x=await getDoc(doc(db,"profiles",uid));return x.exists()?x.data():null},
-saveProfile:async function(){var p=S.profile||{},ce=(S.certs||[]).map(function(c){return{title:c.title,org:c.org,date:c.date,id:c.id}});
-await setDoc(doc(db,"users",S.user.uid),{name:S.name,profile:p,whatsapp:p.whatsapp||"",cv:S.cv||{},certs:S.certs||[]},{merge:true});
-if(p.pub!==false){var pd={name:S.name,headline:p.headline||"",status:p.status||"",bio:p.bio||"",offer:p.offer||"",city:p.city||"",photo:p.photo||"",certs:ce,updatedAt:Date.now()},cc=S.cv||{};
-if(cc.pub){pd.cv={exp:(cc.exp||"").slice(0,1500),edu:(cc.edu||"").slice(0,1000),skills:(cc.skills||"").slice(0,500),langs:(cc.langs||"").slice(0,100)}}
-await setDoc(doc(db,"profiles",S.user.uid),pd)}else{try{await deleteDoc(doc(db,"profiles",S.user.uid))}catch(e){}}},
-adm:async function(){var q=await getDocs(collection(db,"users")),u=[];q.forEach(function(d){var x=d.data();x.uid=d.id;u.push(x)});return u},
-admDel:async function(uid){
-var u=await getDoc(doc(db,"users",uid));
-if(u.exists()){var cid=u.data().certId;if(cid)try{await deleteDoc(doc(db,"certificates",cid))}catch(e){}}
-try{await deleteDoc(doc(db,"users",uid))}catch(e){}
-try{await deleteDoc(doc(db,"profiles",uid))}catch(e){}
-try{await deleteDoc(doc(db,"comments","prompting_"+uid))}catch(e){}
-},
-comments:async function(){var q=await getDocs(query(collection(db,"comments"),where("course","==","prompting"))),a=[];q.forEach(function(d){var x=d.data();x.id=d.id;a.push(x)});a.sort(function(x,y){return (y.createdAt||0)-(x.createdAt||0)});
-var ids=[];a.forEach(function(x){if(ids.indexOf(x.uid)<0)ids.push(x.uid)});var ph={},pb={};
-await Promise.all(ids.map(async function(u){try{var d=await getDoc(doc(db,"profiles",u));if(d.exists()){ph[u]=d.data().photo||"";pb[u]=1}}catch(e){}}));
-a.forEach(function(x){x.photo=ph[x.uid]||"";x.pub=!!pb[x.uid]});
-var rq = await getDocs(collection(db,"replies"));
-var allReplies = {};
-rq.forEach(function(d){
-  var r = d.data(); r.id = d.id;
-  if(!allReplies[r.commentId]) allReplies[r.commentId] = [];
-  allReplies[r.commentId].push(r);
-});
-for(var k in allReplies){ allReplies[k].sort(function(a,b){return a.createdAt - b.createdAt}) }
-S.replies = allReplies;
-return a},
-postcm:async function(r,t){
-var id=S.editCmId||"prompting_"+S.user.uid;
-await setDoc(doc(db,"comments",id),{uid:S.user.uid,name:shortName(S.name),text:t,rating:r,course:"prompting",createdAt:Date.now()},{merge:true})},
-likecm:async function(id){
-var ref=doc(db,"comments",id);
-var snap=await getDoc(ref);
-if(snap.exists()){
-var data=snap.data();
-var likes=data.likes||[];
-if(likes.includes(S.user.uid)){
-await updateDoc(ref,{likes:arrayRemove(S.user.uid)});
-}else{
-await updateDoc(ref,{likes:arrayUnion(S.user.uid)});
-}
-S.cm=undefined;
-render();
-}
-},
-delcm:async function(id){await deleteDoc(doc(db,"comments",id))},
-postReply:async function(commentId, text){
-  await setDoc(doc(collection(db,"replies")), {
-    commentId: commentId,
-    uid: S.user.uid,
-    name: shortName(S.name),
-    text: text,
-    createdAt: Date.now()
-  });
-},
-editReply:async function(id, newText){
-  await updateDoc(doc(db,"replies",id), { text: newText });
-},
-delReply:async function(id){
-  await deleteDoc(doc(db,"replies",id));
-},
-getNetwork:async function(){
-  var allUsers = [];
-  var uq = await getDocs(collection(db,"users"));
-  uq.forEach(function(d){
-    var data = d.data();
-    if((data.profile && data.profile.pub !== false) || d.id === S.user.uid) {
-      allUsers.push({
-        uid: d.id,
-        name: data.name || "Membre",
-        headline: (data.profile && data.profile.headline) || "",
-        offer: (data.profile && data.profile.offer) || "",
-        photo: (data.profile && data.profile.photo) || "",
-        whatsapp: data.whatsapp || ""
-      });
-    }
-  });
-
-  var conns = [];
-  var reqIn = [];
-  var reqOut = [];
-
-  var rq = await getDocs(collection(db,"requests"));
-  rq.forEach(function(d){
-    var r = d.data(); r.id = d.id;
-    if(r.status === "pending") {
-      if(r.from === S.user.uid) reqOut.push(r);
-      if(r.to === S.user.uid) reqIn.push(r);
-    } else if(r.status === "accepted") {
-      if(r.from === S.user.uid) conns.push(r.to);
-      if(r.to === S.user.uid) conns.push(r.from);
-    }
-  });
-
-  var connProfiles = [];
-  for(var i=0;i<conns.length;i++){
-    var c = allUsers.find(function(u){return u.uid === conns[i]});
-    if(c) connProfiles.push(c);
-  }
-
-  return { users: allUsers, connections: connProfiles, requestsIn: reqIn, requestsOut: reqOut };
-},
-sendRequest:async function(toUid){
-  if(!S.user) return;
-  var now = new Date();
-  var currentMonth = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
-  var count = S.requestCount || 0;
-  var month = S.lastRequestMonth || "";
-  
-  if (month !== currentMonth) { count = 0; month = currentMonth; }
-  
-  if (count >= 5) { 
-    alert("Vous avez atteint votre limite de 5 demandes pour ce mois-ci. Passez à Bfamily Premium pour envoyer plus de demandes.");
-    return; 
-  }
-  
-  var reqId = S.user.uid + "_" + toUid;
-  await setDoc(doc(db,"requests",reqId), {
-    from: S.user.uid,
-    to: toUid,
-    status: "pending",
-    createdAt: Date.now()
-  });
-  
-  await updateDoc(doc(db, "users", S.user.uid), { 
-    requestCount: count + 1, 
-    lastRequestMonth: month 
-  });
-  S.requestCount = count + 1;
-  S.lastRequestMonth = month;
-  
-  S.networkData = null;
-  loadNetwork();
-},
-acceptRequest:async function(reqId, fromUid){
-  if(!S.user) return;
-  await updateDoc(doc(db,"requests",reqId), { status: "accepted" });
-  S.networkData = null;
-  loadNetwork();
-},
-rejectRequest:async function(reqId){
-  if(!S.user) return;
-  await deleteDoc(doc(db,"requests",reqId));
-  S.networkData = null;
-  loadNetwork();
-},
-removeConnection:async function(targetUid){
-  if(!S.user) return;
-  if(!confirm("Voulez-vous vraiment retirer cette personne de votre réseau ?")) return;
-  var reqId1 = S.user.uid + "_" + targetUid;
-  var reqId2 = targetUid + "_" + S.user.uid;
-  try{ await deleteDoc(doc(db,"requests",reqId1)); }catch(e){}
-  try{ await deleteDoc(doc(db,"requests",reqId2)); }catch(e){}
-  S.networkData = null;
-  loadNetwork();
-},
-issue:async function(){
-if(S.issuing||S.certId||!S.user)return;S.issuing=true;
-var A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-for(var t=0;t<5&&!S.certId;t++){
-var b=crypto.getRandomValues(new Uint8Array(6)),r="";for(var i=0;i<6;i++)r+=A[b[i]%A.length];
-var id="BF-"+new Date().getFullYear()+"-"+r,now=Date.now();
-try{await setDoc(doc(db,"certificates",id),{uid:S.user.uid,name:S.name,course:COURSE,issuedAt:now});
-S.certId=id;S.certDate=now;S.certName=S.name;
-S.certs=(S.certs||[]).concat([{title:COURSE,org:"Bfamily Compétences Zone",date:now,id:id}]);await setDoc(doc(db,"users",S.user.uid),{certId:id,certDate:now,certName:S.name,certs:S.certs},{merge:true});try{if(S.profile&&S.profile.pub!==false)await FB.saveProfile()}catch(x){}}catch(e){}
-}
-if(!S.certId)S.certFail=true;
-S.issuing=false;render()}
-};
-onAuthStateChanged(auth,async function(u){
-if(!u){try{localStorage.removeItem("bf_in")}catch(e){}S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.certName=null;S.profile=null;S.cv=null;S.certs=[];S.prefs=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
-S.user={uid:u.uid,email:u.email};S.err="";try{localStorage.setItem("bf_in","1")}catch(e){}try{await u.reload()}catch(e){}S.verified=u.emailVerified;S.prov=(u.providerData||[]).some(function(x){return x.providerId=="password"})?"password":"google";
-try{var x=await getDoc(doc(db,"users",u.uid));
-if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.certName=d.certName||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}; S.profile.whatsapp = d.whatsapp || ""; S.requestCount = d.requestCount || 0; S.lastRequestMonth = d.lastRequestMonth || "";}
-else{S.name=S.pendingName||u.displayName||"";S.done=[];S.certId=null;S.profile={};S.cv={auto:true};S.certs=[];S.prefs={news:true};S.requestCount=0;S.lastRequestMonth="";await setDoc(doc(db,"users",u.uid),{name:S.name,email:u.email||"",done:[],createdAt:Date.now(),consentAt:Date.now(),prefs:{news:true}})}
-}catch(e){S.err="Impossible de charger votre compte."}
-if(!location.hash||location.hash=="#accueil")location.hash="cours";S.authReady=true;render()});
-</script>
-</body>
-</html>
+  retur
