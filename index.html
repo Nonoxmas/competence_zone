@@ -130,6 +130,17 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 .reveal{opacity:0;transform:translateY(30px);transition:all 0.8s cubic-bezier(0.5, 0, 0, 1)}
 .reveal.active{opacity:1;transform:translateY(0)}
 
+/* RESEAU + PARTAGE */
+.bn-item{position:relative}
+.bn-dot{position:absolute;top:-6px;left:calc(50% + 4px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--ko);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
+.lock-av{width:50px;height:50px;border-radius:50%;background:var(--bg);border:1.5px dashed var(--bd);display:flex;align-items:center;justify-content:center;flex:none}
+.mdl{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.mdl>div{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:24px;max-width:460px;width:100%;max-height:85vh;overflow:auto}
+.mdl h2{margin:0 0 12px}
+.mdl ul{margin:8px 0 14px;padding-left:20px}
+.mdl li{margin-bottom:8px}
+.shr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.shr-grid .b,.shr-grid button{margin:0;padding:12px 8px;font-size:14px;text-align:center}
 /* PAGE INFOS */
 .inf-hero{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:20px;border:1px solid var(--bd);background:var(--bg);margin:0 0 18px}
 .inf-badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:6px 14px;border-radius:30px;background:linear-gradient(135deg,var(--pr),#06b6d4);color:#fff;margin:0 8px 8px 0}
@@ -381,6 +392,7 @@ function render(){
   document.body.classList.toggle("in",!!S.user);
   fxSync(h);
   initReveal();
+  setBadge();
   if(p=="reseau"&&S.user&&!S.networkData) loadNetwork();
 }
 
@@ -389,7 +401,7 @@ function loadNetwork(){
   S.networkData="loading";
   render();
   FB.getNetwork().then(function(data){
-    S.networkData=data;
+    S.networkData=data;S.pendIn=(data.requestsIn||[]).length;
     render();
   }).catch(function(e){ S.networkData={users:[],connections:[],requestsIn:[],requestsOut:[],error:true}; render(); });
 }
@@ -400,7 +412,8 @@ function reseauView(){
   if(S.networkData==="loading"||S.networkData===null) return '<div class="c"><p>Chargement de votre réseau…</p></div>';
 
   var d=S.networkData;
-  if(!d || d.error) return '<div class="c"><p style="color:var(--mu)">Vous n\'avez pas encore de connexions. Recherchez des membres pour commencer.</p></div>';
+  if(d&&d.error) return '<h1>Mon réseau</h1><div class="c"><p>Le réseau n’a pas pu être chargé pour le moment. Vérifiez votre connexion et réessayez dans quelques instants.</p><button onclick="S.networkData=null;render()">Réessayer</button></div>';
+  if(!d) return '<div class="c"><p style="color:var(--mu)">Vous n\'avez pas encore de connexions. Recherchez des membres pour commencer.</p></div>';
 
   var h='<h1>Mon réseau</h1>';
   
@@ -421,14 +434,15 @@ function reseauView(){
   // Tabs
   h+='<div class="network-tabs">';
   h+='<div class="network-tab '+(S.networkTab==="discover"?"active":"")+'" onclick="S.networkTab=\'discover\';render()">Découvrir</div>';
-  h+='<div class="network-tab '+(S.networkTab==="requests"?"active":"")+'" onclick="S.networkTab=\'requests\';render()">Demandes ('+(d.requestsIn.length+d.requestsOut.length)+')</div>';
-  h+='<div class="network-tab '+(S.networkTab==="connections"?"active":"")+'" onclick="S.networkTab=\'connections\';render()">Mes connexions ('+d.connections.length+')</div>';
+  h+='<div class="network-tab '+(S.networkTab==="requests"?"active":"")+'" onclick="S.networkTab=\'requests\';render()">En attente ('+(d.requestsIn.length+d.requestsOut.length)+')</div>';
+  h+='<div class="network-tab '+(S.networkTab==="connections"?"active":"")+'" onclick="S.networkTab=\'connections\';render()">Réseau validé ('+d.connections.length+')</div>';
   h+='</div>';
 
   // Search
   h+='<div class="c" style="padding:12px 16px;margin-bottom:16px"><input type="text" placeholder="Rechercher un nom, une profession..." value="'+esc(S.networkSearch)+'" oninput="S.networkSearch=this.value;render();setTimeout(function(){var i=document.querySelector(\'#app input\');if(i){i.focus();i.selectionStart=i.value.length}},50)"></div>';
 
   if(S.networkTab==="discover"){
+    h+='<p class="sm mu" style="margin:0 0 14px">Le cadenas indique un profil privé : seuls le prénom et l’initiale sont visibles. Chaque membre est libre d’accepter ou de refuser votre demande. S’il accepte, vous pourrez lui écrire sur WhatsApp.</p>';
     var others = d.users.filter(function(u){ 
       return u.uid!=S.user.uid 
         && d.connections.findIndex(function(c){return c.uid==u.uid})<0
@@ -442,13 +456,13 @@ function reseauView(){
     } else {
       others.forEach(function(u){
         h+='<div class="user-card">';
-        h+='<a href="#membre-'+u.uid+'" class="avatar-link" style="flex:none">'+avatar(u.photo,50,u.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(u.name)+'</h3><p>'+esc(u.headline||u.offer||"Membre")+'</p></div>';
+        h+=netAv(u);
+        h+='<div class="user-info"><h3>'+esc(u.name)+'</h3><p>'+netSub(u)+'</p></div>';
         h+='<div class="user-actions">';
         if(limitReached){
           h+='<button class="btn-small s" disabled style="opacity:0.5;cursor:not-allowed">Limite atteinte</button>';
         } else {
-          h+='<button class="btn-small" onclick="FB.sendRequest(\''+u.uid+'\')">Se connecter</button>';
+          h+='<button class="btn-small" onclick="netAskSend(\''+u.uid+'\')">Se connecter</button>';
         }
         h+='</div></div>';
       });
@@ -460,10 +474,10 @@ function reseauView(){
         var sender = d.users.find(function(u){return u.uid==r.from});
         if(!sender) return;
         h+='<div class="user-card" style="border-color:var(--pr)">';
-        h+='<a href="#membre-'+sender.uid+'" class="avatar-link" style="flex:none">'+avatar(sender.photo,50,sender.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(sender.name)+'</h3><p>'+esc(sender.headline||sender.offer||"Membre")+'</p></div>';
+        h+=netAv(sender);
+        h+='<div class="user-info"><h3>'+esc(sender.name)+'</h3><p>'+netSub(sender)+'</p></div>';
         h+='<div class="user-actions">';
-        h+='<button class="btn-small" onclick="FB.acceptRequest(\''+r.id+'\',\''+sender.uid+'\')">Accepter</button>';
+        h+='<button class="btn-small" onclick="netAskAccept(\''+r.id+'\',\''+sender.uid+'\')">Accepter</button>';
         h+='<button class="btn-small s" onclick="FB.rejectRequest(\''+r.id+'\')" style="color:var(--ko);border:1px solid var(--ko)">Refuser</button>';
         h+='</div></div>';
       });
@@ -474,8 +488,8 @@ function reseauView(){
         var target = d.users.find(function(u){return u.uid==r.to});
         if(!target) return;
         h+='<div class="user-card">';
-        h+='<a href="#membre-'+target.uid+'" class="avatar-link" style="flex:none">'+avatar(target.photo,50,target.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(target.name)+'</h3><p>'+esc(target.headline||target.offer||"Membre")+'</p></div>';
+        h+=netAv(target);
+        h+='<div class="user-info"><h3>'+esc(target.name)+'</h3><p>'+netSub(target)+'</p></div>';
         h+='<div class="user-actions"><span class="sm mu">En attente</span></div>';
         h+='</div>';
       });
@@ -483,26 +497,47 @@ function reseauView(){
     if(d.requestsIn.length===0 && d.requestsOut.length===0) h+='<div class="c g"><p>Aucune demande en attente.</p></div>';
   } else if(S.networkTab==="connections"){
     if(d.connections.length===0){
-      h+='<div class="c g"><p>Vous n\'avez pas encore de connexions. Allez dans "Découvrir" pour trouver des membres.</p></div>';
+      h+='<div class="c g"><p>Votre réseau validé est vide pour le moment. Allez dans "Découvrir" pour envoyer vos premières demandes.</p></div>';
     } else {
       var filtered = d.connections.filter(function(c){return (c.name+" "+(c.headline||"")+" "+(c.offer||"")).toLowerCase().indexOf(S.networkSearch.toLowerCase())>-1});
       if(filtered.length===0) h+='<div class="c g"><p>Aucun résultat pour cette recherche.</p></div>';
       filtered.forEach(function(c){
         var myOffer=(S.profile&&S.profile.offer)?S.profile.offer:"";
-        var msg="Bonjour "+c.name+", je vous contacte via Bfamily Compétences Zone. Je viens de vous ajouter à mon réseau. "+(myOffer?"Pour info, voici ce que je propose de mon côté : "+myOffer+". ":"")+"Au plaisir d'échanger !";
-        var waLink="https://wa.me/"+c.whatsapp+"?text="+encodeURIComponent(msg);
+        var msg=netMsg(c);
+        var waLink="https://wa.me/"+String(c.whatsapp||"").replace(/\D/g,"")+"?text="+encodeURIComponent(msg);
         h+='<div class="user-card">';
-        h+='<a href="#membre-'+c.uid+'" class="avatar-link" style="flex:none">'+avatar(c.photo,50,c.name)+'</a>';
-        h+='<div class="user-info"><h3>'+esc(c.name)+'</h3><p>'+esc(c.headline||c.offer||"Membre")+'</p></div>';
+        h+=netAv(c);
+        h+='<div class="user-info"><h3>'+esc(c.name)+'</h3><p>'+netSub(c)+'</p></div>';
         h+='<div class="user-actions">';
         if(c.whatsapp) h+='<a href="'+waLink+'" target="_blank" class="btn-small btn-wa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.400 2.500 1.500.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.600-.1l1.900.9c.3.1.5.2.5.3.1.2.1.8-.1 1.400z"/></svg>WhatsApp</a>';
+        if(!c.whatsapp)h+='<span class="sm mu" style="text-align:center">WhatsApp non renseigné</span>';
         h+='<button class="btn-small s" onclick="FB.removeConnection(\''+c.uid+'\')" style="color:var(--ko);border:1px solid var(--ko)">Retirer</button>';
         h+='</div></div>';
       });
     }
   }
-  return h;
+  return h+netModal();
 }
+
+var LOCK_SVG='<svg viewBox="0 0 24 24" width="22" height="22" style="fill:var(--mu)"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>';
+function netAv(u){return u.pub===false?'<div class="lock-av" title="Profil privé">'+LOCK_SVG+'</div>':'<a href="#membre-'+u.uid+'" class="avatar-link" style="flex:none">'+avatar(u.photo,50,u.name)+'</a>'}
+function netSub(u){return u.pub===false?'Profil privé':esc(u.headline||u.offer||"Membre")}
+function netAskSend(uid){var u=((S.networkData||{}).users||[]).find(function(x){return x.uid===uid});S.netModal={t:"send",uid:uid,name:u?u.name:""};render()}
+function netAskAccept(id,uid){S.netModal={t:"accept",id:id,uid:uid};render()}
+function netMsg(c){var p=S.profile||{},me=S.name||"",hd=(p.headline||"").trim(),of=(p.offer||"").trim();
+var url=(S.user&&p.pub!==false)?location.origin+location.pathname+"#membre-"+S.user.uid:"";
+var m="Bonjour "+c.name+", c’est "+me+(hd?" ("+hd+")":"")+". "+(c.incoming?"J’ai accepté votre demande":"Vous avez accepté ma demande")+" sur Bfamily Compétences Zone"+(c.incoming?". ":", merci ! ");
+if(of)m+="Voici ce que je propose : "+of+". ";
+if(url)m+="Mon profil : "+url+" ";
+return m+"Au plaisir d’échanger !"}
+function netModal(){var m=S.netModal;if(!m)return"";
+var u=((S.networkData||{}).users||[]).find(function(x){return x.uid===m.uid}),nm=esc(u?u.name:(m.name||"cette personne")),noWa=!(S.profile&&S.profile.whatsapp);
+var h='<div class="mdl" onclick="if(event.target===this){S.netModal=null;render()}"><div>';
+if(m.t==="send"){h+='<h2>Envoyer une demande à '+nm+' ?</h2><p>'+nm+' est libre d’accepter ou de refuser. Si la demande est acceptée, vous pourrez lui écrire sur WhatsApp pour échanger sur des projets. Elle pourra aussi vous écrire si vous avez enregistré votre numéro WhatsApp dans Mon profil.</p><p class="mu sm">Bfamily Compétences Zone met en relation mais n’est pas partie aux échanges.</p><button onclick="FB.sendRequest(\''+m.uid+'\')">Envoyer la demande</button>'}
+else{h+='<h2>Accepter la demande de '+nm+' ?</h2><p>Vous n’êtes pas obligé d’accepter. Si vous acceptez, c’est sous ces conditions :</p><ul><li>'+nm+' pourra vous écrire sur WhatsApp pour échanger sur des projets.</li><li>Bfamily Compétences Zone met en relation mais n’est pas partie aux échanges et n’engage pas sa responsabilité.</li><li>Si la personne devient encombrante, vous pouvez la bloquer sur WhatsApp et la retirer de votre réseau.</li></ul>'+(noWa?'<p class="sm" style="color:var(--ko)">Vous n’avez pas encore enregistré votre numéro WhatsApp : '+nm+' ne pourra pas vous écrire. <a href="#profil" onclick="S.netModal=null">Ajouter mon numéro</a></p>':'')+'<button onclick="FB.acceptRequest(\''+m.id+'\',\''+m.uid+'\')">J’accepte ces conditions</button>'}
+return h+'<button class="s" style="margin-top:10px" onclick="S.netModal=null;render()">Annuler</button></div></div>'}
+function setBadge(){var el=document.getElementById("bn-reseau");if(!el)return;var d=el.querySelector(".bn-dot"),n=S.user?(S.pendIn||0):0;
+if(n>0){if(!d){d=document.createElement("span");d.className="bn-dot";el.appendChild(d)}d.textContent=n>9?"9+":String(n)}else if(d)d.remove()}
 
 function initReveal(){var els=document.querySelectorAll('.reveal');var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('active');obs.unobserve(e.target)}})},{threshold:0.1});els.forEach(function(el){obs.observe(el)})}
 function drawQR(){var e=document.getElementById("qr");if(!e)return;try{var q=qrcode(0,"M");q.addData(SITE+"#cours");q.make();e.innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true})}catch(x){}}
@@ -567,7 +602,7 @@ function formDetail(){
     FB.stats().then(function(st){ S.stats = st; render(); });
   }
   var statsHtml = '';
-  if(S.stats){
+  if(S.stats&&!S.stats.hide){
     statsHtml = '<div class="c g reveal" style="display:flex;justify-content:space-around;text-align:center;margin-bottom:20px;border:0;background:linear-gradient(135deg, color-mix(in srgb,var(--pr) 10%,var(--card)), var(--card))">'+
       '<div><b style="font-size:32px;color:var(--pr);display:block">'+S.stats.total+'</b><span class="sm mu" style="font-weight:600;text-transform:uppercase;letter-spacing:1px">Inscrits</span></div>'+
       '<div style="width:1px;background:var(--bd)"></div>'+
@@ -586,6 +621,7 @@ alt:"Affiche du Cyber Africa Forum 2026 : Que faut-il retenir du Jour 1 ?",
 badge:"Rapport du Jour 1",
 date:"16 novembre 2026",
 title:"Cyber Africa Forum 2026 : que faut-il retenir du Jour 1 à Cotonou ?",
+share:"Cyber Africa Forum 2026 : les temps forts du Jour 1 à Cotonou. Souveraineté numérique, IA et cybersécurité, investissement, Cyber Africa Women. Lisez le rapport sur Bfamily Compétences Zone :",
 meta:["16 et 17 novembre 2026","Sofitel Cotonou Marina Hotel & Spa, Bénin","Organisé par Kaydan Groupe","#CAF2026"],
 intro:["La capitale économique béninoise accueille les 16 et 17 novembre 2026 la sixième édition du **Cyber Africa Forum (CAF)**, un rendez-vous panafricain consacré aux enjeux de cybersécurité, d’intelligence artificielle, de souveraineté numérique et de transformation digitale.","Placée sous le thème « Construire la confiance numérique de demain », cette édition rassemble des décideurs publics, des responsables d’entreprises, des experts, des investisseurs, des entrepreneurs et des acteurs de l’écosystème numérique venus de plusieurs pays.","Alors que la deuxième journée est actuellement en cours, revenons sur les principaux enseignements et les moments forts de cette première journée."],
 stats:[["6e","édition du forum"],["2 jours","16 et 17 novembre"],["32 000","femmes et jeunes formés par DigiFemmes CI"]],
@@ -621,7 +657,7 @@ var h='<div class="c'+(x.hl?' g':'')+' reveal"><div class="inf-sec"><div class="
 if(x.ul)h+='<ul>'+x.ul.map(function(t){return '<li>'+infoTx(t)+'</li>'}).join("")+'</ul>';
 if(x.lk)h+='<p style="margin-top:12px"><b>Pour aller plus loin : </b><a href="'+esc(x.lk[1])+'" target="_blank" rel="noopener">'+esc(x.lk[0])+'</a></p>';
 return h+'</div></div></div>'}
-function infoArt(a){
+function infoArt(a,i){
 var h='<div class="c reveal">';
 if(a.img)h+='<img class="inf-hero" src="'+esc(a.img)+'" alt="'+esc(a.alt||"")+'" width="1080" height="1080" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">';
 h+='<span class="inf-badge">'+esc(a.badge)+'</span><span class="inf-date">'+esc(a.date)+'</span><h2 class="inf-title">'+esc(a.title)+'</h2>';
@@ -631,8 +667,30 @@ if(a.stats)h+='<div class="inf-stats reveal">'+a.stats.map(function(x){return '<
 h+=a.secs.map(infoSec).join("");
 h+='<div class="c reveal"><h2>Photos et ressources complémentaires</h2><p class="mu sm">'+esc(a.resIntro)+' Ces liens mènent vers des sites externes, qui ne sont pas gérés par Bfamily.</p>';
 a.res.forEach(function(g){h+='<div class="inf-sub">'+esc(g[0])+'</div>'+g[1].map(infoLink).join("")});
-return h+'</div>'}
+h+='</div>';h+=shareCard(a,i);return h}
+var INFO_FILES={};
+function infoUrl(){return location.origin+location.pathname+"#infos"}
+function infoShareText(a){return a.share||a.title}
+function shareCard(a,i){var u=infoUrl(),t=infoShareText(a),e=encodeURIComponent;
+return '<div class="c g reveal"><h2>Partager cette information</h2><p class="mu sm">Faites connaître cette actualité à vos proches et sur vos réseaux sociaux.</p><button onclick="shareInfo('+i+')">Partager</button><p style="text-align:center;margin:12px 0 0"><a href="#infos" onclick="shareMore('+i+');return false" class="sm">Autres options de partage</a></p><div id="shp'+i+'" style="display:none"><div class="shr-grid">'+
+'<a class="b s" target="_blank" rel="noopener" href="https://wa.me/?text='+e(t+"\n"+u)+'">WhatsApp</a>'+
+'<a class="b s" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u='+e(u)+'">Facebook</a>'+
+'<a class="b s" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url='+e(u)+'">LinkedIn</a>'+
+'<a class="b s" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text='+e(t)+'&url='+e(u)+'">X</a>'+
+'<a class="b s" target="_blank" rel="noopener" href="https://t.me/share/url?url='+e(u)+'&text='+e(t)+'">Telegram</a>'+
+'<button type="button" class="s" id="cpb'+i+'" onclick="copyInfo('+i+')">Copier le lien</button>'+
+(a.img?'<a class="b s" href="'+esc(a.img)+'" download>Télécharger l’image</a>':'')+
+'</div><p class="mu sm" style="margin-top:10px">Sur Facebook, LinkedIn et X, seul le lien est partagé : téléchargez l’image pour l’ajouter à votre publication.</p></div></div>'}
+function shareInfo(i){var a=INFOS[i],d={title:a.title,text:infoShareText(a)+"\n"+infoUrl()},f=INFO_FILES[i];
+try{if(f&&navigator.canShare&&navigator.canShare({files:[f]}))d.files=[f]}catch(e){}
+if(navigator.share){navigator.share(d).catch(function(e){if(e&&e.name!=="AbortError")shareMore(i,1)})}else shareMore(i,1)}
+function shareMore(i,open){var p=document.getElementById("shp"+i);if(p)p.style.display=(open||p.style.display==="none")?"block":"none"}
+function copyInfo(i){var u=infoUrl(),b=document.getElementById("cpb"+i),ok=function(){if(b){b.textContent="Lien copié";setTimeout(function(){b.textContent="Copier le lien"},2000)}};
+try{navigator.clipboard.writeText(u).then(ok,function(){window.prompt("Copiez ce lien :",u)})}catch(e){window.prompt("Copiez ce lien :",u)}}
+function infoPrefetch(){INFOS.forEach(function(a,i){if(!a.img||INFO_FILES[i]!==undefined)return;INFO_FILES[i]=null;
+fetch(a.img).then(function(r){return r.ok?r.blob():Promise.reject()}).then(function(b){INFO_FILES[i]=new File([b],a.img.split("/").pop(),{type:b.type||"image/jpeg"})}).catch(function(){INFO_FILES[i]=undefined})})}
 function infosView(){
+infoPrefetch();
 return '<h1>Informations</h1><p class="mu reveal" style="margin-top:0">Actualités et informations utiles de Bfamily Compétences Zone.</p>'+INFOS.map(infoArt).join("")+
 '<div class="c g reveal"><h2>Rejoignez la communauté Bfamily Compétences Zone sur WhatsApp !</h2><p>Vous souhaitez rester informé des opportunités, des formations, des événements, des innovations et des initiatives qui contribuent au développement des compétences en Afrique ?</p><p>Rejoignez notre chaîne WhatsApp pour ne manquer aucune actualité et découvrir de nouvelles possibilités d’apprentissage, de collaboration et de développement professionnel.</p><p><b>Ne restez pas en marge des opportunités. Faites partie de la communauté !</b></p><a class="b" href="'+INFO_WA+'" target="_blank" rel="noopener">Cliquez ici pour rejoindre Bfamily Compétences Zone</a></div>'+
 '<div class="inf-sign reveal"><b>BFAMILY COMPÉTENCES ZONE</b><span class="mu sm">Orienter • Former • Accompagner</span><p class="mu sm" style="margin:6px 0 0">Ensemble, développons les compétences et construisons les opportunités de demain.</p></div>'}
@@ -745,7 +803,7 @@ function delReply(id){
 
 var STATUS=["","En recherche d'emploi","Étudiant(e)","Salarié(e)","Entrepreneur(e)","Je propose une activité ou un service","Autre"];
 function avatar(ph,z,nm){var ok=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(ph||"");return ok?'<img src="'+ph+'" alt="" style="width:'+z+'px;height:'+z+'px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.1)">':'<div style="width:'+z+'px;height:'+z+'px;border-radius:50%;background:linear-gradient(135deg,var(--pr),#06b6d4);display:inline-flex;align-items:center;justify-content:center;font-size:'+z/2.5+'px;color:#fff;font-weight:800;box-shadow:0 2px 8px rgba(37,99,235,0.2)">'+esc(((nm||S.name||"?")[0]||"?").toUpperCase())+'</div>'}
-function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked;p.whatsapp=g("pwa")}
+function readProfile(){var p=S.profile=S.profile||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null},n=g("pn");if(n===null)return;S.name=n||S.name;p.headline=g("ph");p.status=g("ps");p.bio=g("pb");p.offer=g("po");p.city=g("pc");p.pub=document.getElementById("pp").checked;var ne=document.getElementById("pnet");p.net=ne?ne.checked:true;p.whatsapp=g("pwa")}
 function readCv(){
   var c=S.cv=S.cv||{},g=function(i){var e=document.getElementById(i);return e?e.value.trim():null};
   if(g("cp")===null)return;
@@ -763,7 +821,7 @@ function saveAll(){S.pmsg="Enregistrement…";render();FB.saveProfile().then(fun
 function saveProfile(){readProfile();if((S.name||"").length<2){alert("Entrez votre nom.");return}saveAll()}
 function saveCv(){readCv();saveAll()}
 function profilView(){var p=S.profile||{},st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
-return '<h1>Mon profil</h1><div class="c reveal" style="text-align:center">'+avatar(p.photo,110)+'<input id="pf" type="file" accept="image/*" onchange="pickPhoto(this)" style="margin-top:16px"></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Nom affiché</label><input id="pn" value="'+esc(S.name)+'" maxlength="40"><label class="sm mu" style="font-weight:600">Profession ou titre</label><input id="ph" value="'+esc(p.headline||"")+'" maxlength="60" placeholder="Ex. Étudiante en comptabilité"><label class="sm mu" style="font-weight:600">Statut</label><select id="ps" style="'+st+'">'+STATUS.map(function(o){return '<option'+(o==(p.status||"")?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select><label class="sm mu" style="font-weight:600">Bio</label><textarea id="pb" rows="3" maxlength="300" style="'+st+'" placeholder="Qui êtes-vous ? Que faites-vous ?">'+esc(p.bio||"")+'</textarea><label class="sm mu" style="font-weight:600">Ce que je propose (activité, service)</label><textarea id="po" rows="2" maxlength="200" style="'+st+'">'+esc(p.offer||"")+'</textarea><label class="sm mu" style="font-weight:600">Ville et pays (facultatif)</label><input id="pc" value="'+esc(p.city||"")+'" maxlength="60"><label class="sm mu" style="font-weight:600">Mon numéro WhatsApp (privé)</label><input id="pwa" value="'+esc(p.whatsapp||"")+'" maxlength="20" placeholder="Ex: 22900000000" style="background:var(--bg)"><p class="sm mu" style="margin-top:4px">Utilisé uniquement pour le bouton WhatsApp de votre réseau.</p></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pp" style="width:auto;margin-top:4px"'+(p.pub!==false?' checked':'')+'><span><b>Profil public</b><br><span class="sm mu">Visible par toute personne qui a votre lien : nom, photo, titre, statut, bio, ville et certifications, et votre CV si vous le choisissez dans Mon CV. Décochez pour le garder privé. Votre e-mail et votre téléphone ne sont jamais affichés.</span></span></label></div><button onclick="saveProfile()" class="reveal">Enregistrer mon profil</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+(p.pub!==false?'<a class="b s reveal" href="#membre-'+S.user.uid+'">Voir mon profil public</a>':'')+'<a class="b s reveal" href="#cv">Mon CV</a><a class="b s reveal" href="#parametres">Paramètres du compte</a>'}
+return '<h1>Mon profil</h1><div class="c reveal" style="text-align:center">'+avatar(p.photo,110)+'<input id="pf" type="file" accept="image/*" onchange="pickPhoto(this)" style="margin-top:16px"></div><div class="c reveal"><label class="sm mu" style="font-weight:600">Nom affiché</label><input id="pn" value="'+esc(S.name)+'" maxlength="40"><label class="sm mu" style="font-weight:600">Profession ou titre</label><input id="ph" value="'+esc(p.headline||"")+'" maxlength="60" placeholder="Ex. Étudiante en comptabilité"><label class="sm mu" style="font-weight:600">Statut</label><select id="ps" style="'+st+'">'+STATUS.map(function(o){return '<option'+(o==(p.status||"")?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select><label class="sm mu" style="font-weight:600">Bio</label><textarea id="pb" rows="3" maxlength="300" style="'+st+'" placeholder="Qui êtes-vous ? Que faites-vous ?">'+esc(p.bio||"")+'</textarea><label class="sm mu" style="font-weight:600">Ce que je propose (activité, service)</label><textarea id="po" rows="2" maxlength="200" style="'+st+'">'+esc(p.offer||"")+'</textarea><label class="sm mu" style="font-weight:600">Ville et pays (facultatif)</label><input id="pc" value="'+esc(p.city||"")+'" maxlength="60"><label class="sm mu" style="font-weight:600">Mon numéro WhatsApp (privé)</label><input id="pwa" value="'+esc(p.whatsapp||"")+'" maxlength="20" placeholder="Ex: 22900000000" style="background:var(--bg)"><p class="sm mu" style="margin-top:4px">Communiqué uniquement aux membres avec qui vous êtes connecté (demande acceptée), pour qu’ils puissent vous écrire.</p></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pp" style="width:auto;margin-top:4px"'+(p.pub!==false?' checked':'')+'><span><b>Profil public</b><br><span class="sm mu">Visible par toute personne qui a votre lien : nom, photo, titre, statut, bio, ville et certifications, et votre CV si vous le choisissez dans Mon CV. Décochez pour le garder privé : dans le Réseau, seuls votre prénom et l’initiale de votre nom restent alors visibles, avec un cadenas. Votre e-mail et votre téléphone ne sont jamais affichés.</span></span></label></div><div class="c reveal"><label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="pnet" style="width:auto;margin-top:4px"'+(p.net!==false?' checked':'')+'><span><b>Apparaître dans la liste du Réseau</b><br><span class="sm mu">Les membres peuvent vous trouver et vous envoyer une demande de connexion. Décochez pour ne pas apparaître du tout.</span></span></label></div><button onclick="saveProfile()" class="reveal">Enregistrer mon profil</button>'+(S.pmsg?'<p style="color:var(--ok);font-weight:600">'+esc(S.pmsg)+'</p>':'')+(p.pub!==false?'<a class="b s reveal" href="#membre-'+S.user.uid+'">Voir mon profil public</a>':'')+'<a class="b s reveal" href="#cv">Mon CV</a><a class="b s reveal" href="#parametres">Paramètres du compte</a>'}
 function cvView(){
   var c=S.cv||{},ce=S.certs||[],st='width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--bd);font:inherit;margin-top:8px;background:var(--bg)';
   var customHtml = '';
@@ -851,9 +909,9 @@ var it=a.map(function(x){var t=String(x.text||"");return '<div class="mi">'+avLi
 return '<h2 style="margin:32px 0 8px" class="reveal">Avis</h2><div class="mq reveal"><div class="mt" style="animation-duration:'+Math.max(20,a.length*8)+'s">'+it+it+'</div></div>'}
 var LEGAL={confidentialite:["Politique de confidentialité",[
 ["Qui sommes-nous ?","Bfamily Compétences Zone est la plateforme de formations de Bfamily, organisation établie à Cotonou (Bénin) depuis 2018. Le responsable du traitement de vos données est Bfamily. Contact : {{C}}."],
-["Les données que nous collectons","• Votre nom et votre adresse e-mail, à l’inscription.<br>• Votre mot de passe, géré par le service d’authentification de Google (Firebase) : nous ne pouvons pas le lire.<br>• Votre progression et vos résultats aux quiz.<br>• Vos certificats : nom, formation, date et numéro.<br>• Vos avis : prénom et initiale, note, texte et date.<br>• Si vous le souhaitez : votre profil (photo, titre, statut, bio, activité, ville) et votre CV (téléphone, expériences, formations, compétences, langues)."],
+["Les données que nous collectons","• Votre nom et votre adresse e-mail, à l’inscription.<br>• Votre mot de passe, géré par le service d’authentification de Google (Firebase) : nous ne pouvons pas le lire.<br>• Votre progression et vos résultats aux quiz.<br>• Vos certificats : nom, formation, date et numéro.<br>• Vos avis : prénom et initiale, note, texte et date.<br>• Si vous le souhaitez : votre profil (photo, titre, statut, bio, activité, ville) et votre CV (téléphone, expériences, formations, compétences, langues).<br>• Si vous utilisez le Réseau : votre numéro WhatsApp (facultatif), ainsi que vos demandes de connexion et leur statut."],
 ["Pourquoi nous les utilisons","Pour créer votre compte, enregistrer votre progression, vous délivrer des certificats et permettre de les vérifier, afficher les avis et les profils publics que vous choisissez de publier, et vous informer de nos formations par e-mail."],
-["Ce qui est visible par les autres","• Un certificat peut être vérifié par toute personne qui en connaît le numéro : elle voit le nom, la formation et la date.<br>• Vos avis sont publics, avec votre prénom et l’initiale de votre nom. Votre photo n’apparaît que si votre profil est public.<br>• Votre profil n’est visible que si vous le rendez public. Vous pouvez le repasser en privé à tout moment.<br>• Votre e-mail et votre téléphone ne sont jamais affichés publiquement. Votre CV n’est visible sur votre profil public que si vous cochez la case prévue dans Mon CV, et sans votre téléphone."],
+["Ce qui est visible par les autres","• Un certificat peut être vérifié par toute personne qui en connaît le numéro : elle voit le nom, la formation et la date.<br>• Vos avis sont publics, avec votre prénom et l’initiale de votre nom. Votre photo n’apparaît que si votre profil est public.<br>• Votre profil complet n’est visible que si vous le rendez public. Vous pouvez le repasser en privé à tout moment. Dans la liste du Réseau, un profil privé apparaît quand même avec un cadenas : seuls le prénom et l’initiale du nom sont visibles, sans photo ni détails. Vous pouvez choisir de ne pas y apparaître dans Mon profil.<br>• Votre numéro WhatsApp n’est communiqué qu’aux membres avec qui vous êtes connecté, c’est-à-dire dont vous avez accepté la demande ou qui ont accepté la vôtre.<br>• Votre e-mail et votre téléphone ne sont jamais affichés publiquement. Votre CV n’est visible sur votre profil public que si vous cochez la case prévue dans Mon CV, et sans votre téléphone."],
 ["Où sont stockées vos données","Dans les services Firebase de Google (authentification et base de données, hébergés en Europe). Les vidéos sont diffusées par YouTube. Le site est hébergé sur une plateforme d’hébergement web. Ces prestataires traitent des données pour notre compte."],
 ["Combien de temps nous les gardons","Tant que votre compte existe. Si vous supprimez votre compte, votre profil, vos avis et vos certificats sont supprimés avec lui. Nous vous demandons alors la raison de votre départ : elle est conservée sans votre nom ni votre e-mail, pour améliorer nos formations."],
 ["Vos droits","Vous pouvez à tout moment consulter vos données (bouton Télécharger mes données), les corriger (Mon profil et Mon CV), les supprimer (bouton Supprimer mon compte), ou vous opposer à l’envoi d’informations par e-mail en nous écrivant ({{C}}). Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir l’Autorité de protection des données personnelles du Bénin (APDP)."],
@@ -866,6 +924,7 @@ conditions:["Conditions d’utilisation",[
 ["Formations et certificats","Bfamily Compétences Zone propose des formations en ligne gratuites avec certificat, mais aussi des formations payantes, des séances de formation et des semaines d’acquisition de compétences. Le certificat atteste d’une compétence acquise à l’issue d’une formation suivie et validée chez Bfamily Compétences Zone. C’est une certification de la plateforme, qui enrichit votre parcours et votre CV. Son numéro permet de le vérifier sur le site. Une fois la compétence acquise, c’est à vous de la mettre en pratique, de gagner en expérience et de continuer à vous former pour mieux vous positionner : dans votre CV, dans votre recherche d’emploi ou dans votre projet d’entreprise."],
 ["Offres payantes","Pour une offre payante, le prix, le mode de paiement, la durée et les conditions d’annulation ou de remboursement sont indiqués avant votre inscription."],
 ["Avis et profils","Vos avis et votre profil doivent rester respectueux, exacts et légaux. Nous pouvons supprimer un contenu qui ne respecte pas ces règles."],
+["Réseau et mises en relation","Le Réseau permet d’envoyer une demande de connexion à un autre membre. Chaque membre est libre d’accepter ou de refuser. En cas d’acceptation, les deux membres peuvent s’écrire sur WhatsApp. Bfamily met les membres en relation mais n’est pas partie à leurs échanges, n’en garantit pas le contenu et n’engage pas sa responsabilité. Vous restez libre de bloquer une personne sur WhatsApp et de la retirer de votre réseau. Les messages non sollicités, le harcèlement et la publicité abusive sont interdits."],
 ["Ce qui est interdit","• Fabriquer ou modifier un faux certificat, ou tenter de contourner les quiz.<br>• Usurper l’identité d’une autre personne.<br>• Publier des propos injurieux, discriminatoires ou illégaux.<br>• Perturber le fonctionnement du site ou tenter d’accéder aux données d’autres personnes.<br>En cas de manquement, nous pouvons suspendre ou supprimer un compte et invalider les certificats concernés."],
 ["Contenus et propriété","Les textes, vidéos et visuels de la plateforme appartiennent à Bfamily ou à leurs auteurs. Vous pouvez les consulter pour votre formation personnelle. Toute reproduction ou revente sans accord est interdite. Certains contenus sont réalisés avec l’aide de l’intelligence artificielle."],
 ["Liens externes","Les ressources proposées sous les leçons mènent vers des sites externes. Nous ne contrôlons pas leur contenu et n’en sommes pas responsables."],
@@ -931,7 +990,7 @@ setTimeout(function(){if(!S.authReady){S.authReady=true;S.err="Connexion au serv
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,sendEmailVerification,deleteUser,reauthenticateWithCredential,EmailAuthProvider,reauthenticateWithPopup}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,getDocs,collection,deleteDoc,query,where,updateDoc,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,getDocs,collection,deleteDoc,query,where,updateDoc,arrayUnion,arrayRemove,deleteField}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 var cfg={apiKey:"AIzaSyAG3fQkwhrfmklTiYRp1l9PYz-VL9AgYW4",authDomain:"bfamily-competences-zone.firebaseapp.com",projectId:"bfamily-competences-zone",storageBucket:"bfamily-competences-zone.firebasestorage.app",messagingSenderId:"839328126762",appId:"1:839328126762:web:094099073943d3e3ac7053"};
 var app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),COURSE="Maîtriser le prompting IA";
 window.FB={
@@ -944,7 +1003,7 @@ reset:function(e){return sendPasswordResetEmail(auth,e)},
 out:function(){S.sub="home";return signOut(auth)},
 save:function(){if(!S.user)return;setDoc(doc(db,"users",S.user.uid),{name:S.name,done:S.done},{merge:true}).catch(function(){})},
 verify:async function(id){var x=await getDoc(doc(db,"certificates",id));return x.exists()?x.data():null},
-stats:async function(){var q=await getDocs(collection(db,"users")),t=0,c=0;q.forEach(function(d){t++;if(d.data().certId)c++;});return{total:t,certs:c}},
+stats:async function(){var x=await getDoc(doc(db,"stats","global"));return x.exists()?{total:x.data().total||0,certs:x.data().certs||0}:{hide:true}},
 reauth:async function(pw){var u=auth.currentUser,ids=(u.providerData||[]).map(function(x){return x.providerId});
 if(ids.indexOf("password")>=0){await reauthenticateWithCredential(u,EmailAuthProvider.credential(u.email,pw))}else{await reauthenticateWithPopup(u,new GoogleAuthProvider())}},
 deletionReason:async function(r,n){await setDoc(doc(collection(db,"deletionReasons")),{reason:r,note:n||"",at:Date.now()})},
@@ -955,18 +1014,29 @@ try{await deleteDoc(doc(db,"comments","prompting_"+uid))}catch(e){}
 var ids=(S.certs||[]).map(function(c){return c.id});if(S.certId&&ids.indexOf(S.certId)<0)ids.push(S.certId);
 for(var i=0;i<ids.length;i++){try{await deleteDoc(doc(db,"certificates",ids[i]))}catch(e){}}
 try{await deleteDoc(doc(db,"users",uid))}catch(e){}
+try{await deleteDoc(doc(db,"directory",uid))}catch(e){}
+try{await deleteDoc(doc(db,"contacts",uid))}catch(e){}
 await deleteUser(auth.currentUser)},
 pub:async function(uid){var x=await getDoc(doc(db,"profiles",uid));return x.exists()?x.data():null},
+syncDir:async function(){var u=S.user||auth.currentUser;if(!u)return false;var uid=u.uid,p=S.profile||{},wa=p.whatsapp||"",okc=false;
+try{await setDoc(doc(db,"contacts",uid),{whatsapp:wa,updatedAt:Date.now()});okc=true}catch(e){}
+try{if(p.net===false)await deleteDoc(doc(db,"directory",uid));else if(p.pub!==false)await setDoc(doc(db,"directory",uid),{name:S.name||"Membre",pub:true,headline:(p.headline||"").slice(0,60),offer:(p.offer||"").slice(0,200),photo:p.photo||"",updatedAt:Date.now()});else await setDoc(doc(db,"directory",uid),{name:shortName(S.name),pub:false,updatedAt:Date.now()})}catch(e){}
+if(okc){try{await updateDoc(doc(db,"users",uid),{"profile.whatsapp":deleteField(),whatsapp:deleteField()})}catch(e){}}
+return okc},
+pending:async function(){var u=S.user||auth.currentUser;if(!u)return;var q=await getDocs(query(collection(db,"requests"),where("to","==",u.uid))),n=0;q.forEach(function(d){if(d.data().status==="pending")n++});S.pendIn=n;setBadge()},
 saveProfile:async function(){var p=S.profile||{},ce=(S.certs||[]).map(function(c){return{title:c.title,org:c.org,date:c.date,id:c.id}});
-await setDoc(doc(db,"users",S.user.uid),{name:S.name,profile:p,whatsapp:p.whatsapp||"",cv:S.cv||{},certs:S.certs||[]},{merge:true});
+var okc=await FB.syncDir();var pr=Object.assign({},p);if(okc)delete pr.whatsapp;
+await setDoc(doc(db,"users",S.user.uid),Object.assign({name:S.name,profile:pr,cv:S.cv||{},certs:S.certs||[]},okc?{}:{whatsapp:p.whatsapp||""}),{merge:true});
 if(p.pub!==false){var pd={name:S.name,headline:p.headline||"",status:p.status||"",bio:p.bio||"",offer:p.offer||"",city:p.city||"",photo:p.photo||"",certs:ce,updatedAt:Date.now()},cc=S.cv||{};
 if(cc.pub){pd.cv={exp:(cc.exp||"").slice(0,1500),edu:(cc.edu||"").slice(0,1000),skills:(cc.skills||"").slice(0,500),langs:(cc.langs||"").slice(0,100)}}
 await setDoc(doc(db,"profiles",S.user.uid),pd)}else{try{await deleteDoc(doc(db,"profiles",S.user.uid))}catch(e){}}},
-adm:async function(){var q=await getDocs(collection(db,"users")),u=[];q.forEach(function(d){var x=d.data();x.uid=d.id;u.push(x)});return u},
+adm:async function(){var q=await getDocs(collection(db,"users")),u=[];q.forEach(function(d){var x=d.data();x.uid=d.id;u.push(x)});var nc=0;u.forEach(function(x){if(x.certId)nc++});try{await setDoc(doc(db,"stats","global"),{total:u.length,certs:nc,updatedAt:Date.now()})}catch(e){}return u},
 admDel:async function(uid){
 var u=await getDoc(doc(db,"users",uid));
 if(u.exists()){var cid=u.data().certId;if(cid)try{await deleteDoc(doc(db,"certificates",cid))}catch(e){}}
 try{await deleteDoc(doc(db,"users",uid))}catch(e){}
+try{await deleteDoc(doc(db,"directory",uid))}catch(e){}
+try{await deleteDoc(doc(db,"contacts",uid))}catch(e){}
 try{await deleteDoc(doc(db,"profiles",uid))}catch(e){}
 try{await deleteDoc(doc(db,"comments","prompting_"+uid))}catch(e){}
 },
@@ -1019,85 +1089,44 @@ delReply:async function(id){
   await deleteDoc(doc(db,"replies",id));
 },
 getNetwork:async function(){
-  var allUsers = [];
-  var uq = await getDocs(collection(db,"users"));
-  uq.forEach(function(d){
-    var data = d.data();
-    if((data.profile && data.profile.pub !== false) || d.id === S.user.uid) {
-      allUsers.push({
-        uid: d.id,
-        name: data.name || "Membre",
-        headline: (data.profile && data.profile.headline) || "",
-        offer: (data.profile && data.profile.offer) || "",
-        photo: (data.profile && data.profile.photo) || "",
-        whatsapp: data.whatsapp || ""
-      });
-    }
-  });
-
-  var conns = [];
-  var reqIn = [];
-  var reqOut = [];
-
-  var rq = await getDocs(collection(db,"requests"));
-  rq.forEach(function(d){
-    var r = d.data(); r.id = d.id;
-    if(r.status === "pending") {
-      if(r.from === S.user.uid) reqOut.push(r);
-      if(r.to === S.user.uid) reqIn.push(r);
-    } else if(r.status === "accepted") {
-      if(r.from === S.user.uid) conns.push(r.to);
-      if(r.to === S.user.uid) conns.push(r.from);
-    }
-  });
-
-  var connProfiles = [];
-  for(var i=0;i<conns.length;i++){
-    var c = allUsers.find(function(u){return u.uid === conns[i]});
-    if(c) connProfiles.push(c);
-  }
-
-  return { users: allUsers, connections: connProfiles, requestsIn: reqIn, requestsOut: reqOut };
+var uid=S.user.uid,allUsers=[],byId={};
+var dq=await getDocs(collection(db,"directory"));
+dq.forEach(function(d){var x=d.data(),pu=x.pub!==false,o={uid:d.id,name:x.name||"Membre",pub:pu,headline:pu?(x.headline||""):"",offer:pu?(x.offer||""):"",photo:pu?(x.photo||""):"",whatsapp:""};allUsers.push(o);byId[d.id]=o});
+var reqs={};
+var q1=await getDocs(query(collection(db,"requests"),where("from","==",uid)));
+var q2=await getDocs(query(collection(db,"requests"),where("to","==",uid)));
+q1.forEach(function(d){var r=d.data();r.id=d.id;reqs[d.id]=r});
+q2.forEach(function(d){var r=d.data();r.id=d.id;reqs[d.id]=r});
+var conns=[],reqIn=[],reqOut=[];
+Object.keys(reqs).forEach(function(k){var r=reqs[k],other=r.from===uid?r.to:r.from,nm=r.from===uid?r.toName:r.fromName;
+if(!byId[other]){var o={uid:other,name:nm||"Membre",pub:false,headline:"",offer:"",photo:"",whatsapp:""};allUsers.push(o);byId[other]=o}
+if(r.status==="pending"){if(r.from===uid)reqOut.push(r);if(r.to===uid)reqIn.push(r)}
+else if(r.status==="accepted"){conns.push({uid:other,incoming:r.to===uid})}});
+var connProfiles=[];
+for(var i=0;i<conns.length;i++){var o=Object.assign({},byId[conns[i].uid]);o.incoming=conns[i].incoming;
+try{var cs=await getDoc(doc(db,"contacts",o.uid));if(cs.exists())o.whatsapp=cs.data().whatsapp||""}catch(e){}
+connProfiles.push(o)}
+return {users:allUsers,connections:connProfiles,requestsIn:reqIn,requestsOut:reqOut};
 },
 sendRequest:async function(toUid){
-  if(!S.user) return;
-  var now = new Date();
-  var currentMonth = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
-  var count = S.requestCount || 0;
-  var month = S.lastRequestMonth || "";
-  
-  if (month !== currentMonth) { count = 0; month = currentMonth; }
-  
-  if (count >= 5) { 
-    alert("Vous avez atteint votre limite de 5 demandes pour ce mois-ci. Passez à Bfamily Premium pour envoyer plus de demandes.");
-    return; 
-  }
-  
-  var reqId = S.user.uid + "_" + toUid;
-  await setDoc(doc(db,"requests",reqId), {
-    from: S.user.uid,
-    to: toUid,
-    status: "pending",
-    createdAt: Date.now()
-  });
-  
-  await updateDoc(doc(db, "users", S.user.uid), { 
-    requestCount: count + 1, 
-    lastRequestMonth: month 
-  });
-  S.requestCount = count + 1;
-  S.lastRequestMonth = month;
-  
-  S.networkData = null;
-  loadNetwork();
+if(!S.user) return;
+S.netModal=null;
+var now=new Date(),currentMonth=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0'),count=S.requestCount||0,month=S.lastRequestMonth||"";
+if(month!==currentMonth){count=0;month=currentMonth}
+if(count>=5){alert("Vous avez atteint votre limite de 5 demandes pour ce mois-ci. Passez à Bfamily Premium pour envoyer plus de demandes.");render();return}
+var t=((S.networkData||{}).users||[]).find(function(x){return x.uid===toUid});
+await setDoc(doc(db,"requests",S.user.uid+"_"+toUid),{from:S.user.uid,to:toUid,fromName:shortName(S.name),toName:t?t.name:"",status:"pending",createdAt:Date.now()});
+await updateDoc(doc(db,"users",S.user.uid),{requestCount:count+1,lastRequestMonth:month});
+S.requestCount=count+1;S.lastRequestMonth=month;
+S.networkData=null;loadNetwork();
 },
-acceptRequest:async function(reqId, fromUid){
+acceptRequest:async function(reqId, fromUid){S.netModal=null;
   if(!S.user) return;
   await updateDoc(doc(db,"requests",reqId), { status: "accepted" });
   S.networkData = null;
   loadNetwork();
 },
-rejectRequest:async function(reqId){
+rejectRequest:async function(reqId){S.netModal=null;
   if(!S.user) return;
   await deleteDoc(doc(db,"requests",reqId));
   S.networkData = null;
@@ -1130,7 +1159,7 @@ onAuthStateChanged(auth,async function(u){
 if(!u){try{localStorage.removeItem("bf_in")}catch(e){}S.user=null;S.done=[];S.name="";S.certId=null;S.certDate=null;S.certName=null;S.profile=null;S.cv=null;S.certs=[];S.prefs=null;S.adm=null;S.admLoad=0;S.authReady=true;render();return}
 S.user={uid:u.uid,email:u.email};S.err="";try{localStorage.setItem("bf_in","1")}catch(e){}try{await u.reload()}catch(e){}S.verified=u.emailVerified;S.prov=(u.providerData||[]).some(function(x){return x.providerId=="password"})?"password":"google";
 try{var x=await getDoc(doc(db,"users",u.uid));
-if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.certName=d.certName||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}; S.profile.whatsapp = d.whatsapp || ""; S.requestCount = d.requestCount || 0; S.lastRequestMonth = d.lastRequestMonth || "";}
+if(x.exists()){var d=x.data();S.name=d.name||u.displayName||"";S.done=d.done||[];S.certId=d.certId||null;S.certDate=d.certDate||null;S.certName=d.certName||null;S.profile=d.profile||{};S.cv=d.cv||{auto:true};S.certs=d.certs||(d.certId?[{title:COURSE,org:"Bfamily Compétences Zone",date:d.certDate||Date.now(),id:d.certId}]:[]);S.prefs=d.prefs||{news:true}; S.profile.whatsapp = d.whatsapp || (d.profile&&d.profile.whatsapp) || ""; try{var cs=await getDoc(doc(db,"contacts",u.uid));if(cs.exists()&&cs.data().whatsapp)S.profile.whatsapp=cs.data().whatsapp}catch(e){} FB.syncDir().catch(function(){}); FB.pending().catch(function(){}); S.requestCount = d.requestCount || 0; S.lastRequestMonth = d.lastRequestMonth || "";}
 else{S.name=S.pendingName||u.displayName||"";S.done=[];S.certId=null;S.profile={};S.cv={auto:true};S.certs=[];S.prefs={news:true};S.requestCount=0;S.lastRequestMonth="";await setDoc(doc(db,"users",u.uid),{name:S.name,email:u.email||"",done:[],createdAt:Date.now(),consentAt:Date.now(),prefs:{news:true}})}
 }catch(e){S.err="Impossible de charger votre compte."}
 if(!location.hash||location.hash=="#accueil")location.hash="cours";S.authReady=true;render()});
