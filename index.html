@@ -420,15 +420,15 @@ function reseauView(){
   // Compteur de demandes
   var now = new Date();
   var currentMonth = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
-  var count = S.requestCount || 0;
-  var month = S.lastRequestMonth || "";
-  if (month !== currentMonth) { count = 0; }
-  var limitReached = count >= 5;
+  var qt = netQuota();
+  var count = qt.used;
+  var limitReached = qt.left <= 0;
   
   h+='<div class="c g" style="padding:16px;margin-bottom:20px;text-align:center;border:0;background:linear-gradient(135deg, color-mix(in srgb,var(--pr) 10%,var(--card)), var(--card))">';
   h+='<b style="font-size:15px">Demandes de connexion ce mois-ci</b><br>';
-  h+='<span style="font-size:24px;font-weight:800;color:'+(limitReached?'var(--ko)':'var(--pr)')+'">'+count+' / 5</span>';
-  if(limitReached) h+='<br><span class="sm" style="color:var(--ko);font-weight:600">Limite atteinte. Passez à Premium pour continuer.</span>';
+  h+='<span style="font-size:24px;font-weight:800;color:'+(limitReached?'var(--ko)':'var(--pr)')+'">'+count+' / '+qt.max+'</span>';
+  h+='<br><span class="sm" style="color:'+(limitReached?'var(--ko)':'var(--mu)')+';font-weight:600">'+(limitReached?(qt.cert?'Limite atteinte. Elle se renouvelle le mois prochain.':'Limite atteinte. Obtenez un certificat ce mois-ci pour passer à 5 demandes.'):(qt.cert?'Votre certificat de ce mois vous donne 5 demandes.':'Obtenez un certificat sur la plateforme ce mois-ci pour passer à 5 demandes.'))+'</span>';
+  if(!qt.cert) h+='<br><a class="sm" href="#formations">Voir les formations</a>';
   h+='</div>';
 
   // Tabs
@@ -536,6 +536,10 @@ var h='<div class="mdl" onclick="if(event.target===this){S.netModal=null;render(
 if(m.t==="send"){h+='<h2>Envoyer une demande à '+nm+' ?</h2><p>'+nm+' est libre d’accepter ou de refuser. Si la demande est acceptée, vous pourrez lui écrire sur WhatsApp pour échanger sur des projets. Elle pourra aussi vous écrire si vous avez enregistré votre numéro WhatsApp dans Mon profil.</p><p class="mu sm">Bfamily Compétences Zone met en relation mais n’est pas partie aux échanges.</p><button onclick="FB.sendRequest(\''+m.uid+'\')">Envoyer la demande</button>'}
 else{h+='<h2>Accepter la demande de '+nm+' ?</h2><p>Vous n’êtes pas obligé d’accepter. Si vous acceptez, c’est sous ces conditions :</p><ul><li>'+nm+' pourra vous écrire sur WhatsApp pour échanger sur des projets.</li><li>Bfamily Compétences Zone met en relation mais n’est pas partie aux échanges et n’engage pas sa responsabilité.</li><li>Si la personne devient encombrante, vous pouvez la bloquer sur WhatsApp et la retirer de votre réseau.</li></ul>'+(noWa?'<p class="sm" style="color:var(--ko)">Vous n’avez pas encore enregistré votre numéro WhatsApp : '+nm+' ne pourra pas vous écrire. <a href="#profil" onclick="S.netModal=null">Ajouter mon numéro</a></p>':'')+'<button onclick="FB.acceptRequest(\''+m.id+'\',\''+m.uid+'\')">J’accepte ces conditions</button>'}
 return h+'<button class="s" style="margin-top:10px" onclick="S.netModal=null;render()">Annuler</button></div></div>'}
+function netQuota(){var now=new Date(),cm=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+var cert=(S.certs||[]).some(function(c){var d=new Date(c&&c.date);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()});
+var max=cert?5:1,used=(S.lastRequestMonth===cm)?(S.requestCount||0):0;
+return {max:max,used:used,left:Math.max(0,max-used),cert:cert}}
 function setBadge(){var el=document.getElementById("bn-reseau");if(!el)return;var d=el.querySelector(".bn-dot"),n=S.user?(S.pendIn||0):0;
 if(n>0){if(!d){d=document.createElement("span");d.className="bn-dot";el.appendChild(d)}d.textContent=n>9?"9+":String(n)}else if(d)d.remove()}
 
@@ -1111,13 +1115,12 @@ return {users:allUsers,connections:connProfiles,requestsIn:reqIn,requestsOut:req
 sendRequest:async function(toUid){
 if(!S.user) return;
 S.netModal=null;
-var now=new Date(),currentMonth=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0'),count=S.requestCount||0,month=S.lastRequestMonth||"";
-if(month!==currentMonth){count=0;month=currentMonth}
-if(count>=5){alert("Vous avez atteint votre limite de 5 demandes pour ce mois-ci. Passez à Bfamily Premium pour envoyer plus de demandes.");render();return}
+var now=new Date(),currentMonth=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0'),qt=netQuota();
+if(qt.left<=0){alert(qt.cert?"Vous avez atteint votre limite de 5 demandes pour ce mois-ci. Elle se renouvelle le mois prochain.":"Vous avez atteint votre limite de 1 demande pour ce mois-ci. Obtenez un certificat sur la plateforme ce mois-ci pour passer à 5 demandes. La limite se renouvelle chaque mois.");render();return}
 var t=((S.networkData||{}).users||[]).find(function(x){return x.uid===toUid});
 await setDoc(doc(db,"requests",S.user.uid+"_"+toUid),{from:S.user.uid,to:toUid,fromName:shortName(S.name),toName:t?t.name:"",status:"pending",createdAt:Date.now()});
-await updateDoc(doc(db,"users",S.user.uid),{requestCount:count+1,lastRequestMonth:month});
-S.requestCount=count+1;S.lastRequestMonth=month;
+await updateDoc(doc(db,"users",S.user.uid),{requestCount:qt.used+1,lastRequestMonth:currentMonth});
+S.requestCount=qt.used+1;S.lastRequestMonth=currentMonth;
 S.networkData=null;loadNetwork();
 },
 acceptRequest:async function(reqId, fromUid){S.netModal=null;
