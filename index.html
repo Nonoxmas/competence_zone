@@ -166,6 +166,8 @@ footer{margin-top:40px;background:linear-gradient(180deg,#0f172a,#020617);color:
 .inf-sub{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin:18px 0 4px}
 .inf-sign{text-align:center;margin:30px 0 10px}
 .inf-sep{height:2px;background:var(--bd);border-radius:2px;margin:38px 0}
+.inf-badge.red{background:linear-gradient(135deg,#ef4444,#f97316)}
+.inf-badge.grey{background:var(--mu)}
 .inf-sign b{display:block;font-size:16px;letter-spacing:.5px;color:var(--pr)}
 @media (max-width:699px){.inf-title{font-size:22px}.inf-sec{gap:10px}.inf-n{flex-basis:32px;width:32px;height:32px;font-size:14px}}
 
@@ -374,7 +376,7 @@ function render(){
   if(p=="evolution")h=need(evo);
   if(p=="certificats")h=need(certs);
   if(p=="reseau")h=need(reseauView);
-  if(p=="bourses")h=soon("Bourses d’études","Retrouvez ici les bourses d’études disponibles et comment postuler.");
+  if(p=="bourses")h=need(boursesView);
   if(p=="infos")h=need(infosView);
   if(p=="opportunites")h=soon("Opportunités","Offres d’emploi, stages, concours et opportunités pour les jeunes.");
   if(p=="accueil"&&!S.authReady)h=HINT?'<div class="c"><p>Chargement…</p></div>':authView();
@@ -705,31 +707,73 @@ h+='<div class="c reveal"><h2>'+esc(a.resTitle||"Photos et ressources complémen
 a.res.forEach(function(g){h+='<div class="inf-sub">'+esc(g[0])+'</div>'+g[1].map(infoLink).join("")});
 h+='</div>';h+=shareCard(a,i);return h}
 var INFO_FILES={};
-function infoUrl(){return location.origin+location.pathname+"#infos"}
+function shList(k){return k==="B"?BOURSES:INFOS}
+function infoUrl(k){return location.origin+location.pathname+(k==="B"?"#bourses":"#infos")}
 function infoShareText(a){return a.share||a.title}
-function shareCard(a,i){var u=infoUrl(),t=infoShareText(a),e=encodeURIComponent;
-return '<div class="c g reveal"><h2>Partager cette information</h2><p class="mu sm">Faites connaître cette actualité à vos proches et sur vos réseaux sociaux.</p><button onclick="shareInfo('+i+')">Partager</button><p style="text-align:center;margin:12px 0 0"><a href="#infos" onclick="shareMore('+i+');return false" class="sm">Autres options de partage</a></p><div id="shp'+i+'" style="display:none"><div class="shr-grid">'+
+function shareCard(a,i,k){k=k||"I";var id=k+i,u=infoUrl(k),t=infoShareText(a),e=encodeURIComponent;
+return '<div class="c g reveal"><h2>'+esc(a.shareTitle||"Partager cette information")+'</h2><p class="mu sm">'+esc(a.shareLead||"Faites connaître cette actualité à vos proches et sur vos réseaux sociaux.")+'</p><button onclick="shareInfo(\''+k+'\','+i+')">Partager</button><p style="text-align:center;margin:12px 0 0"><a href="'+(k==="B"?"#bourses":"#infos")+'" onclick="shareMore(\''+id+'\');return false" class="sm">Autres options de partage</a></p><div id="shp'+id+'" style="display:none"><div class="shr-grid">'+
 '<a class="b s" target="_blank" rel="noopener" href="https://wa.me/?text='+e(t+"\n"+u)+'">WhatsApp</a>'+
 '<a class="b s" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u='+e(u)+'">Facebook</a>'+
 '<a class="b s" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url='+e(u)+'">LinkedIn</a>'+
 '<a class="b s" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text='+e(t)+'&url='+e(u)+'">X</a>'+
 '<a class="b s" target="_blank" rel="noopener" href="https://t.me/share/url?url='+e(u)+'&text='+e(t)+'">Telegram</a>'+
-'<button type="button" class="s" id="cpb'+i+'" onclick="copyInfo('+i+')">Copier le lien</button>'+
+'<button type="button" class="s" id="cpb'+id+'" onclick="copyInfo(\''+k+'\','+i+')">Copier le lien</button>'+
 (a.img?'<a class="b s" href="'+esc(a.img)+'" download>Télécharger l’image</a>':'')+
 '</div><p class="mu sm" style="margin-top:10px">Sur Facebook, LinkedIn et X, seul le lien est partagé : téléchargez l’image pour l’ajouter à votre publication.</p></div></div>'}
-function shareInfo(i){var a=INFOS[i],d={title:a.title,text:infoShareText(a)+"\n"+infoUrl()},f=INFO_FILES[i];
+function shareInfo(k,i){var a=shList(k)[i],d={title:a.title,text:infoShareText(a)+"\n"+infoUrl(k)},f=INFO_FILES[k+i];
 try{if(f&&navigator.canShare&&navigator.canShare({files:[f]}))d.files=[f]}catch(e){}
-if(navigator.share){navigator.share(d).catch(function(e){if(e&&e.name!=="AbortError")shareMore(i,1)})}else shareMore(i,1)}
-function shareMore(i,open){var p=document.getElementById("shp"+i);if(p)p.style.display=(open||p.style.display==="none")?"block":"none"}
-function copyInfo(i){var u=infoUrl(),b=document.getElementById("cpb"+i),ok=function(){if(b){b.textContent="Lien copié";setTimeout(function(){b.textContent="Copier le lien"},2000)}};
+if(navigator.share){navigator.share(d).catch(function(e){if(e&&e.name!=="AbortError")shareMore(k+i,1)})}else shareMore(k+i,1)}
+function shareMore(id,open){var p=document.getElementById("shp"+id);if(p)p.style.display=(open||p.style.display==="none")?"block":"none"}
+function copyInfo(k,i){var u=infoUrl(k),b=document.getElementById("cpb"+k+i),ok=function(){if(b){b.textContent="Lien copié";setTimeout(function(){b.textContent="Copier le lien"},2000)}};
 try{navigator.clipboard.writeText(u).then(ok,function(){window.prompt("Copiez ce lien :",u)})}catch(e){window.prompt("Copiez ce lien :",u)}}
-function infoPrefetch(){INFOS.forEach(function(a,i){if(!a.img||INFO_FILES[i]!==undefined)return;INFO_FILES[i]=null;
-fetch(a.img).then(function(r){return r.ok?r.blob():Promise.reject()}).then(function(b){INFO_FILES[i]=new File([b],a.img.split("/").pop(),{type:b.type||"image/jpeg"})}).catch(function(){INFO_FILES[i]=undefined})})}
-function infosView(){
-infoPrefetch();
-return '<h1>Informations</h1><p class="mu reveal" style="margin-top:0">Actualités et informations utiles de Bfamily Compétences Zone.</p>'+INFOS.map(infoArt).join('<div class="inf-sep"></div>')+
-'<div class="c g reveal"><h2>Rejoignez la communauté Bfamily Compétences Zone sur WhatsApp !</h2><p>Vous souhaitez rester informé des opportunités, des formations, des événements, des innovations et des initiatives qui contribuent au développement des compétences en Afrique ?</p><p>Rejoignez notre chaîne WhatsApp pour ne manquer aucune actualité et découvrir de nouvelles possibilités d’apprentissage, de collaboration et de développement professionnel.</p><p><b>Ne restez pas en marge des opportunités. Faites partie de la communauté !</b></p><a class="b" href="'+INFO_WA+'" target="_blank" rel="noopener">Cliquez ici pour rejoindre Bfamily Compétences Zone</a></div>'+
+function infoPrefetch(k){shList(k).forEach(function(a,i){var id=k+i;if(!a.img||INFO_FILES[id]!==undefined)return;INFO_FILES[id]=null;
+fetch(a.img).then(function(r){return r.ok?r.blob():Promise.reject()}).then(function(x){INFO_FILES[id]=new File([x],a.img.split("/").pop(),{type:x.type||"image/jpeg"})}).catch(function(){INFO_FILES[id]=undefined})})}
+function infoFoot(){return '<div class="c g reveal"><h2>Rejoignez la communauté Bfamily Compétences Zone sur WhatsApp !</h2><p>Vous souhaitez rester informé des opportunités, des formations, des événements, des innovations et des initiatives qui contribuent au développement des compétences en Afrique ?</p><p>Rejoignez notre chaîne WhatsApp pour ne manquer aucune actualité et découvrir de nouvelles possibilités d’apprentissage, de collaboration et de développement professionnel.</p><p><b>Ne restez pas en marge des opportunités. Faites partie de la communauté !</b></p><a class="b" href="'+INFO_WA+'" target="_blank" rel="noopener">Cliquez ici pour rejoindre Bfamily Compétences Zone</a></div>'+
 '<div class="inf-sign reveal"><b>BFAMILY COMPÉTENCES ZONE</b><span class="mu sm">Orienter • Former • Accompagner</span><p class="mu sm" style="margin:6px 0 0">Ensemble, développons les compétences et construisons les opportunités de demain.</p></div>'}
+function infosView(){
+infoPrefetch("I");
+return '<h1>Informations</h1><p class="mu reveal" style="margin-top:0">Actualités et informations utiles de Bfamily Compétences Zone.</p>'+INFOS.map(infoArt).join('<div class="inf-sep"></div>')+infoFoot()}
+var BOURSES=[{
+img:"bourse-jackie.jpg",
+alt:"Bourse Jackie English Language Scholarship",
+title:"Bourse Jackie English Language Scholarship",
+badge:"Bourse d’études",
+deadline:"2026-11-21",deadlineText:"21 novembre 2026",
+form:"https://docs.google.com/forms/d/e/1FAIpQLSekBcrk4OAD3KFDOzjgkzAU5GO1lS4hknWyjQrgISu_LxYieg/viewform",
+share:"Bourse Jackie English Language Scholarship : une formation linguistique de six mois, entièrement financée au Ghana, pour les jeunes femmes de 18 à 25 ans originaires du Sénégal, de Guinée, du Niger, de Côte d’Ivoire, du Bénin, du Togo, du Burkina Faso et du Mali. Date limite : 21 novembre 2026. Détails et lien pour postuler :",
+shareTitle:"Partager cette bourse",
+shareLead:"Une jeune femme de votre entourage peut être concernée : faites-lui connaître cette opportunité.",
+meta:["Ghana","Formation de 6 mois","Entièrement financée","Jeunes femmes de 18 à 25 ans"],
+intro:["La **Bourse Jackie English Language Scholarship** est une bourse très compétitive qui offre une opportunité de formation linguistique de six mois, entièrement financée, au Ghana.","Elle s’adresse aux jeunes femmes âgées de 18 à 25 ans originaires de huit pays d’Afrique de l’Ouest, dont le **Bénin**."],
+stats:[["6 mois","de formation au Ghana"],["8 pays","éligibles, dont le Bénin"],["18 à 25","ans"]],
+secs:[
+{t:"De quoi s’agit-il ?",p:["Cette bourse offre une formation linguistique de six mois au Ghana, entièrement financée.","Elle est très compétitive : il est important de préparer sa candidature avec soin."]},
+{t:"Qui peut postuler ?",b:["Les candidates doivent être des jeunes femmes âgées de 18 à 25 ans, originaires de l’un des pays suivants :",["**Sénégal**","**Guinée**","**Niger**","**Côte d’Ivoire**","**Bénin**","**Togo**","**Burkina Faso**","**Mali**"],"Le programme accorde une attention particulière aux jeunes femmes issues de milieux socioéconomiques défavorisés, qui font preuve d’une forte motivation et d’un engagement en faveur de leur développement personnel, académique et professionnel."]},
+{t:"Comment postuler ?",b:["La candidature se fait en ligne, avec le formulaire officiel de la bourse : il suffit de cliquer sur le bouton **Postuler**.","Avant de commencer, préparez et téléchargez les documents demandés. Ils sont détaillés dans la section « Documents requis » du formulaire.","La date limite de candidature est fixée au **21 novembre 2026**."]},
+{t:"Pourquoi saisir cette opportunité ?",hl:1,p:["Apprendre ou perfectionner une langue ouvre des portes : celles des études, de l’emploi et des échanges avec le reste du monde.","Cette formation est entièrement financée et s’adresse en priorité à celles qui montrent de la motivation et de l’engagement. Si vous êtes concernée, ne laissez pas passer l’occasion.","Si ce n’est pas votre cas, pensez à une jeune femme de votre entourage et partagez cette fiche avec elle."]}
+]
+}];
+function bourseState(b){var now=new Date(),end=new Date(b.deadline+"T23:59:59"),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),dl=new Date(b.deadline+"T00:00:00"),d=Math.round((dl-today)/864e5);
+if(now>end)return{open:false,label:"Inscriptions clôturées",cls:"grey"};
+if(d===0)return{open:true,label:"Dernier jour pour postuler",cls:"red"};
+if(d<=7)return{open:true,label:"Plus que "+d+" jour"+(d>1?"s":"")+" pour postuler",cls:"red"};
+return{open:true,label:"Inscriptions ouvertes",cls:""}}
+function bourseCta(b){var st=bourseState(b);
+return st.open?'<a class="b" href="'+esc(b.form)+'" target="_blank" rel="noopener">Postuler</a><p class="mu sm" style="text-align:center;margin:8px 0 0">Date limite : '+esc(b.deadlineText)+'. Le formulaire officiel s’ouvre dans un nouvel onglet.</p>':'<button class="s" disabled style="opacity:.55;cursor:not-allowed">Inscriptions clôturées</button><p class="mu sm" style="text-align:center;margin:8px 0 0">La date limite était le '+esc(b.deadlineText)+'.</p>'}
+function bourseArt(b,i){var st=bourseState(b),h='<div class="c reveal">';
+if(b.img)h+='<img class="inf-hero" src="'+esc(b.img)+'" alt="'+esc(b.alt||"")+'" style="aspect-ratio:auto;height:auto" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">';
+h+='<span class="inf-badge">'+esc(b.badge)+'</span><span class="inf-badge'+(st.cls?' '+st.cls:'')+'">'+esc(st.label)+'</span><h2 class="inf-title">'+esc(b.title)+'</h2>';
+h+='<div class="inf-meta">'+b.meta.map(function(m){return '<span>'+esc(m)+'</span>'}).join("")+'</div>';
+h+=b.intro.map(function(t){return '<p style="margin:12px 0 0">'+infoTx(t)+'</p>'}).join("");
+h+='<div style="margin-top:18px">'+bourseCta(b)+'</div></div>';
+if(b.stats)h+='<div class="inf-stats reveal">'+b.stats.map(function(x){return '<div class="inf-stat"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'}).join("")+'</div>';
+h+=b.secs.map(infoSec).join("");
+h+='<div class="c g reveal"><h2>'+(st.open?'Prête à postuler ?':'Les inscriptions sont closes')+'</h2><p>'+(st.open?'Rassemblez vos documents et remplissez le formulaire officiel avant la date limite.':'Cette bourse n’accepte plus de candidatures. D’autres opportunités seront publiées ici.')+'</p>'+bourseCta(b)+'<p class="mu sm" style="margin:14px 0 0">Bfamily Compétences Zone relaie cette opportunité. La bourse est gérée par ses organisateurs : les conditions et la sélection leur appartiennent.</p></div>';
+return h+shareCard(b,i,"B")}
+function boursesView(){
+infoPrefetch("B");
+return '<h1>Bourses d’études</h1><p class="mu reveal" style="margin-top:0">Retrouvez ici les bourses d’études disponibles et comment postuler.</p>'+BOURSES.map(bourseArt).join('<div class="inf-sep"></div>')+infoFoot()}
+//FIN-BOURSES
 
 function drawer(){if(!S.menu||!S.user)return "";var l=function(h,t){return '<a href="#'+h+'" onclick="S.menu=0;render()">'+t+'</a>'};
 return '<div class="ov" onclick="S.menu=0;render()"></div><div class="pn"><div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bd)">'+'<a href="#profil" onclick="S.menu=0;render()" style="flex:none;text-decoration:none">'+avatar((S.profile||{}).photo,60,S.name)+'</a><div style="min-width:0"><b style="font-size:18px;display:block">'+esc(S.name||"Mon compte")+'</b><span class="mu sm" style="word-break:break-all;font-size:13px">'+esc(S.user.email||"")+'</span></div></div>'+l("reseau","Mon réseau")+l("cours","Ma formation")+l("profil","Mon profil")+l("cv","Mon CV")+l("evolution","Mon évolution")+l("certificats","Mes certificats")+l("bourses","Bourses d’études")+l("infos","Informations")+l("opportunites","Opportunités")+l("parametres","Paramètres")+'<a href="#accueil" onclick="S.menu=0;FB.out();return false" style="color:var(--ko);margin-top:16px">Se déconnecter</a></div>'}
